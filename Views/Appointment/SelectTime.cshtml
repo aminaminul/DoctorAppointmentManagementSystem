@@ -1,143 +1,409 @@
-﻿@{
+@{
     Layout = "_Layout";
+    ViewData["Title"] = "Select Time Slot";
+    var slots       = ViewBag.Slots  as List<string> ?? new List<string>();
+    var bookedSlots = ViewBag.BookedSlots as List<string> ?? new List<string>();
 }
 
-<h2>Select Time</h2>
+<style>
+    /* ===== SELECT TIME PAGE ===== */
+    .selecttime-hero {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        padding: 2.5rem 0 5rem;
+        color: white; text-align: center;
+        position: relative; overflow: hidden;
+    }
+    .selecttime-hero h1 { font-size: 2rem; font-weight: 700; margin-bottom: .4rem; }
+    .selecttime-hero p  { opacity: .88; }
 
-<form method="post" action="/Appointment/Confirm">
+    .main-card {
+        background: white; border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.12);
+        padding: 2rem 2.5rem; margin-top: -3rem;
+        position: relative; z-index: 10;
+    }
 
-    <!-- 🔷 Hidden Data -->
-    <input type="hidden" name="DoctorId" value="@ViewBag.DoctorId" />
-    <input type="hidden" name="Date" value="@ViewBag.Date" />
+    /* Doctor Summary */
+    .doc-summary {
+        display: flex; align-items: center; gap: 1.25rem;
+        background: linear-gradient(135deg,#f0f7ff,#e8f4ff);
+        border-radius: 16px; padding: 1.25rem 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .doc-avatar-sm {
+        width: 60px; height: 60px; border-radius: 50%;
+        background: linear-gradient(135deg,#667eea,#764ba2);
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 1.6rem; flex-shrink: 0;
+        overflow: hidden;
+    }
+    .doc-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+    .doc-summary-info h5 { font-weight: 700; color: #1e293b; margin: 0 0 .2rem; }
+    .doc-summary-info .badges { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .badge-info {
+        background: rgba(102,126,234,.12); color: #667eea;
+        border-radius: 20px; padding: .2rem .75rem;
+        font-size: .75rem; font-weight: 600;
+    }
+    .badge-date {
+        background: rgba(16,185,129,.12); color: #059669;
+        border-radius: 20px; padding: .2rem .75rem;
+        font-size: .75rem; font-weight: 600;
+    }
 
-    <!-- 🔷 TIME -->
-    <label>Available Time</label>
+    /* Section title */
+    .section-title {
+        font-weight: 700; color: #1e293b; font-size: 1rem;
+        margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem;
+    }
+    .section-title i { color: #4facfe; }
 
-    <select name="TimeSlot" class="form-control">
+    /* Time slot grid */
+    .slot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+        gap: .75rem;
+        margin-bottom: 2rem;
+    }
+    .slot-btn {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: .7rem .5rem;
+        text-align: center;
+        font-size: .85rem;
+        font-weight: 600;
+        color: #374151;
+        cursor: pointer;
+        background: white;
+        transition: all .25s;
+        position: relative;
+        user-select: none;
+    }
+    .slot-btn:hover:not(.booked) {
+        border-color: #4facfe;
+        background: #f0f9ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79,172,254,.2);
+    }
+    .slot-btn.selected {
+        border-color: #4facfe;
+        background: linear-gradient(135deg,#4facfe,#00f2fe);
+        color: white;
+        box-shadow: 0 6px 20px rgba(79,172,254,.4);
+        transform: translateY(-3px);
+    }
+    .slot-btn.booked {
+        background: #f8fafc; color: #cbd5e1;
+        border-color: #f1f5f9; cursor: not-allowed;
+        text-decoration: line-through;
+    }
+    .slot-btn .slot-icon { display: block; font-size: 1rem; margin-bottom: .2rem; }
 
-        <option value="">-- Select Time --</option>
+    /* No slots message */
+    .no-slots {
+        text-align: center; padding: 2rem;
+        color: #94a3b8;
+    }
+    .no-slots i { font-size: 3rem; display: block; margin-bottom: .75rem; }
 
-        @foreach (var slot in ViewBag.Slots)
-        {
-            <option value="@slot">@slot</option>
+    /* Payment section */
+    .payment-section { margin-top: 1.5rem; }
+    .payment-option {
+        border: 2px solid #e2e8f0; border-radius: 14px;
+        padding: 1rem 1.25rem; cursor: pointer;
+        transition: all .25s; margin-bottom: .75rem;
+        display: flex; align-items: center; gap: 1rem;
+    }
+    .payment-option:hover { border-color: #4facfe; background: #f0f9ff; }
+    .payment-option.selected { border-color: #4facfe; background: #e8f7ff; }
+    .payment-option input[type=radio] { accent-color: #4facfe; width: 18px; height: 18px; }
+    .payment-icon {
+        width: 44px; height: 44px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem; font-weight: 800;
+        flex-shrink: 0;
+    }
+    .payment-icon.bkash  { background: #fce4ec; color: #e91e8c; }
+    .payment-icon.card   { background: #e8eaf6; color: #3949ab; }
+    .payment-icon.cash   { background: #e8f5e9; color: #2e7d32; }
+    .payment-label  { font-weight: 600; font-size: .9rem; color: #1e293b; }
+    .payment-sublabel { font-size: .78rem; color: #64748b; }
+
+    /* Card type sub-options */
+    .card-types {
+        display: none; padding: .75rem 1rem 0;
+        gap: .75rem;
+    }
+    .card-types.show { display: flex; }
+    .card-type-btn {
+        border: 2px solid #e2e8f0; border-radius: 10px;
+        padding: .5rem 1rem; cursor: pointer;
+        font-size: .82rem; font-weight: 600; color: #374151;
+        background: white; transition: all .2s;
+    }
+    .card-type-btn.selected { border-color: #3949ab; background: #e8eaf6; color: #3949ab; }
+
+    /* Summary bar */
+    .summary-bar {
+        background: linear-gradient(135deg,#f8faff,#f0f7ff);
+        border: 2px solid #e2e8f0; border-radius: 14px;
+        padding: 1rem 1.5rem; margin-top: 1.5rem;
+        display: none;
+    }
+    .summary-bar.show { display: block; animation: slideIn .3s ease; }
+    .summary-row { display: flex; justify-content: space-between; align-items: center; font-size: .875rem; padding: .25rem 0; }
+    .summary-row .label { color: #64748b; }
+    .summary-row .value { font-weight: 600; color: #1e293b; }
+    .summary-total { font-size: 1rem; border-top: 1px solid #e2e8f0; margin-top: .5rem; padding-top: .5rem; }
+
+    /* Confirm button */
+    .btn-confirm {
+        background: linear-gradient(135deg,#4facfe,#00f2fe);
+        color: white; border: none; border-radius: 12px;
+        padding: .9rem 2rem; font-weight: 700; font-size: 1rem;
+        width: 100%; margin-top: 1.5rem; cursor: pointer;
+        transition: all .3s;
+        display: flex; align-items: center; justify-content: center; gap: .6rem;
+    }
+    .btn-confirm:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(79,172,254,.5);
+    }
+    .btn-confirm:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .divider { height: 1px; background: #f1f5f9; margin: 1.5rem 0; }
+
+    @@keyframes slideIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<!-- Hero -->
+<div class="selecttime-hero">
+    <div class="container">
+        <h1><i class="bi bi-clock-history me-2"></i>Choose Your Time Slot</h1>
+        <p>Pick an available time for <strong>@ViewBag.DateDisplay</strong></p>
+    </div>
+</div>
+
+<div class="container" style="max-width: 680px;">
+    <div class="main-card">
+
+        <!-- Doctor Summary -->
+        <div class="doc-summary">
+            <div class="doc-avatar-sm" id="docAvatarSm">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            <div class="doc-summary-info">
+                <h5>Dr. @ViewBag.DoctorName</h5>
+                <div class="badges">
+                    <span class="badge-info">@ViewBag.Specialization</span>
+                    <span class="badge-info">@ViewBag.Experience yrs exp.</span>
+                    <span class="badge-info">৳ @ViewBag.Fee fee</span>
+                    <span class="badge-date"><i class="bi bi-calendar3 me-1"></i>@ViewBag.DateDisplay</span>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" action="/Appointment/Confirm" id="confirmForm">
+            <input type="hidden" name="DoctorId" value="@ViewBag.DoctorId" />
+            <input type="hidden" name="Date" value="@ViewBag.Date" />
+            <input type="hidden" name="ReasonForVisit" value="@Context.Request.Query["reason"]" />
+            <input type="hidden" name="TimeSlot" id="timeSlotInput" />
+            <input type="hidden" name="PaymentMethod" id="paymentMethodInput" />
+            <input type="hidden" name="CardType" id="cardTypeInput" />
+
+            <!-- ===== TIME SLOTS ===== -->
+            <div class="section-title">
+                <i class="bi bi-clock"></i>Available Time Slots
+                <span style="font-size:.8rem;color:#94a3b8;font-weight:400;margin-left:.5rem;">
+                    (@slots.Count available)
+                </span>
+            </div>
+
+            @if (slots.Count == 0)
+            {
+                <div class="no-slots">
+                    <i class="bi bi-calendar-x"></i>
+                    <strong>No slots available for this date.</strong>
+                    <p class="mt-2 mb-0">Please go back and choose a different date.</p>
+                    <a href="/Appointment/Book" class="btn btn-outline-primary mt-3 rounded-pill">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Booking
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="slot-grid" id="slotGrid">
+                    @foreach (var slot in slots)
+                    {
+                        <div class="slot-btn" data-slot="@slot" onclick="selectSlot(this, '@slot')">
+                            <span class="slot-icon"><i class="bi bi-clock"></i></span>
+                            @slot
+                        </div>
+                    }
+                    @foreach (var bs in bookedSlots)
+                    {
+                        <div class="slot-btn booked" title="Already booked">
+                            <span class="slot-icon"><i class="bi bi-x-circle"></i></span>
+                            @bs
+                        </div>
+                    }
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- ===== PAYMENT METHOD ===== -->
+                <div class="section-title">
+                    <i class="bi bi-credit-card-2-front"></i>Payment Method
+                </div>
+                <div class="payment-section">
+
+                    <!-- bKash -->
+                    <label class="payment-option" id="payOpt_Bkash" onclick="selectPayment('Bkash', this)">
+                        <input type="radio" name="_payMethod" value="Bkash" />
+                        <div class="payment-icon bkash">৳</div>
+                        <div>
+                            <div class="payment-label">bKash</div>
+                            <div class="payment-sublabel">Pay via bKash mobile banking</div>
+                        </div>
+                    </label>
+
+                    <!-- Card -->
+                    <label class="payment-option" id="payOpt_Card" onclick="selectPayment('Card', this)">
+                        <input type="radio" name="_payMethod" value="Card" />
+                        <div class="payment-icon card"><i class="bi bi-credit-card"></i></div>
+                        <div style="flex:1;">
+                            <div class="payment-label">Debit / Credit Card</div>
+                            <div class="payment-sublabel">Visa, MasterCard</div>
+                        </div>
+                    </label>
+                    <div class="card-types" id="cardTypes">
+                        <div class="card-type-btn" onclick="selectCardType('Visa',this)">
+                            <i class="bi bi-credit-card me-1"></i>Visa
+                        </div>
+                        <div class="card-type-btn" onclick="selectCardType('MasterCard',this)">
+                            <i class="bi bi-credit-card-fill me-1"></i>MasterCard
+                        </div>
+                    </div>
+
+                    <!-- Cash -->
+                    <label class="payment-option" id="payOpt_Cash" onclick="selectPayment('Cash', this)">
+                        <input type="radio" name="_payMethod" value="Cash" />
+                        <div class="payment-icon cash"><i class="bi bi-cash-coin"></i></div>
+                        <div>
+                            <div class="payment-label">Pay at Hospital</div>
+                            <div class="payment-sublabel">Pay in cash on arrival</div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Summary Bar -->
+                <div class="summary-bar" id="summaryBar">
+                    <div class="summary-row">
+                        <span class="label">Doctor</span>
+                        <span class="value">Dr. @ViewBag.DoctorName</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Date &amp; Time</span>
+                        <span class="value">@ViewBag.DateDisplay — <span id="summarySlot">—</span></span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Payment</span>
+                        <span class="value" id="summaryPayment">—</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span class="label" style="font-weight:700;">Total Fee</span>
+                        <span class="value" style="color:#4facfe;font-size:1.1rem;">৳ @ViewBag.Fee</span>
+                    </div>
+                </div>
+
+                <!-- Confirm Button -->
+                <button type="submit" class="btn-confirm" id="confirmBtn" disabled>
+                    <i class="bi bi-check-circle-fill"></i>
+                    Confirm Appointment
+                </button>
+            }
+        </form>
+
+        <div style="text-align:center;margin-top:1rem;">
+            <a href="/Appointment/Book" class="text-decoration-none" style="color:#94a3b8;font-size:.85rem;">
+                <i class="bi bi-arrow-left me-1"></i>Back to booking
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let selectedSlot    = null;
+    let selectedPayment = null;
+    let selectedCard    = null;
+
+    function selectSlot(el, slot) {
+        document.querySelectorAll('.slot-btn:not(.booked)').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedSlot = slot;
+        document.getElementById('timeSlotInput').value = slot;
+        document.getElementById('summarySlot').textContent = slot;
+        showSummary();
+        checkConfirm();
+    }
+
+    function selectPayment(method, el) {
+        document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedPayment = method;
+        document.getElementById('paymentMethodInput').value = method;
+
+        // Card types
+        const cardTypes = document.getElementById('cardTypes');
+        if (method === 'Card') {
+            cardTypes.classList.add('show');
+        } else {
+            cardTypes.classList.remove('show');
+            selectedCard = null;
+            document.getElementById('cardTypeInput').value = '';
         }
 
-    </select>
+        document.getElementById('summaryPayment').textContent = method;
+        showSummary();
+        checkConfirm();
+    }
 
-    <br />
+    function selectCardType(type, el) {
+        document.querySelectorAll('.card-type-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedCard = type;
+        document.getElementById('cardTypeInput').value = type;
+        checkConfirm();
+        event.stopPropagation();
+    }
 
-    <!-- 🔷 PAYMENT AMOUNT -->
-    <label>Payment Amount</label>
+    function showSummary() {
+        if (selectedSlot && selectedPayment) {
+            document.getElementById('summaryBar').classList.add('show');
+        }
+    }
 
-    <input type="text"
-           class="form-control"
-           value="800 TK"
-           readonly />
+    function checkConfirm() {
+        const slotOk    = !!selectedSlot;
+        const payOk     = !!selectedPayment;
+        const cardOk    = selectedPayment !== 'Card' || !!selectedCard;
+        document.getElementById('confirmBtn').disabled = !(slotOk && payOk && cardOk);
+    }
 
-    <br />
-
-    <!-- 🔷 PAYMENT METHOD -->
-    <label>Payment Method</label>
-
-    <div class="card p-3">
-
-        <!-- BKASH -->
-        <div class="form-check mb-3">
-
-            <input class="form-check-input"
-                   type="radio"
-                   name="PaymentMethod"
-                   value="Bkash"
-                   id="bkash">
-
-            <label class="form-check-label" for="bkash">
-                bKash
-            </label>
-
-        </div>
-
-        <!-- CARD -->
-        <div class="form-check mb-3">
-
-            <input class="form-check-input"
-                   type="radio"
-                   name="PaymentMethod"
-                   value="Card"
-                   id="card">
-
-            <label class="form-check-label" for="card">
-                Card
-            </label>
-
-        </div>
-
-        <!-- CARD TYPES -->
-        <div class="ms-4">
-
-            <div class="form-check mb-2">
-
-                <input class="form-check-input"
-                       type="radio"
-                       name="CardType"
-                       value="Visa"
-                       id="visa">
-
-                <label class="form-check-label" for="visa">
-                    Visa
-                </label>
-
-            </div>
-
-            <div class="form-check">
-
-                <input class="form-check-input"
-                       type="radio"
-                       name="CardType"
-                       value="MasterCard"
-                       id="master">
-
-                <label class="form-check-label" for="master">
-                    MasterCard
-                </label>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <br />
-    <input type="hidden" name="PaymentMethod" id="paymentMethodHidden" />
-    <input type="hidden" name="CardType" id="cardTypeHidden" />
-
-    <!-- 🔷 CONFIRM BUTTON -->
-    <button type="submit" class="btn btn-success">
-        Confirm Booking
-    </button>
-
-</form>
-<script>
-
-    // payment method
-    document.querySelectorAll('input[name="PaymentMethod"]').forEach(radio => {
-
-        radio.addEventListener("change", function () {
-
-            document.getElementById("paymentMethodHidden").value = this.value;
-
-        });
-
-    });
-
-    // card type
-    document.querySelectorAll('input[name="CardType"]').forEach(radio => {
-
-        radio.addEventListener("change", function () {
-
-            document.getElementById("cardTypeHidden").value = this.value;
-
-        });
-
-    });
-
+    // Doctor avatar (passed from server)
+    @{
+        var profileImg = ViewBag.ProfileImage as string;
+        if (!string.IsNullOrEmpty(profileImg) && profileImg != "doctor_default.png")
+        {
+            <text>
+            document.getElementById('docAvatarSm').innerHTML =
+                '<img src="/images/@profileImg" onerror="this.parentElement.innerHTML=\'<i class=\\'bi bi-person-circle\\'></i>\'" />';
+            </text>
+        }
+    }
 </script>
+}

@@ -67,6 +67,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXBwb2ludG1lbnRcQ2FyZFBheW1lbnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/Appointment/Confirmation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXBwb2ludG1lbnRcQ29uZmlybWF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/Appointment/SelectTime.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXBwb2ludG1lbnRcU2VsZWN0VGltZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
