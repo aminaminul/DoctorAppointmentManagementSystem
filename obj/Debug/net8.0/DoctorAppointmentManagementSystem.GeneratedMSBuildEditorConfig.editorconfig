@@ -79,8 +79,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9jdG9yXEFkZFByZXNjcmlwdGlvbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/Doctor/AddSchedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9jdG9yXEFkZFNjaGVkdWxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/Doctor/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9jdG9yXERhc2hib2FyZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/Doctor/EditSchedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9jdG9yXEVkaXRTY2hlZHVsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/Doctor/Schedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9jdG9yXFNjaGVkdWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/Home/Index.cshtml]

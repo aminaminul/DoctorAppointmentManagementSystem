@@ -1,126 +1,428 @@
-﻿@model List<Appointment>
+@model List<DoctorAppointmentManagementSystem.Models.Appointment>
+@using DoctorAppointmentManagementSystem.Models
 
 @{
     Layout = "_Layout";
+    ViewData["Title"] = "Doctor Dashboard";
+    string section = ViewBag.Section ?? "overview";
 }
 
-<div class="container-fluid mt-3">
-    <div class="row">
+<style>
+/* ── Dashboard Layout ─────────────────────────────────────── */
+.dash-wrapper { display: flex; min-height: calc(100vh - 72px); background: #f8fafc; }
 
-        <!-- 🔷 SIDEBAR -->
-        <div class="col-md-3 bg-dark text-white p-3" style="min-height:90vh;">
+/* Sidebar */
+.dash-sidebar {
+    width: 260px; flex-shrink: 0;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    padding: 1.75rem 0;
+    display: flex; flex-direction: column;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar-profile {
+    text-align: center; padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 1rem;
+}
+.sidebar-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; color: white; margin: 0 auto .75rem;
+    border: 3px solid rgba(255,255,255,.15);
+}
+.sidebar-name  { color: white; font-weight: 700; font-size: .95rem; margin-bottom: .15rem; }
+.sidebar-spec  { color: #94a3b8; font-size: .78rem; }
 
-            <h4>Doctor Panel</h4>
+.nav-section-label {
+    color: #475569; font-size: .7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .1em;
+    padding: .5rem 1.5rem .25rem;
+}
+.dash-nav-link {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .65rem 1.5rem;
+    color: #94a3b8; text-decoration: none;
+    font-size: .875rem; font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all .2s;
+}
+.dash-nav-link:hover { color: white; background: rgba(255,255,255,.05); }
+.dash-nav-link.active {
+    color: white; background: rgba(102,126,234,.15);
+    border-left-color: #667eea;
+}
+.dash-nav-link .nav-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; flex-shrink: 0;
+    background: rgba(255,255,255,.05);
+}
+.dash-nav-link.active .nav-icon { background: rgba(102,126,234,.3); }
+.sidebar-footer { margin-top: auto; padding: 1rem 1.5rem 0; }
+.btn-logout {
+    display: flex; align-items: center; justify-content: center; gap: .5rem;
+    background: rgba(239,68,68,.1); color: #f87171;
+    border: 1px solid rgba(239,68,68,.2); border-radius: 10px;
+    padding: .6rem 1rem; width: 100%;
+    font-size: .875rem; font-weight: 600; text-decoration: none;
+    transition: all .2s;
+}
+.btn-logout:hover { background: rgba(239,68,68,.2); color: #f87171; }
 
-            <ul class="nav flex-column mt-3">
+/* Main content */
+.dash-main { flex: 1; padding: 2rem; overflow-y: auto; }
+.dash-header { margin-bottom: 1.75rem; }
+.dash-header h1 { font-size: 1.5rem; font-weight: 800; color: #1e293b; margin: 0 0 .2rem; }
+.dash-header p  { color: #64748b; font-size: .9rem; margin: 0; }
 
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/Doctor/Dashboard?section=approved">
-                        ✅ My Appointments
-                    </a>
-                </li>
+/* Stat cards */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card {
+    background: white; border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    display: flex; flex-direction: column; gap: .4rem;
+    border-left: 4px solid transparent;
+    transition: transform .2s;
+}
+.stat-card:hover { transform: translateY(-3px); }
+.stat-card.blue   { border-left-color: #3b82f6; }
+.stat-card.amber  { border-left-color: #f59e0b; }
+.stat-card.green  { border-left-color: #10b981; }
+.stat-card.purple { border-left-color: #8b5cf6; }
+.stat-card.teal   { border-left-color: #06b6d4; }
+.stat-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; margin-bottom: .25rem;
+}
+.stat-icon.blue   { background:#dbeafe; color:#3b82f6; }
+.stat-icon.amber  { background:#fef3c7; color:#f59e0b; }
+.stat-icon.green  { background:#d1fae5; color:#10b981; }
+.stat-icon.purple { background:#ede9fe; color:#8b5cf6; }
+.stat-icon.teal   { background:#cffafe; color:#06b6d4; }
+.stat-value { font-size: 1.75rem; font-weight: 800; color: #1e293b; line-height: 1; }
+.stat-label { font-size: .78rem; color: #64748b; font-weight: 500; }
 
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/Doctor/Dashboard?section=pending">
-                        ⏳ Pending Appointments
-                    </a>
-                </li>
+/* Content card */
+.content-card {
+    background: white; border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06); overflow: hidden;
+}
+.content-card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: .75rem;
+}
+.content-card-header h2 {
+    font-size: 1rem; font-weight: 700; color: #1e293b;
+    margin: 0; display: flex; align-items: center; gap: .5rem;
+}
 
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/Doctor/Dashboard?section=profile">
-                        👤 View Profile
-                    </a>
-                </li>
+/* Table */
+.dash-table { width: 100%; border-collapse: collapse; }
+.dash-table th {
+    padding: .75rem 1.25rem; text-align: left;
+    font-size: .75rem; font-weight: 700; color: #64748b;
+    text-transform: uppercase; letter-spacing: .05em;
+    background: #f8fafc; border-bottom: 1px solid #f1f5f9;
+}
+.dash-table td {
+    padding: .875rem 1.25rem;
+    border-bottom: 1px solid #f8fafc; font-size: .875rem; color: #374151;
+}
+.dash-table tr:last-child td { border-bottom: none; }
+.dash-table tr:hover td { background: #fafafa; }
 
-                <li class="nav-item mt-4">
-                    <a href="/Account/Logout" class="btn btn-danger w-100">
-                        Logout
-                    </a>
-                </li>
+/* Badges */
+.badge-status {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .25rem .75rem; border-radius: 20px;
+    font-size: .73rem; font-weight: 700; white-space: nowrap;
+}
+.bs-pending   { background:#fff7ed; color:#c2410c; }
+.bs-confirmed { background:#d1fae5; color:#065f46; }
+.bs-completed { background:#dbeafe; color:#1e40af; }
+.bs-cancelled { background:#fee2e2; color:#991b1b; }
 
-            </ul>
+/* Action buttons */
+.btn-action {
+    display: inline-flex; align-items: center; gap: .3rem;
+    padding: .3rem .75rem; border-radius: 8px;
+    font-size: .78rem; font-weight: 600;
+    border: none; cursor: pointer; text-decoration: none;
+    transition: all .2s;
+}
+.btn-approve  { background:#d1fae5; color:#065f46; }
+.btn-approve:hover  { background:#a7f3d0; color:#065f46; }
+.btn-reject   { background:#fee2e2; color:#991b1b; }
+.btn-reject:hover   { background:#fecaca; color:#991b1b; }
+.btn-complete { background:#dbeafe; color:#1e40af; }
+.btn-complete:hover { background:#bfdbfe; color:#1e40af; }
+.btn-rx       { background:#ede9fe; color:#5b21b6; }
+.btn-rx:hover       { background:#ddd6fe; color:#5b21b6; }
+
+/* Alert */
+.dash-alert-success {
+    background:#d1fae5; color:#065f46; border-radius:12px;
+    padding:.85rem 1.2rem; margin-bottom:1.25rem;
+    display:flex; align-items:center; gap:.6rem;
+    font-weight:500; font-size:.875rem;
+}
+.dash-alert-error {
+    background:#fee2e2; color:#991b1b; border-radius:12px;
+    padding:.85rem 1.2rem; margin-bottom:1.25rem;
+    display:flex; align-items:center; gap:.6rem;
+    font-weight:500; font-size:.875rem;
+}
+
+/* Empty state */
+.empty-state { text-align:center; padding:3rem 1rem; color:#94a3b8; }
+.empty-state i { font-size:3rem; display:block; margin-bottom:.75rem; }
+</style>
+
+<div class="dash-wrapper">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="dash-sidebar">
+        <div class="sidebar-profile">
+            <div class="sidebar-avatar"><i class="bi bi-person-circle"></i></div>
+            <div class="sidebar-name">Dr. @ViewBag.DoctorName</div>
+            <div class="sidebar-spec">@ViewBag.Specialization</div>
         </div>
 
-        <!-- 🔷 RIGHT CONTENT -->
-        <div class="col-md-9">
-
-            @if (ViewBag.Section == null)
+        <span class="nav-section-label">Main</span>
+        <a href="/Doctor/Dashboard?section=overview"
+           class="dash-nav-link @(section == "overview" ? "active" : "")">
+            <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>Overview
+        </a>
+        <a href="/Doctor/Dashboard?section=appointments"
+           class="dash-nav-link @(section == "appointments" ? "active" : "")">
+            <span class="nav-icon"><i class="bi bi-calendar-check"></i></span>Appointments
+            @if ((int)ViewBag.PendingCount > 0)
             {
-                <div class="alert alert-info mt-4">
-                    👉 Please select an option from sidebar
+                <span style="margin-left:auto;background:#ef4444;color:white;border-radius:20px;padding:.1rem .5rem;font-size:.72rem;font-weight:700;">
+                    @ViewBag.PendingCount
+                </span>
+            }
+        </a>
+
+        <span class="nav-section-label">Schedule</span>
+        <a href="/Doctor/Schedule"
+           class="dash-nav-link @(section == "schedule" ? "active" : "")">
+            <span class="nav-icon"><i class="bi bi-calendar3"></i></span>My Schedule
+        </a>
+        <a href="/Doctor/AddSchedule"
+           class="dash-nav-link">
+            <span class="nav-icon"><i class="bi bi-calendar-plus"></i></span>Add Schedule
+        </a>
+
+        <span class="nav-section-label">Account</span>
+        <a href="/Doctor/Dashboard?section=profile"
+           class="dash-nav-link @(section == "profile" ? "active" : "")">
+            <span class="nav-icon"><i class="bi bi-person-badge"></i></span>My Profile
+        </a>
+
+        <div class="sidebar-footer">
+            <a href="/Account/Logout" class="btn-logout">
+                <i class="bi bi-box-arrow-right"></i>Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="dash-main">
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="dash-alert-success">
+                <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="dash-alert-error">
+                <i class="bi bi-exclamation-circle-fill"></i> @TempData["Error"]
+            </div>
+        }
+
+        <!-- ══ OVERVIEW ══════════════════════════════════════════════════════ -->
+        @if (section == "overview")
+        {
+            <div class="dash-header">
+                <h1>Welcome back, Dr. @ViewBag.DoctorName 👋</h1>
+                <p>Here's your dashboard overview for today, @DateTime.Today.ToString("MMMM dd, yyyy")</p>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card blue">
+                    <div class="stat-icon blue"><i class="bi bi-calendar-week"></i></div>
+                    <div class="stat-value">@ViewBag.TotalAppointments</div>
+                    <div class="stat-label">Total Appointments</div>
                 </div>
-            }
+                <div class="stat-card amber">
+                    <div class="stat-icon amber"><i class="bi bi-hourglass-split"></i></div>
+                    <div class="stat-value">@ViewBag.PendingCount</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
+                    <div class="stat-value">@ViewBag.ConfirmedCount</div>
+                    <div class="stat-label">Confirmed</div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-icon purple"><i class="bi bi-patch-check"></i></div>
+                    <div class="stat-value">@ViewBag.CompletedCount</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card teal">
+                    <div class="stat-icon teal"><i class="bi bi-clock-history"></i></div>
+                    <div class="stat-value">@ViewBag.TodaySlots</div>
+                    <div class="stat-label">Today's Slots</div>
+                </div>
+            </div>
 
-            <!-- 🔷 APPROVED APPOINTMENTS -->
-            @if (ViewBag.Section == "approved")
-            {
-                <h3>My Appointments</h3>
-
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Patient</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Status</th>
-                    </tr>
-
-                    @foreach (var item in Model.Where(a => a.Status == "Approved"))
+            <!-- Recent appointments -->
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h2><i class="bi bi-clock-history text-primary"></i> Recent Appointments</h2>
+                    <a href="/Doctor/Dashboard?section=appointments" class="btn-action btn-complete">View All</a>
+                </div>
+                <table class="dash-table">
+                    <thead><tr>
+                        <th>Patient</th><th>Date</th><th>Time</th><th>Reason</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                    @foreach (var a in Model.Take(5))
                     {
                         <tr>
-                            <td>@item.Patient.User.Name</td>
-                            <td>@item.Date.ToShortDateString()</td>
-                            <td>@item.TimeSlot</td>
-                            <td><span class="badge bg-success">Approved</span></td>
-                        </tr>
-                    }
-                </table>
-            }
-
-            <!-- 🔷 PENDING APPOINTMENTS -->
-            @if (ViewBag.Section == "pending")
-            {
-                <h3>Pending Appointments</h3>
-
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Patient</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Action</th>
-                    </tr>
-
-                    @foreach (var item in Model.Where(a => a.Status.ToLower() == "pending" || a.Status.ToLower() == "waiting"))
-                    {
-                        <tr>
-                            <td>@item.Patient.User.Name</td>
-                            <td>@item.Date.ToShortDateString()</td>
-                            <td>@item.TimeSlot</td>
+                            <td><strong>@a.Patient.User.FullName</strong></td>
+                            <td>@a.AppointmentDate.ToString("MMM dd, yyyy")</td>
+                            <td>@a.AppointmentTime</td>
+                            <td>@(a.ReasonForVisit ?? "—")</td>
                             <td>
-                                <a href="/Doctor/Approve/@item.Id" class="btn btn-success btn-sm">Approve</a>
-                                <a href="/Doctor/Reject/@item.Id" class="btn btn-danger btn-sm">Reject</a>
+                                <span class="badge-status @(a.AppointmentStatus == "Pending" ? "bs-pending" :
+                                    a.AppointmentStatus == "Confirmed" || a.AppointmentStatus == "Approved" ? "bs-confirmed" :
+                                    a.AppointmentStatus == "Completed" ? "bs-completed" : "bs-cancelled")">
+                                    @a.AppointmentStatus
+                                </span>
                             </td>
                         </tr>
                     }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="5" class="empty-state">
+                            <i class="bi bi-calendar-x"></i>No appointments yet.
+                        </td></tr>
+                    }
+                    </tbody>
                 </table>
-            }
+            </div>
+        }
 
-            <!-- 🔷 PROFILE -->
-            @if (ViewBag.Section == "profile")
-            {
-                <h3>My Profile</h3>
+        <!-- ══ APPOINTMENTS ══════════════════════════════════════════════════ -->
+        @if (section == "appointments")
+        {
+            <div class="dash-header">
+                <h1><i class="bi bi-calendar-check me-2"></i>Appointments</h1>
+                <p>Manage and track all patient appointments</p>
+            </div>
 
-                <div class="card p-3">
-                    <p><strong>Name:</strong> @ViewBag.DoctorName</p>
-                    <p><strong>Email:</strong> @ViewBag.Email</p>
-                    <p><strong>Specialization:</strong> @ViewBag.Specialization</p>
-                    <p><strong>Availability:</strong> @ViewBag.Availability</p>
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h2><i class="bi bi-list-ul text-primary"></i> All Appointments</h2>
+                </div>
+                <table class="dash-table">
+                    <thead><tr>
+                        <th>Patient</th><th>Date</th><th>Time</th><th>Reason</th><th>Status</th><th>Actions</th>
+                    </tr></thead>
+                    <tbody>
+                    @foreach (var a in Model)
+                    {
+                        <tr>
+                            <td><strong>@a.Patient.User.FullName</strong></td>
+                            <td>@a.AppointmentDate.ToString("MMM dd, yyyy")</td>
+                            <td>@a.AppointmentTime</td>
+                            <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                @(a.ReasonForVisit ?? "—")
+                            </td>
+                            <td>
+                                <span class="badge-status @(a.AppointmentStatus == "Pending" ? "bs-pending" :
+                                    a.AppointmentStatus == "Confirmed" || a.AppointmentStatus == "Approved" ? "bs-confirmed" :
+                                    a.AppointmentStatus == "Completed" ? "bs-completed" : "bs-cancelled")">
+                                    @a.AppointmentStatus
+                                </span>
+                            </td>
+                            <td style="white-space:nowrap;">
+                                @if (a.AppointmentStatus == "Pending")
+                                {
+                                    <a href="/Doctor/Approve/@a.Id" class="btn-action btn-approve">
+                                        <i class="bi bi-check-lg"></i>Approve
+                                    </a>
+                                    <a href="/Doctor/Reject/@a.Id" class="btn-action btn-reject ms-1">
+                                        <i class="bi bi-x-lg"></i>Reject
+                                    </a>
+                                }
+                                @if (a.AppointmentStatus == "Confirmed" || a.AppointmentStatus == "Approved")
+                                {
+                                    <a href="/Doctor/Complete/@a.Id" class="btn-action btn-complete">
+                                        <i class="bi bi-patch-check"></i>Complete
+                                    </a>
+                                    <a href="/Doctor/AddPrescription?appointmentId=@a.Id" class="btn-action btn-rx ms-1">
+                                        <i class="bi bi-file-earmark-medical"></i>Rx
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="6">
+                            <div class="empty-state"><i class="bi bi-calendar-x"></i>No appointments found.</div>
+                        </td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
 
-                    <a href="/Doctor/EditProfile" class="btn btn-warning">
-                        Edit Profile
+        <!-- ══ PROFILE ═══════════════════════════════════════════════════════ -->
+        @if (section == "profile")
+        {
+            <div class="dash-header">
+                <h1><i class="bi bi-person-badge me-2"></i>My Profile</h1>
+                <p>Your professional information</p>
+            </div>
+            <div class="content-card" style="max-width:600px;">
+                <div class="content-card-header">
+                    <h2><i class="bi bi-person-circle text-primary"></i> Profile Details</h2>
+                    <a href="/Doctor/EditProfile" class="btn-action" style="background:#fef3c7;color:#92400e;">
+                        <i class="bi bi-pencil"></i>Edit
                     </a>
                 </div>
-            }
+                <div style="padding:1.5rem;">
+                    @{
+                        var rows = new [] {
+                            ("Name",             ViewBag.DoctorName?.ToString()    ?? "—"),
+                            ("Email",            ViewBag.Email?.ToString()         ?? "—"),
+                            ("Specialization",   ViewBag.Specialization?.ToString()?? "—"),
+                            ("Qualification",    ViewBag.Qualification?.ToString() ?? "—"),
+                            ("Experience",       ViewBag.Experience + " years"),
+                            ("Consultation Fee", "৳ " + ViewBag.Fee),
+                            ("Available Days",   ViewBag.AvailableDays?.ToString() ?? "—"),
+                        };
+                    }
+                    @foreach (var (label, value) in rows)
+                    {
+                        <div style="display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid #f1f5f9;font-size:.875rem;">
+                            <span style="color:#64748b;font-weight:500;">@label</span>
+                            <span style="color:#1e293b;font-weight:600;">@value</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
 
-        </div>
-    </div>
+    </main>
 </div>

@@ -1,0 +1,269 @@
+@model DoctorAppointmentManagementSystem.ViewModels.DoctorScheduleViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Add Schedule";
+
+    // Pre-built time options (15-min increments, 12h format)
+    var times = new List<string>();
+    for (int h = 6; h <= 22; h++)
+    {
+        foreach (int m in new[] { 0, 15, 30, 45 })
+        {
+            var dt = new DateTime(2000, 1, 1, h, m, 0);
+            times.Add(dt.ToString("hh:mm tt"));
+        }
+    }
+}
+
+<style>
+.form-wrapper { display:flex; min-height:calc(100vh - 72px); background:#f8fafc; }
+
+/* Sidebar (same as dashboard) */
+.dash-sidebar { width:260px; flex-shrink:0; background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%); padding:1.75rem 0; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
+.sidebar-profile { text-align:center; padding:0 1.5rem 1.5rem; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:1rem; }
+.sidebar-avatar { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); display:flex; align-items:center; justify-content:center; font-size:2rem; color:white; margin:0 auto .75rem; border:3px solid rgba(255,255,255,.15); }
+.sidebar-name { color:white; font-weight:700; font-size:.95rem; }
+.nav-section-label { color:#475569; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; padding:.5rem 1.5rem .25rem; }
+.dash-nav-link { display:flex; align-items:center; gap:.75rem; padding:.65rem 1.5rem; color:#94a3b8; text-decoration:none; font-size:.875rem; font-weight:500; border-left:3px solid transparent; transition:all .2s; }
+.dash-nav-link:hover { color:white; background:rgba(255,255,255,.05); }
+.dash-nav-link.active { color:white; background:rgba(102,126,234,.15); border-left-color:#667eea; }
+.dash-nav-link .nav-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; background:rgba(255,255,255,.05); }
+.dash-nav-link.active .nav-icon { background:rgba(102,126,234,.3); }
+.sidebar-footer { margin-top:auto; padding:1rem 1.5rem 0; }
+.btn-logout { display:flex; align-items:center; justify-content:center; gap:.5rem; background:rgba(239,68,68,.1); color:#f87171; border:1px solid rgba(239,68,68,.2); border-radius:10px; padding:.6rem 1rem; width:100%; font-size:.875rem; font-weight:600; text-decoration:none; transition:all .2s; }
+.btn-logout:hover { background:rgba(239,68,68,.2); color:#f87171; }
+
+/* Form main */
+.form-main { flex:1; padding:2rem; display:flex; align-items:flex-start; justify-content:center; }
+
+.form-card { background:white; border-radius:20px; box-shadow:0 4px 24px rgba(0,0,0,.08); padding:2.5rem; width:100%; max-width:680px; }
+.form-card-title { font-size:1.3rem; font-weight:800; color:#1e293b; margin-bottom:.3rem; display:flex; align-items:center; gap:.6rem; }
+.form-card-title i { color:#667eea; }
+.form-card-sub { color:#64748b; font-size:.88rem; margin-bottom:2rem; }
+
+.section-label { font-size:.78rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.08em; margin-bottom:.75rem; padding-bottom:.4rem; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; gap:.5rem; }
+
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+@@media(max-width:560px) { .form-row { grid-template-columns:1fr; } }
+
+.form-group { margin-bottom:1.25rem; }
+.form-label  { font-size:.83rem; font-weight:600; color:#374151; display:block; margin-bottom:.4rem; }
+.form-select2, .form-input2, .form-textarea2 {
+    width:100%; border:2px solid #e2e8f0; border-radius:12px;
+    padding:.65rem 1rem; font-size:.88rem; color:#1e293b;
+    background:white; transition:border-color .2s, box-shadow .2s;
+    appearance:none;
+}
+.form-select2:focus, .form-input2:focus, .form-textarea2:focus {
+    border-color:#667eea; box-shadow:0 0 0 3px rgba(102,126,234,.12); outline:none;
+}
+.form-textarea2 { resize:vertical; min-height:80px; }
+
+/* Vacation toggle */
+.toggle-wrap { display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border-radius:12px; padding:1rem 1.25rem; border:2px solid #e2e8f0; cursor:pointer; transition:all .2s; }
+.toggle-wrap:hover { border-color:#f59e0b; background:#fffbeb; }
+.toggle-wrap.active { border-color:#f59e0b; background:#fffbeb; }
+.toggle-label { font-weight:600; color:#374151; font-size:.9rem; }
+.toggle-sub { font-size:.78rem; color:#94a3b8; margin-top:.1rem; }
+.toggle-switch { position:relative; width:44px; height:24px; flex-shrink:0; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-knob {
+    position:absolute; inset:0; background:#e2e8f0; border-radius:20px; cursor:pointer; transition:.3s;
+}
+.toggle-knob::before {
+    content:''; position:absolute; width:18px; height:18px; left:3px; bottom:3px;
+    background:white; border-radius:50%; transition:.3s; box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+input:checked + .toggle-knob { background:#f59e0b; }
+input:checked + .toggle-knob::before { transform:translateX(20px); }
+
+/* Quick day buttons */
+.day-quick-btns { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1.25rem; }
+.day-btn { border:2px solid #e2e8f0; background:white; border-radius:8px; padding:.35rem .75rem; font-size:.78rem; font-weight:600; cursor:pointer; color:#374151; transition:all .2s; }
+.day-btn:hover { border-color:#667eea; color:#667eea; }
+
+/* Conflict warning */
+.conflict-warn { background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:.75rem 1rem; display:none; align-items:center; gap:.5rem; color:#c2410c; font-size:.83rem; font-weight:500; margin-top:.5rem; }
+.conflict-warn.show { display:flex; }
+
+/* Submit */
+.btn-save { display:flex; align-items:center; justify-content:center; gap:.5rem; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; border-radius:12px; padding:.9rem 2rem; font-weight:700; font-size:1rem; width:100%; margin-top:1.5rem; cursor:pointer; transition:all .3s; }
+.btn-save:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(102,126,234,.4); }
+
+.btn-cancel { display:flex; align-items:center; justify-content:center; gap:.5rem; background:white; color:#374151; border:2px solid #e2e8f0; border-radius:12px; padding:.85rem 2rem; font-weight:600; font-size:.9rem; text-decoration:none; transition:all .2s; margin-top:.75rem; }
+.btn-cancel:hover { border-color:#94a3b8; color:#1e293b; }
+
+.val-error { color:#dc2626; font-size:.78rem; margin-top:.3rem; }
+.divider { height:1px; background:#f1f5f9; margin:1.5rem 0; }
+</style>
+
+<div class="form-wrapper">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="dash-sidebar">
+        <div class="sidebar-profile">
+            <div class="sidebar-avatar"><i class="bi bi-person-circle"></i></div>
+            <div class="sidebar-name">Doctor Panel</div>
+        </div>
+        <span class="nav-section-label">Main</span>
+        <a href="/Doctor/Dashboard" class="dash-nav-link">
+            <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>Overview
+        </a>
+        <a href="/Doctor/Dashboard?section=appointments" class="dash-nav-link">
+            <span class="nav-icon"><i class="bi bi-calendar-check"></i></span>Appointments
+        </a>
+        <span class="nav-section-label">Schedule</span>
+        <a href="/Doctor/Schedule" class="dash-nav-link">
+            <span class="nav-icon"><i class="bi bi-calendar3"></i></span>My Schedule
+        </a>
+        <a href="/Doctor/AddSchedule" class="dash-nav-link active">
+            <span class="nav-icon"><i class="bi bi-calendar-plus"></i></span>Add Schedule
+        </a>
+        <span class="nav-section-label">Account</span>
+        <a href="/Doctor/Dashboard?section=profile" class="dash-nav-link">
+            <span class="nav-icon"><i class="bi bi-person-badge"></i></span>My Profile
+        </a>
+        <div class="sidebar-footer">
+            <a href="/Account/Logout" class="btn-logout"><i class="bi bi-box-arrow-right"></i>Logout</a>
+        </div>
+    </aside>
+
+    <!-- ── FORM ── -->
+    <main class="form-main">
+        <div class="form-card">
+            <div class="form-card-title"><i class="bi bi-calendar-plus-fill"></i>Add New Schedule</div>
+            <p class="form-card-sub">Define your working hours, break times, or mark a vacation day.</p>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div style="background:#fee2e2;color:#991b1b;border-radius:12px;padding:.85rem 1.2rem;margin-bottom:1.25rem;font-size:.85rem;">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    @Html.ValidationSummary(true)
+                </div>
+            }
+
+            <form method="post" asp-action="AddSchedule" id="scheduleForm">
+                @Html.AntiForgeryToken()
+
+                <!-- ── DATE ── -->
+                <div class="section-label"><i class="bi bi-calendar3"></i>Date</div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="AvailableDate">Select Date</label>
+                    <input type="date" asp-for="AvailableDate" class="form-input2"
+                           min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                           id="dateInput" />
+                    <span asp-validation-for="AvailableDate" class="val-error"></span>
+                </div>
+
+                <!-- ── VACATION TOGGLE ── -->
+                <div class="divider"></div>
+                <div class="section-label"><i class="bi bi-umbrella"></i>Day Type</div>
+
+                <label class="toggle-wrap" id="vacationToggleWrap">
+                    <div>
+                        <div class="toggle-label"><i class="bi bi-umbrella-fill me-1 text-warning"></i>Mark as Vacation / Leave Day</div>
+                        <div class="toggle-sub">When enabled, the entire day will be blocked for patients</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" asp-for="IsVacation" id="vacationToggle" />
+                        <span class="toggle-knob"></span>
+                    </div>
+                </label>
+
+                <!-- ── WORKING HOURS (hidden when vacation) ── -->
+                <div id="workingHoursSection">
+                    <div class="divider"></div>
+                    <div class="section-label"><i class="bi bi-clock"></i>Working Hours</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" asp-for="StartTime">Start Time</label>
+                            <select asp-for="StartTime" class="form-select2" id="startTime">
+                                @foreach (var t in times)
+                                {
+                                    <option value="@t" selected="@(t == Model.StartTime ? "selected" : null)">@t</option>
+                                }
+                            </select>
+                            <span asp-validation-for="StartTime" class="val-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" asp-for="EndTime">End Time</label>
+                            <select asp-for="EndTime" class="form-select2" id="endTime">
+                                @foreach (var t in times)
+                                {
+                                    <option value="@t" selected="@(t == Model.EndTime ? "selected" : null)">@t</option>
+                                }
+                            </select>
+                            <span asp-validation-for="EndTime" class="val-error"></span>
+                        </div>
+                    </div>
+
+                    <!-- ── BREAK TIME ── -->
+                    <div class="divider"></div>
+                    <div class="section-label"><i class="bi bi-cup-hot"></i>Break Time <span style="font-weight:400;color:#94a3b8;">(optional)</span></div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" asp-for="BreakStartTime">Break Start</label>
+                            <select asp-for="BreakStartTime" class="form-select2">
+                                <option value="">— No break —</option>
+                                @foreach (var t in times)
+                                {
+                                    <option value="@t">@t</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" asp-for="BreakEndTime">Break End</label>
+                            <select asp-for="BreakEndTime" class="form-select2">
+                                <option value="">— No break —</option>
+                                @foreach (var t in times)
+                                {
+                                    <option value="@t">@t</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── NOTES ── -->
+                <div class="divider"></div>
+                <div class="section-label"><i class="bi bi-chat-text"></i>Notes <span style="font-weight:400;color:#94a3b8;">(optional)</span></div>
+                <div class="form-group">
+                    <textarea asp-for="Notes" class="form-textarea2"
+                              placeholder="e.g. Conference, Personal leave, Public holiday..."></textarea>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn-save">
+                    <i class="bi bi-check-circle-fill"></i>Save Schedule
+                </button>
+                <a href="/Doctor/Schedule" class="btn-cancel">
+                    <i class="bi bi-x-circle"></i>Cancel
+                </a>
+            </form>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+<script>
+    // Vacation toggle — hide/show working hours
+    const toggle     = document.getElementById('vacationToggle');
+    const toggleWrap = document.getElementById('vacationToggleWrap');
+    const workSection= document.getElementById('workingHoursSection');
+
+    function applyToggle() {
+        if (toggle.checked) {
+            workSection.style.display = 'none';
+            toggleWrap.classList.add('active');
+        } else {
+            workSection.style.display = '';
+            toggleWrap.classList.remove('active');
+        }
+    }
+    toggle.addEventListener('change', applyToggle);
+    applyToggle(); // run on load
+</script>
+}
