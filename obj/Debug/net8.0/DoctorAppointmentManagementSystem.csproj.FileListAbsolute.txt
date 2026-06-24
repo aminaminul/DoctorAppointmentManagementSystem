@@ -234,7 +234,6 @@ E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\refint\
 E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
 E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.genruntimeconfig.cache
 E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\ref\DoctorAppointmentManagementSystem.dll
-D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.Development.json
 D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.json
 D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.endpoints.json
 D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.runtime.json
@@ -312,3 +311,5 @@ D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\refint\
 D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
 D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.genruntimeconfig.cache
 D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\ref\DoctorAppointmentManagementSystem.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.sourcelink.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

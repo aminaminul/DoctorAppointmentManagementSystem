@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +61,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 Name = model.Name,
                 Email = model.Email,
                 Password = model.Password,
-                Role = "Doctor"
+                RoleId = 2
             };
 
             _context.Users.Add(user);
@@ -137,7 +137,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 Name = model.Name,
                 Email = model.Email,
                 Password = model.Password,
-                Role = "Patient"
+                RoleId = 3
             };
 
             _context.Users.Add(user);

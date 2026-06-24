@@ -1,6 +1,7 @@
-﻿using DoctorAppointmentManagementSystem.Models;
+using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
@@ -44,19 +45,27 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
 
             // 🔥 STEP 4: Save User
+            int roleId = model.Role switch
+            {
+                "Admin" => 1,
+                "Doctor" => 2,
+                "Patient" => 3,
+                _ => 3
+            };
+
             User user = new User()
             {
                 Name = model.Name,
                 Email = model.Email,
                 Password = model.Password,
-                Role = model.Role
+                RoleId = roleId
             };
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
             // 🔥 STEP 5: Role wise create
-            if (user.Role == "Patient")
+            if (roleId == 3) // Patient
             {
                 Patient patient = new Patient()
                 {
@@ -67,7 +76,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
                 _context.Patients.Add(patient);
             }
-            else if (user.Role == "Doctor")
+            else if (roleId == 2) // Doctor
             {
                 Doctor doctor = new Doctor()
                 {
@@ -103,6 +112,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             // 🔥 STEP 2: Check user from DB
             var user = _context.Users
+                .Include(u => u.Role)
                 .FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
 
             if (user == null)
@@ -113,16 +123,16 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             // 🔥 STEP 3: Session set
             HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserRole", user.Role);
+            HttpContext.Session.SetString("UserRole", user.Role?.RoleName ?? "Patient");
 
             // 🔥 STEP 4: Role-based redirect (IMPORTANT)
-            if (user.Role == "Patient")
+            if (user.RoleId == 3) // Patient
                 return RedirectToAction("Dashboard", "Patient");
 
-            if (user.Role == "Doctor")
+            if (user.RoleId == 2) // Doctor
                 return RedirectToAction("Dashboard", "Doctor");
 
-            if (user.Role == "Admin")
+            if (user.RoleId == 1) // Admin
                 return RedirectToAction("Dashboard", "Admin");
 
             return View();
