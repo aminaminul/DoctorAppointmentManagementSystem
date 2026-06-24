@@ -1,0 +1,28 @@
+﻿@model DoctorAppointmentManagementSystem.Models.Patient
+
+<h2>Patient Details</h2>
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <td>@Model.User.Name</td>
+    </tr>
+
+    <tr>
+        <th>Email</th>
+        <td>@Model.User.Email</td>
+    </tr>
+
+    <tr>
+        <th>Age</th>
+        <td>@Model.Age</td>
+    </tr>
+
+    <tr>
+        <th>Gender</th>
+        <td>@Model.Gender</td>
+    </tr>
+</table>
+
+<a href="/Admin/EditPatient/@Model.Id" class="btn btn-warning">Edit</a>
+<a href="/Admin/DeletePatient/@Model.Id" class="btn btn-danger">Delete</a>

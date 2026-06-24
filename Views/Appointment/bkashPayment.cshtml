@@ -1,0 +1,31 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+
+    <div class="card shadow p-4">
+
+        <h2 class="mb-4">Bkash Payment</h2>
+
+        <form method="post" action="/Appointment/FinalConfirm">
+
+            <label>Bkash Number</label>
+
+            <input type="text"
+                   name="PaymentNumber"
+                   class="form-control"
+                   placeholder="Enter Bkash Number"
+                   required />
+
+            <br />
+
+            <button type="submit" class="btn btn-success">
+                Confirm Payment
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

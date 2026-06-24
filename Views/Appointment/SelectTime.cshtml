@@ -1,0 +1,143 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<h2>Select Time</h2>
+
+<form method="post" action="/Appointment/Confirm">
+
+    <!-- 🔷 Hidden Data -->
+    <input type="hidden" name="DoctorId" value="@ViewBag.DoctorId" />
+    <input type="hidden" name="Date" value="@ViewBag.Date" />
+
+    <!-- 🔷 TIME -->
+    <label>Available Time</label>
+
+    <select name="TimeSlot" class="form-control">
+
+        <option value="">-- Select Time --</option>
+
+        @foreach (var slot in ViewBag.Slots)
+        {
+            <option value="@slot">@slot</option>
+        }
+
+    </select>
+
+    <br />
+
+    <!-- 🔷 PAYMENT AMOUNT -->
+    <label>Payment Amount</label>
+
+    <input type="text"
+           class="form-control"
+           value="800 TK"
+           readonly />
+
+    <br />
+
+    <!-- 🔷 PAYMENT METHOD -->
+    <label>Payment Method</label>
+
+    <div class="card p-3">
+
+        <!-- BKASH -->
+        <div class="form-check mb-3">
+
+            <input class="form-check-input"
+                   type="radio"
+                   name="PaymentMethod"
+                   value="Bkash"
+                   id="bkash">
+
+            <label class="form-check-label" for="bkash">
+                bKash
+            </label>
+
+        </div>
+
+        <!-- CARD -->
+        <div class="form-check mb-3">
+
+            <input class="form-check-input"
+                   type="radio"
+                   name="PaymentMethod"
+                   value="Card"
+                   id="card">
+
+            <label class="form-check-label" for="card">
+                Card
+            </label>
+
+        </div>
+
+        <!-- CARD TYPES -->
+        <div class="ms-4">
+
+            <div class="form-check mb-2">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="CardType"
+                       value="Visa"
+                       id="visa">
+
+                <label class="form-check-label" for="visa">
+                    Visa
+                </label>
+
+            </div>
+
+            <div class="form-check">
+
+                <input class="form-check-input"
+                       type="radio"
+                       name="CardType"
+                       value="MasterCard"
+                       id="master">
+
+                <label class="form-check-label" for="master">
+                    MasterCard
+                </label>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <br />
+    <input type="hidden" name="PaymentMethod" id="paymentMethodHidden" />
+    <input type="hidden" name="CardType" id="cardTypeHidden" />
+
+    <!-- 🔷 CONFIRM BUTTON -->
+    <button type="submit" class="btn btn-success">
+        Confirm Booking
+    </button>
+
+</form>
+<script>
+
+    // payment method
+    document.querySelectorAll('input[name="PaymentMethod"]').forEach(radio => {
+
+        radio.addEventListener("change", function () {
+
+            document.getElementById("paymentMethodHidden").value = this.value;
+
+        });
+
+    });
+
+    // card type
+    document.querySelectorAll('input[name="CardType"]').forEach(radio => {
+
+        radio.addEventListener("change", function () {
+
+            document.getElementById("cardTypeHidden").value = this.value;
+
+        });
+
+    });
+
+</script>

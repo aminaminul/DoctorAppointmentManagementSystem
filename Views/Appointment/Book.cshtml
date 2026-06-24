@@ -1,0 +1,72 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<h2>Book Appointment</h2>
+
+@if (TempData["Error"] != null)
+{
+    <p style="color:red">@TempData["Error"]</p>
+}
+
+<form method="get" action="/Appointment/SelectTime">
+
+    <!-- 🔷 Specialization -->
+    <label>Specialization:</label>
+    <select id="specialization" class="form-control">
+        <option value="">-- Select Specialization --</option>
+
+        @foreach (var s in ViewBag.Specializations)
+        {
+            <option value="@s">@s</option>
+        }
+    </select>
+
+    <br />
+
+    <!-- 🔷 Doctor -->
+    <label>Doctor:</label>
+    <select id="doctor" name="doctorId" class="form-control">
+        <option value="">-- Select Doctor --</option>
+    </select>
+
+    <br />
+
+    <!-- 🔷 Date -->
+    <label>Date:</label>
+    <input type="date" name="date" class="form-control"
+           min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+
+    <br />
+
+    <!-- 🔷 NEXT BUTTON -->
+    <button type="submit" class="btn btn-primary">
+        Next →
+    </button>
+
+</form>
+
+<!-- 🔥 JAVASCRIPT -->
+<script>
+    document.getElementById("specialization").addEventListener("change", function () {
+
+        var spec = this.value;
+
+        if (spec === "") return;
+
+        fetch('/Appointment/GetDoctorsBySpecialization?specialization=' + spec)
+            .then(res => res.json())
+            .then(data => {
+
+                var doctorDropdown = document.getElementById("doctor");
+                doctorDropdown.innerHTML = '<option value="">-- Select Doctor --</option>';
+
+                data.forEach(function (doc) {
+                    var option = document.createElement("option");
+                    option.value = doc.id;
+                    option.text = doc.name;
+                    doctorDropdown.appendChild(option);
+                });
+            });
+    });
+</script>

@@ -1,0 +1,25 @@
+﻿@using DoctorAppointmentManagementSystem.ViewModels
+@model PatientCreateViewModel
+
+<h2>Add Patient</h2>
+
+@if (ViewBag.Error != null)
+{
+    <p style="color:red">@ViewBag.Error</p>
+}
+
+<form method="post">
+
+    <input type="text" name="Name" placeholder="Name" class="form-control" /><br />
+
+    <input type="email" name="Email" placeholder="Email" class="form-control" /><br />
+
+    <input type="password" name="Password" placeholder="Password" class="form-control" /><br />
+
+    <input type="number" name="Age" placeholder="Age" class="form-control" /><br />
+
+    <input type="text" name="Gender" placeholder="Gender" class="form-control" /><br />
+
+    <button type="submit" class="btn btn-success">Add Patient</button>
+
+</form>

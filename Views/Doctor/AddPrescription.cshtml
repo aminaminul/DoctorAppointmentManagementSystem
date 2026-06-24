@@ -1,0 +1,38 @@
+﻿@model DoctorAppointmentManagementSystem.Models.Prescription
+
+@{
+    Layout = "_Layout";
+}
+
+<div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#f4f6f9;">
+
+    <div style="background:white; padding:30px; width:500px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
+
+        <h2 style="text-align:center; margin-bottom:20px;">Add Prescription</h2>
+
+        <form method="post">
+
+            <!-- Hidden Appointment Id -->
+            <input type="hidden" asp-for="AppointmentId" value="@ViewBag.AppointmentId" />
+
+            <!-- Medicines -->
+            <div style="margin-bottom:15px;">
+                <label>Medicines</label>
+                <textarea asp-for="Medicines" class="form-control" rows="4" placeholder="Write medicines..."></textarea>
+            </div>
+
+            <!-- Advice -->
+            <div style="margin-bottom:15px;">
+                <label>Advice</label>
+                <textarea asp-for="Advice" class="form-control" rows="4" placeholder="Write advice..."></textarea>
+            </div>
+
+            <!-- Button -->
+            <button type="submit" style="width:100%; padding:10px; background:#28a745; color:white; border:none; border-radius:5px;">
+                Save Prescription
+            </button>
+
+        </form>
+
+    </div>
+</div>

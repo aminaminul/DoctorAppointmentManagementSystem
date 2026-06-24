@@ -1,0 +1,126 @@
+﻿@model List<Appointment>
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-3">
+    <div class="row">
+
+        <!-- 🔷 SIDEBAR -->
+        <div class="col-md-3 bg-dark text-white p-3" style="min-height:90vh;">
+
+            <h4>Doctor Panel</h4>
+
+            <ul class="nav flex-column mt-3">
+
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/Doctor/Dashboard?section=approved">
+                        ✅ My Appointments
+                    </a>
+                </li>
+
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/Doctor/Dashboard?section=pending">
+                        ⏳ Pending Appointments
+                    </a>
+                </li>
+
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/Doctor/Dashboard?section=profile">
+                        👤 View Profile
+                    </a>
+                </li>
+
+                <li class="nav-item mt-4">
+                    <a href="/Account/Logout" class="btn btn-danger w-100">
+                        Logout
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+
+        <!-- 🔷 RIGHT CONTENT -->
+        <div class="col-md-9">
+
+            @if (ViewBag.Section == null)
+            {
+                <div class="alert alert-info mt-4">
+                    👉 Please select an option from sidebar
+                </div>
+            }
+
+            <!-- 🔷 APPROVED APPOINTMENTS -->
+            @if (ViewBag.Section == "approved")
+            {
+                <h3>My Appointments</h3>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+
+                    @foreach (var item in Model.Where(a => a.Status == "Approved"))
+                    {
+                        <tr>
+                            <td>@item.Patient.User.Name</td>
+                            <td>@item.Date.ToShortDateString()</td>
+                            <td>@item.TimeSlot</td>
+                            <td><span class="badge bg-success">Approved</span></td>
+                        </tr>
+                    }
+                </table>
+            }
+
+            <!-- 🔷 PENDING APPOINTMENTS -->
+            @if (ViewBag.Section == "pending")
+            {
+                <h3>Pending Appointments</h3>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Action</th>
+                    </tr>
+
+                    @foreach (var item in Model.Where(a => a.Status.ToLower() == "pending" || a.Status.ToLower() == "waiting"))
+                    {
+                        <tr>
+                            <td>@item.Patient.User.Name</td>
+                            <td>@item.Date.ToShortDateString()</td>
+                            <td>@item.TimeSlot</td>
+                            <td>
+                                <a href="/Doctor/Approve/@item.Id" class="btn btn-success btn-sm">Approve</a>
+                                <a href="/Doctor/Reject/@item.Id" class="btn btn-danger btn-sm">Reject</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+
+            <!-- 🔷 PROFILE -->
+            @if (ViewBag.Section == "profile")
+            {
+                <h3>My Profile</h3>
+
+                <div class="card p-3">
+                    <p><strong>Name:</strong> @ViewBag.DoctorName</p>
+                    <p><strong>Email:</strong> @ViewBag.Email</p>
+                    <p><strong>Specialization:</strong> @ViewBag.Specialization</p>
+                    <p><strong>Availability:</strong> @ViewBag.Availability</p>
+
+                    <a href="/Doctor/EditProfile" class="btn btn-warning">
+                        Edit Profile
+                    </a>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+﻿<table class="table">
+    <tr>
+        <th>Medicines</th>
+        <th>Advice</th>
+        <th>Date</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Medicines</td>
+            <td>@item.Advice</td>
+            <td>@item.CreatedDate</td>
+        </tr>
+    }
+</table>

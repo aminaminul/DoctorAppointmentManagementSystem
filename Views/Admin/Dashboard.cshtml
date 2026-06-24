@@ -1,0 +1,172 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-3">
+    <div class="row">
+
+        <!-- 🔷 SIDEBAR -->
+        <div class="col-md-3 bg-dark text-white p-3" style="min-height:90vh;">
+
+            <h4>Admin Panel</h4>
+
+            <!-- 🔷 ADD SECTION -->
+            
+
+            <ul class="nav flex-column mt-3">
+
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/Admin/AddPatient">
+                        ➕ Add Patient
+                    </a>
+                </li>
+
+                <li class="nav-item mb-3">
+                    <a class="nav-link text-white" href="/Admin/AddDoctor">
+                        ➕ Add Doctor
+                    </a>
+                </li>
+
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/Admin/Dashboard?section=doctors">
+                        🩺 Manage Doctors
+                    </a>
+                </li>
+
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/Admin/Dashboard?section=patients">
+                        🧍 Manage Patients
+                    </a>
+                </li>
+
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/Admin/Dashboard?section=appointments">
+                        📅 Appointments
+                    </a>
+                </li>
+
+                <!-- 🔷 LOGOUT -->
+                <li class="nav-item mt-3">
+                    <a href="/Account/Logout" class="btn btn-danger w-100">
+                        Logout
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+
+        <!-- 🔷 RIGHT CONTENT -->
+        <div class="col-md-9">
+
+            @if (ViewBag.Section == null)
+            {
+                <div class="alert alert-info mt-4">
+                    👉 Please select an option from sidebar
+                </div>
+            }
+
+            <!-- 🔷 USERS -->
+            @if (ViewBag.Section == "users")
+            {
+                <h3>All Users</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+
+                    @foreach (var user in ViewBag.Users)
+                    {
+                        <tr>
+                            <td>@user.Name</td>
+                            <td>@user.Email</td>
+                            <td>@user.Role</td>
+                        </tr>
+                    }
+                </table>
+            }
+
+            <!-- 🔷 DOCTORS -->
+            @if (ViewBag.Section == "doctors")
+            {
+                <h3>Manage Doctors</h3>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Name</th>
+                        <th>Specialization</th>
+                        <th>Availability</th>
+                        <th>Action</th>
+                    </tr>
+
+                    @foreach (var doc in ViewBag.Doctors)
+                    {
+                        <tr>
+                            <td>@doc.User?.Name</td>
+                            <td>@doc.Specialization</td>
+                            <td>@doc.Availability</td>
+                            <td>
+                                <a href="/Admin/EditDoctor/@doc.Id" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="/Admin/DeleteDoctor/@doc.Id" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+
+            
+            @if (ViewBag.Section == "patients")
+            {
+                <h3>Manage Patients</h3>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Action</th>
+                    </tr>
+
+                    @foreach (var p in ViewBag.Patients)
+                    {
+                        <tr>
+                            <td>@p.User.Name</td>
+                            <td>@p.Age</td>
+                            <td>@p.Gender</td>
+                            <td>
+                                <a href="/Admin/PatientDetails/@p.Id" class="btn btn-primary btn-sm">Details</a>
+                                <a href="/Admin/DeletePatient/@p.Id" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+
+            <!-- 🔷 APPOINTMENTS -->
+            @if (ViewBag.Section == "appointments")
+            {
+                <h3>Appointments</h3>
+                <table class="table table-striped">
+                    <tr>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+
+                    @foreach (var app in ViewBag.Appointments)
+                    {
+                        <tr>
+                            <td>@app.Patient.User.Name</td>
+                            <td>@app.Doctor.User.Name</td>
+                            <td>@app.Date.ToShortDateString()</td>
+                            <td>@app.Status</td>
+                        </tr>
+                    }
+                </table>
+            }
+
+        </div>
+    </div>
+</div>

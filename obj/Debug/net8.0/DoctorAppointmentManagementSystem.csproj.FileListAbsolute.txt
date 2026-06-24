@@ -1,0 +1,314 @@
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.Development.json
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.json
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.runtime.json
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.endpoints.json
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.exe
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.deps.json
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.runtimeconfig.json
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Azure.Core.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Azure.Identity.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Humanizer.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Identity.Client.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.CodeDom.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Drawing.Common.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Memory.Data.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Runtime.Caching.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Security.Permissions.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Windows.Extensions.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\Intern project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.csproj.AssemblyReference.cache
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.GeneratedMSBuildEditorConfig.editorconfig
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.AssemblyInfoInputs.cache
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.AssemblyInfo.cs
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.csproj.CoreCompileInputs.cache
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.MvcApplicationPartsAssemblyInfo.cache
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.RazorAssemblyInfo.cache
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.RazorAssemblyInfo.cs
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\bundle\DoctorAppointmentManagementSystem.styles.css
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\projectbundle\DoctorAppointmentManagementSystem.bundle.scp.css
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.json
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.development.json
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAp.3822490A.Up2Date
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.dll
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\refint\DoctorAppointmentManagementSystem.dll
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.genruntimeconfig.cache
+D:\Intern project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\ref\DoctorAppointmentManagementSystem.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.runtime.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.endpoints.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.exe
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.deps.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.runtimeconfig.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Azure.Core.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Humanizer.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Identity.Client.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Mono.TextTemplating.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.CodeDom.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Drawing.Common.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Memory.Data.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Runtime.Caching.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Security.Permissions.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Windows.Extensions.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.csproj.AssemblyReference.cache
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.AssemblyInfoInputs.cache
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.AssemblyInfo.cs
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.csproj.CoreCompileInputs.cache
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.RazorAssemblyInfo.cache
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.RazorAssemblyInfo.cs
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\bundle\DoctorAppointmentManagementSystem.styles.css
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\projectbundle\DoctorAppointmentManagementSystem.bundle.scp.css
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.json.cache
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\swae.build.ex.cache
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAp.3822490A.Up2Date
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\refint\DoctorAppointmentManagementSystem.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.genruntimeconfig.cache
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\ref\DoctorAppointmentManagementSystem.dll
+C:\Users\amina\Downloads\Demo Project\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.Development.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.endpoints.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.runtime.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.exe
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.deps.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.runtimeconfig.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Azure.Core.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Azure.Identity.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Humanizer.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Identity.Client.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Mono.TextTemplating.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.CodeDom.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Drawing.Common.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Memory.Data.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Runtime.Caching.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Security.Permissions.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Windows.Extensions.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.csproj.AssemblyReference.cache
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rpswa.dswa.cache.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.GeneratedMSBuildEditorConfig.editorconfig
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.AssemblyInfoInputs.cache
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.AssemblyInfo.cs
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.csproj.CoreCompileInputs.cache
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.MvcApplicationPartsAssemblyInfo.cache
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.RazorAssemblyInfo.cache
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.RazorAssemblyInfo.cs
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjimswa.dswa.cache.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\bundle\DoctorAppointmentManagementSystem.styles.css
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\projectbundle\DoctorAppointmentManagementSystem.bundle.scp.css
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.json.cache
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.development.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\swae.build.ex.cache
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAp.3822490A.Up2Date
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\refint\DoctorAppointmentManagementSystem.dll
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.genruntimeconfig.cache
+E:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\ref\DoctorAppointmentManagementSystem.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.Development.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\appsettings.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.endpoints.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.staticwebassets.runtime.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.exe
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.deps.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.runtimeconfig.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Azure.Core.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Azure.Identity.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Humanizer.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Identity.Client.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.CodeDom.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Drawing.Common.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Memory.Data.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Runtime.Caching.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Security.Permissions.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\System.Windows.Extensions.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.csproj.AssemblyReference.cache
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.GeneratedMSBuildEditorConfig.editorconfig
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.AssemblyInfoInputs.cache
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.AssemblyInfo.cs
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.csproj.CoreCompileInputs.cache
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.MvcApplicationPartsAssemblyInfo.cache
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.RazorAssemblyInfo.cache
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.RazorAssemblyInfo.cs
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\bundle\DoctorAppointmentManagementSystem.styles.css
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\scopedcss\projectbundle\DoctorAppointmentManagementSystem.bundle.scp.css
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.development.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\swae.build.ex.cache
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAp.3822490A.Up2Date
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\refint\DoctorAppointmentManagementSystem.dll
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.pdb
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.genruntimeconfig.cache
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\ref\DoctorAppointmentManagementSystem.dll
