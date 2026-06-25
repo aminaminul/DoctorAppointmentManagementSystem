@@ -115,6 +115,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
+        public IActionResult Delay(int id)
+        {
+            var appt = _context.Appointments.FirstOrDefault(a => a.Id == id);
+            if (appt != null) { appt.AppointmentStatus = "Delayed"; _context.SaveChanges(); }
+            return RedirectToAction("Dashboard", new { section = "appointments" });
+        }
+
         // ─────────────────────────────────────────────────────────────────────────
         //  PRESCRIPTIONS
         // ─────────────────────────────────────────────────────────────────────────

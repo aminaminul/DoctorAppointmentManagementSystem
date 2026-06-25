@@ -145,6 +145,9 @@
 .bs-confirmed { background:#d1fae5; color:#065f46; }
 .bs-completed { background:#dbeafe; color:#1e40af; }
 .bs-cancelled { background:#fee2e2; color:#991b1b; }
+.bs-delayed   { background:#fef9c3; color:#713f12; }
+.btn-delay    { background:#fef9c3; color:#713f12; }
+.btn-delay:hover { background:#fde68a; color:#713f12; }
 
 /* Action buttons */
 .btn-action {
@@ -308,8 +311,9 @@
                             <td>
                                 <span class="badge-status @(a.AppointmentStatus == "Pending" ? "bs-pending" :
                                     a.AppointmentStatus == "Confirmed" || a.AppointmentStatus == "Approved" ? "bs-confirmed" :
-                                    a.AppointmentStatus == "Completed" ? "bs-completed" : "bs-cancelled")">
-                                    @a.AppointmentStatus
+                                    a.AppointmentStatus == "Completed" ? "bs-completed" :
+                                    a.AppointmentStatus == "Delayed" ? "bs-delayed" : "bs-cancelled")">
+                                    @(a.AppointmentStatus == "Delayed" ? "⏱ Delayed" : a.AppointmentStatus)
                                 </span>
                             </td>
                         </tr>
@@ -354,8 +358,9 @@
                             <td>
                                 <span class="badge-status @(a.AppointmentStatus == "Pending" ? "bs-pending" :
                                     a.AppointmentStatus == "Confirmed" || a.AppointmentStatus == "Approved" ? "bs-confirmed" :
-                                    a.AppointmentStatus == "Completed" ? "bs-completed" : "bs-cancelled")">
-                                    @a.AppointmentStatus
+                                    a.AppointmentStatus == "Completed" ? "bs-completed" :
+                                    a.AppointmentStatus == "Delayed" ? "bs-delayed" : "bs-cancelled")">
+                                    @(a.AppointmentStatus == "Delayed" ? "⏱ Delayed" : a.AppointmentStatus)
                                 </span>
                             </td>
                             <td style="white-space:nowrap;">
@@ -373,8 +378,20 @@
                                     <a href="/Doctor/Complete/@a.Id" class="btn-action btn-complete">
                                         <i class="bi bi-patch-check"></i>Complete
                                     </a>
+                                    <a href="/Doctor/Delay/@a.Id" class="btn-action btn-delay ms-1" title="Mark as Delayed">
+                                        <i class="bi bi-clock"></i>Delay
+                                    </a>
                                     <a href="/Doctor/AddPrescription?appointmentId=@a.Id" class="btn-action btn-rx ms-1">
                                         <i class="bi bi-file-earmark-medical"></i>Rx
+                                    </a>
+                                }
+                                @if (a.AppointmentStatus == "Delayed")
+                                {
+                                    <a href="/Doctor/Approve/@a.Id" class="btn-action btn-approve" title="Re-Confirm">
+                                        <i class="bi bi-arrow-clockwise"></i>Re-Confirm
+                                    </a>
+                                    <a href="/Doctor/Complete/@a.Id" class="btn-action btn-complete ms-1">
+                                        <i class="bi bi-patch-check"></i>Complete
                                     </a>
                                 }
                             </td>
