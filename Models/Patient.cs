@@ -36,6 +36,10 @@ namespace DoctorAppointmentManagementSystem.Models
         public string? Address { get; set; }
         
         public string? EmergencyContact { get; set; }
+
+        public string? MedicalHistory { get; set; }
+
+        public string? Allergies { get; set; }
         
         public bool ActiveStatus { get; set; } = true;
 

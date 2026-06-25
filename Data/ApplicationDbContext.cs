@@ -91,6 +91,8 @@ public class ApplicationDbContext : DbContext
                 BloodGroup = "O+",
                 Address = "Dhaka, Bangladesh",
                 EmergencyContact = "01900000002",
+                MedicalHistory = "No major past medical illnesses. Regular checkups.",
+                Allergies = "Dust and pollen allergy",
                 ActiveStatus = true
             }
         );

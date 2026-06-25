@@ -162,17 +162,40 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         public IActionResult EditPatient(int id)
         {
-            var patient = _context.Patients.Find(id);
+            var patient = _context.Patients
+                .Include(p => p.User)
+                .FirstOrDefault(p => p.Id == id);
             return View(patient);
         }
 
         [HttpPost]
         public IActionResult EditPatient(Patient model)
         {
-            _context.Patients.Update(model);
-            _context.SaveChanges();
+            var patient = _context.Patients
+                .Include(p => p.User)
+                .FirstOrDefault(p => p.Id == model.Id);
 
-            return RedirectToAction("Dashboard");
+            if (patient != null)
+            {
+                patient.DateOfBirth = model.DateOfBirth;
+                patient.Gender = model.Gender;
+                patient.BloodGroup = model.BloodGroup;
+                patient.Address = model.Address;
+                patient.EmergencyContact = model.EmergencyContact;
+                patient.MedicalHistory = model.MedicalHistory;
+                patient.Allergies = model.Allergies;
+
+                if (patient.User != null && model.User != null)
+                {
+                    patient.User.Name = model.User.Name;
+                    patient.User.Email = model.User.Email;
+                    patient.User.PhoneNumber = model.User.PhoneNumber;
+                }
+
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Dashboard", new { section = "patients" });
         }
 
 

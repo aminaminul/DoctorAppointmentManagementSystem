@@ -1,4 +1,4 @@
-﻿@model List<Appointment>
+@model List<Appointment>
 
 @{
     Layout = "_Layout";
@@ -136,30 +136,139 @@
             <!-- 🔷 PROFILE -->
             @if (ViewBag.Section == "profile")
             {
-                <div class="card shadow">
-
-                    <div class="card-header bg-dark text-white">
-                        <h4>My Profile</h4>
+                var patient = ViewBag.Patient as Patient;
+                
+                <div class="row g-4">
+                    <!-- Profile Header Card -->
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                            <div class="card-body p-4 text-white">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="bg-white bg-opacity-20 rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                                            <i class="bi bi-person-fill fs-1"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="fw-bold mb-0">@(patient?.User?.FullName ?? ViewBag.PatientName)</h3>
+                                            <p class="text-white text-opacity-75 mb-0"><i class="bi bi-envelope-fill me-2"></i>@(patient?.User?.Email ?? ViewBag.Email)</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a href="/Patient/EditProfile" class="btn btn-light btn-lg rounded-pill px-4 fw-semibold text-primary shadow-sm transition-all hover-translate">
+                                            <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="card-body">
-
-                        <p><strong>Name:</strong> @ViewBag.PatientName</p>
-
-                        <p><strong>Email:</strong> @ViewBag.Email</p>
-
-                        <p><strong>Age:</strong> @ViewBag.Age</p>
-
-                        <p><strong>Gender:</strong> @ViewBag.Gender</p>
-
-                        <a href="/Patient/EditProfile"
-                           class="btn btn-warning">
-
-                            Edit Profile
-                        </a>
-
+                    <!-- Personal Details & Blood Group -->
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-4 text-primary d-flex align-items-center gap-2">
+                                    <i class="bi bi-person-badge"></i> Personal Details
+                                </h5>
+                                
+                                <div class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                                    <span class="text-muted">Gender</span>
+                                    <span class="fw-semibold">@(patient?.Gender ?? "Not Specified")</span>
+                                </div>
+                                <div class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                                    <span class="text-muted">Date of Birth</span>
+                                    <span class="fw-semibold">@(patient?.DateOfBirth != default ? patient.DateOfBirth.ToString("dd MMM yyyy") : "Not Specified")</span>
+                                </div>
+                                <div class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                                    <span class="text-muted">Age</span>
+                                    <span class="fw-semibold">@(patient?.Age ?? ViewBag.Age) years</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">Blood Group</span>
+                                    @if (!string.IsNullOrEmpty(patient?.BloodGroup))
+                                    {
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-2 rounded-pill fw-bold">
+                                            <i class="bi bi-droplet-fill me-1"></i> @patient.BloodGroup
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted italic">Not Specified</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- Contact Information -->
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-4 text-primary d-flex align-items-center gap-2">
+                                    <i class="bi bi-telephone-inbound"></i> Contact Details
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label class="text-muted small d-block">Phone Number</label>
+                                    <span class="fw-semibold"><i class="bi bi-phone me-2 text-primary"></i>@(patient?.User?.PhoneNumber ?? "Not Provided")</span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="text-muted small d-block">Emergency Contact</label>
+                                    <span class="fw-semibold text-danger"><i class="bi bi-telephone me-2 text-danger"></i>@(patient?.EmergencyContact ?? "Not Provided")</span>
+                                </div>
+                                <div>
+                                    <label class="text-muted small d-block">Home Address</label>
+                                    <span class="fw-semibold"><i class="bi bi-geo-alt me-2 text-primary"></i>@(patient?.Address ?? "Not Provided")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Profile (Medical History & Allergies) -->
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-4 text-primary d-flex align-items-center gap-2">
+                                    <i class="bi bi-activity"></i> Medical Profile
+                                </h5>
+                                
+                                <div class="row g-4">
+                                    <!-- Medical History -->
+                                    <div class="col-md-6 border-end-md">
+                                        <div class="p-3 bg-light rounded-3 h-100">
+                                            <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-journal-medical me-2"></i>Medical History</h6>
+                                            @if (!string.IsNullOrEmpty(patient?.MedicalHistory))
+                                            {
+                                                <p class="mb-0 text-dark" style="white-space: pre-line;">@patient.MedicalHistory</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-muted italic mb-0">No recorded medical history. Update your profile to add your history.</p>
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Allergies -->
+                                    <div class="col-md-6">
+                                        @if (!string.IsNullOrEmpty(patient?.Allergies))
+                                        {
+                                            <div class="p-3 bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-3 h-100">
+                                                <h6 class="fw-bold mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>Allergies</h6>
+                                                <p class="mb-0 fw-semibold" style="white-space: pre-line;">@patient.Allergies</p>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="p-3 bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-3 h-100">
+                                                <h6 class="fw-bold mb-3"><i class="bi bi-check-circle-fill me-2"></i>Allergies</h6>
+                                                <p class="mb-0 fw-semibold">No known allergies</p>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             }
 

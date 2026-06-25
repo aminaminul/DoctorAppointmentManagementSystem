@@ -1,4 +1,4 @@
-﻿using DoctorAppointmentManagementSystem.Models;
+using DoctorAppointmentManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +30,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .ToList();
 
             // 🔷 Profile Data
+            ViewBag.Patient = patient;
             ViewBag.PatientName = patient.User.Name;
             ViewBag.Email = patient.User.Email;
             ViewBag.Age = patient.Age;
@@ -65,12 +66,18 @@ namespace DoctorAppointmentManagementSystem.Controllers
             if (patient != null)
             {
                 // 🔷 Update Patient Info
-                patient.Age = model.Age;
+                patient.DateOfBirth = model.DateOfBirth;
                 patient.Gender = model.Gender;
+                patient.BloodGroup = model.BloodGroup;
+                patient.Address = model.Address;
+                patient.EmergencyContact = model.EmergencyContact;
+                patient.MedicalHistory = model.MedicalHistory;
+                patient.Allergies = model.Allergies;
 
                 // 🔷 Update User Info
                 patient.User.Name = model.User.Name;
                 patient.User.Email = model.User.Email;
+                patient.User.PhoneNumber = model.User.PhoneNumber;
 
                 _context.SaveChanges();
             }
