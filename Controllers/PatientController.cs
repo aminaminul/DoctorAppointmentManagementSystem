@@ -39,6 +39,18 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             ViewBag.Section = section;
 
+            // 🔔 Notification count for sidebar bell badge
+            ViewBag.UnreadNotificationCount = _context.Notifications
+                .Count(n => n.UserId == userId && n.NotificationStatus == "Unread");
+
+            if (section == "notifications")
+            {
+                ViewBag.Notifications = _context.Notifications
+                    .Where(n => n.UserId == userId)
+                    .OrderByDescending(n => n.SentDateTime)
+                    .ToList();
+            }
+
             if (section == "queue")
             {
                 var today = DateTime.Today;
@@ -146,6 +158,32 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .ToList();
 
             return View(prescriptions);
+        }
+
+        // ================= MARK NOTIFICATION READ =================
+
+        [HttpPost]
+        public IActionResult MarkNotificationRead(int id)
+        {
+            var notification = _context.Notifications.FirstOrDefault(n => n.Id == id);
+            if (notification != null)
+            {
+                notification.NotificationStatus = "Read";
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Dashboard", new { section = "notifications" });
+        }
+
+        [HttpPost]
+        public IActionResult MarkAllNotificationsRead()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            var unread = _context.Notifications
+                .Where(n => n.UserId == userId && n.NotificationStatus == "Unread")
+                .ToList();
+            foreach (var n in unread) n.NotificationStatus = "Read";
+            _context.SaveChanges();
+            return RedirectToAction("Dashboard", new { section = "notifications" });
         }
     }
 }

@@ -1,5 +1,6 @@
 using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
+using DoctorAppointmentManagementSystem.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DoctorAppointmentManagementSystem.Data;
@@ -9,10 +10,12 @@ namespace DoctorAppointmentManagementSystem.Controllers
     public class DoctorController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public DoctorController(ApplicationDbContext context)
+        public DoctorController(ApplicationDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         // ─────────────────────────────────────────────────────────────────────────
@@ -34,6 +37,18 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             var doctor = GetCurrentDoctor();
             if (doctor == null) return RedirectToAction("Login", "Account");
+
+            int userId = doctor.UserId;
+            ViewBag.UnreadNotificationCount = _context.Notifications
+                .Count(n => n.UserId == userId && n.NotificationStatus == "Unread");
+
+            if (section == "notifications")
+            {
+                ViewBag.Notifications = _context.Notifications
+                    .Where(n => n.UserId == userId)
+                    .OrderByDescending(n => n.SentDateTime)
+                    .ToList();
+            }
 
             var appointments = _context.Appointments
                 .Include(a => a.Patient).ThenInclude(p => p.User)
@@ -91,20 +106,30 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View(appointments);
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
+        // ─────────────────────────────────────────────────────────────────────────────
         //  APPROVE / REJECT APPOINTMENT
-        // ─────────────────────────────────────────────────────────────────────────
-        public IActionResult Approve(int id)
+        // ─────────────────────────────────────────────────────────────────────────────
+        public async Task<IActionResult> Approve(int id)
         {
             var appt = _context.Appointments.FirstOrDefault(a => a.Id == id);
-            if (appt != null) { appt.AppointmentStatus = "Confirmed"; _context.SaveChanges(); }
+            if (appt != null)
+            {
+                appt.AppointmentStatus = "Confirmed";
+                _context.SaveChanges();
+                try { await _notificationService.SendAppointmentApprovedAsync(appt); } catch { }
+            }
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
-        public IActionResult Reject(int id)
+        public async Task<IActionResult> Reject(int id)
         {
             var appt = _context.Appointments.FirstOrDefault(a => a.Id == id);
-            if (appt != null) { appt.AppointmentStatus = "Cancelled"; _context.SaveChanges(); }
+            if (appt != null)
+            {
+                appt.AppointmentStatus = "Cancelled";
+                _context.SaveChanges();
+                try { await _notificationService.SendAppointmentCancelledAsync(appt); } catch { }
+            }
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
@@ -115,14 +140,19 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
-        public IActionResult Delay(int id)
+        public async Task<IActionResult> Delay(int id)
         {
             var appt = _context.Appointments.FirstOrDefault(a => a.Id == id);
-            if (appt != null) { appt.AppointmentStatus = "Delayed"; _context.SaveChanges(); }
+            if (appt != null)
+            {
+                appt.AppointmentStatus = "Delayed";
+                _context.SaveChanges();
+                try { await _notificationService.SendAppointmentDelayedAsync(appt); } catch { }
+            }
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
+        // ─────────────────────────────────────────────────────────────────────────────
         //  PRESCRIPTIONS
         // ─────────────────────────────────────────────────────────────────────────
         public IActionResult AddPrescription(int appointmentId)
@@ -132,11 +162,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddPrescription(Prescription model)
+        public async Task<IActionResult> AddPrescription(Prescription model)
         {
             model.PrescriptionDateTime = DateTime.Now;
             _context.Prescriptions.Add(model);
             _context.SaveChanges();
+
+            try { await _notificationService.SendPrescriptionReadyAsync(model); } catch { }
+
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
@@ -381,6 +414,35 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .ToList();
 
             return Json(schedules);
+        }
+
+        // ================= MARK NOTIFICATION READ =================
+
+        [HttpPost]
+        public IActionResult MarkNotificationRead(int id)
+        {
+            var notification = _context.Notifications.FirstOrDefault(n => n.Id == id);
+            if (notification != null)
+            {
+                notification.NotificationStatus = "Read";
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Dashboard", new { section = "notifications" });
+        }
+
+        [HttpPost]
+        public IActionResult MarkAllNotificationsRead()
+        {
+            var doctor = GetCurrentDoctor();
+            if (doctor == null) return RedirectToAction("Login", "Account");
+
+            int userId = doctor.UserId;
+            var unread = _context.Notifications
+                .Where(n => n.UserId == userId && n.NotificationStatus == "Unread")
+                .ToList();
+            foreach (var n in unread) n.NotificationStatus = "Read";
+            _context.SaveChanges();
+            return RedirectToAction("Dashboard", new { section = "notifications" });
         }
     }
 }

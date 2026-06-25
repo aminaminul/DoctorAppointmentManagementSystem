@@ -1,5 +1,6 @@
 using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
+using DoctorAppointmentManagementSystem.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +9,12 @@ namespace DoctorAppointmentManagementSystem.Controllers
     public class AppointmentController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public AppointmentController(ApplicationDbContext context)
+        public AppointmentController(ApplicationDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         // ================= STEP 1: BOOK PAGE =================
@@ -234,7 +237,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         // ================= FINAL CONFIRM — SAVE BOOKING =================
 
         [HttpPost]
-        public IActionResult FinalConfirm(string? PaymentNumber)
+        public async Task<IActionResult> FinalConfirm(string? PaymentNumber)
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -304,6 +307,10 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 scheduleSlot.SlotStatus = "Booked";
                 _context.SaveChanges();
             }
+
+            // ── Send booking confirmation notification ──
+            try { await _notificationService.SendAppointmentConfirmationAsync(appointment); }
+            catch { /* Never block booking on notification failure */ }
 
             TempData["BookingSuccess"]    = "true";
             TempData["BookedDoctorId"]    = doctorId;

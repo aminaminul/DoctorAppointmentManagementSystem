@@ -47,11 +47,25 @@
                     </li>
 
                     <!-- Live Queue Tracker -->
-                    <li class="nav-item mb-5">
+                    <li class="nav-item mb-4">
                         <a class="nav-link text-white fs-5"
                            href="/Patient/Dashboard?section=queue">
 
                             🚶 Live Queue Tracker
+                        </a>
+                    </li>
+
+                    <!-- Notifications -->
+                    <li class="nav-item mb-5">
+                        <a class="nav-link text-white fs-5 d-flex align-items-center justify-content-between"
+                           href="/Patient/Dashboard?section=notifications">
+                            <span>🔔 Notifications</span>
+                            @if (ViewBag.UnreadNotificationCount != null && ViewBag.UnreadNotificationCount > 0)
+                            {
+                                <span class="badge bg-danger rounded-pill">
+                                    @ViewBag.UnreadNotificationCount
+                                </span>
+                            }
                         </a>
                     </li>
 
@@ -527,6 +541,79 @@
                         </a>
                     </div>
                 }
+            }
+
+            <!-- 🔷 NOTIFICATIONS -->
+            @if (ViewBag.Section == "notifications")
+            {
+                var notifications = ViewBag.Notifications as List<Notification> ?? new List<Notification>();
+
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header text-white p-3 d-flex align-items-center justify-content-between"
+                         style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                        <h5 class="mb-0 fw-bold"><i class="bi bi-bell-fill me-2"></i>My Notifications</h5>
+                        @if (notifications.Any(n => n.NotificationStatus == "Unread"))
+                        {
+                            <form method="post" action="/Patient/MarkAllNotificationsRead" style="margin: 0;">
+                                <button type="submit" class="btn btn-sm btn-light rounded-pill px-3 fw-semibold text-primary">
+                                    Mark All as Read
+                                </button>
+                            </form>
+                        }
+                    </div>
+
+                    <div class="card-body p-4">
+                        @if (notifications.Any())
+                        {
+                            <div class="d-flex flex-column gap-3">
+                                @foreach (var n in notifications)
+                                {
+                                    var isUnread = n.NotificationStatus == "Unread";
+                                    var (icon, bgClass) = n.NotificationType switch {
+                                        "Booking"      => ("📅", "bg-primary"),
+                                        "Confirmation" => ("✅", "bg-success"),
+                                        "Cancellation" => ("❌", "bg-danger"),
+                                        "Delay"        => ("⏱", "bg-warning"),
+                                        "Prescription" => ("💊", "bg-info"),
+                                        "Reminder"     => ("🔔", "bg-secondary"),
+                                        _              => ("💬", "bg-light")
+                                    };
+
+                                    <div class="p-3 rounded-3 border d-flex align-items-start gap-3 transition-all hover-shadow @(isUnread ? "border-primary bg-primary bg-opacity-10" : "bg-light")" 
+                                         style="position: relative;">
+                                        <div class="rounded-circle p-2 text-white d-flex align-items-center justify-content-center @bgClass" 
+                                             style="width: 40px; height: 40px; font-size: 1.25rem; flex-shrink: 0;">
+                                            @icon
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                                <h6 class="fw-bold mb-1 @(isUnread ? "text-primary" : "text-dark")">@n.Title</h6>
+                                                <span class="text-muted small">@n.SentDateTime.ToString("dd MMM yyyy, hh:mm tt")</span>
+                                            </div>
+                                            <p class="mb-0 text-secondary" style="font-size: 0.9rem;">@n.Message</p>
+                                        </div>
+                                        @if (isUnread)
+                                        {
+                                            <form method="post" action="/Patient/MarkNotificationRead" class="ms-2">
+                                                <input type="hidden" name="id" value="@n.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill py-1 px-3" style="font-size: 0.8rem; white-space: nowrap;">
+                                                    Mark Read
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5 text-muted">
+                                <i class="bi bi-bell-slash fs-1 d-block mb-3"></i>
+                                <p class="mb-0 fw-semibold">No notifications yet.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
             }
 
         </div>
