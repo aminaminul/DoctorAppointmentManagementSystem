@@ -38,11 +38,20 @@
                     </li>
 
                     <!-- View Profile -->
-                    <li class="nav-item mb-5">
+                    <li class="nav-item mb-4">
                         <a class="nav-link text-white fs-5"
                            href="/Patient/Dashboard?section=profile">
 
                             👤 View Profile
+                        </a>
+                    </li>
+
+                    <!-- Live Queue Tracker -->
+                    <li class="nav-item mb-5">
+                        <a class="nav-link text-white fs-5"
+                           href="/Patient/Dashboard?section=queue">
+
+                            🚶 Live Queue Tracker
                         </a>
                     </li>
 
@@ -270,6 +279,217 @@
                         </div>
                     </div>
                 </div>
+            }
+
+            <!-- 🔷 LIVE QUEUE TRACKER -->
+            @if (ViewBag.Section == "queue")
+            {
+                var entry = ViewBag.ActiveQueueEntry as QueueEntry;
+                
+                @if (entry != null)
+                {
+                    <div class="row g-4">
+                        <!-- Top Alert Status -->
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                                <div class="card-body p-4 text-white d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                    <div>
+                                        <h4 class="fw-bold mb-1"><i class="bi bi-broadcast me-2"></i>Live Queue is Active</h4>
+                                        <p class="mb-0 text-white text-opacity-80">Tracking your appointment with Dr. @entry.Appointment.Doctor.User.FullName today</p>
+                                    </div>
+                                    @if (entry.Appointment.IsEmergency)
+                                    {
+                                        <span class="badge bg-danger text-white border border-white border-opacity-50 px-3 py-2 rounded-pill fw-bold animate-pulse">
+                                            🚨 EMERGENCY PRIORITY
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Stats Grid -->
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 bg-light">
+                                <div class="card-body">
+                                    <div class="text-secondary small fw-semibold uppercase mb-2">Your Token</div>
+                                    <h1 class="fw-extrabold text-primary display-4 mb-0">#@entry.TokenNumber</h1>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary mt-2">@entry.Appointment.AppointmentTime</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 bg-light">
+                                <div class="card-body">
+                                    <div class="text-secondary small fw-semibold uppercase mb-2">Currently Serving</div>
+                                    @if (ViewBag.ServingToken > 0)
+                                    {
+                                        <h1 class="fw-extrabold text-success display-4 mb-0">#@ViewBag.ServingToken</h1>
+                                    }
+                                    else
+                                    {
+                                        <h2 class="fw-bold text-muted mb-0 py-2">None</h2>
+                                    }
+                                    <span class="badge bg-success bg-opacity-10 text-success mt-2">Live Status</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 bg-light">
+                                <div class="card-body">
+                                    <div class="text-secondary small fw-semibold uppercase mb-2">Patients Ahead</div>
+                                    <h1 class="fw-extrabold text-warning display-4 mb-0">@ViewBag.PatientsAhead</h1>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning mt-2">Queue Position</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100 bg-light">
+                                <div class="card-body">
+                                    <div class="text-secondary small fw-semibold uppercase mb-2">Est. Wait Time</div>
+                                    <h1 class="fw-extrabold text-danger display-4 mb-0">@(ViewBag.PatientsAhead * 15)</h1>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger mt-2">Minutes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Tracker -->
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm rounded-4 p-4">
+                                <h5 class="fw-bold text-primary mb-4"><i class="bi bi-activity"></i> Queue Progress</h5>
+                                
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-4 position-relative px-md-5 my-3">
+                                    <!-- Background Line -->
+                                    <div class="position-absolute w-75 start-50 translate-middle-x bg-light d-none d-md-block" style="height: 4px; top: 22px; z-index: 0;"></div>
+                                    
+                                    <!-- Step 1: Waiting -->
+                                    <div class="d-flex flex-column align-items-center position-relative text-center" style="z-index: 1;">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center border-3 @(entry.Status == "Waiting" ? "bg-primary border-primary text-white" : "bg-success border-success text-white")" style="width: 48px; height: 48px;">
+                                            @if (entry.Status != "Waiting") { <i class="bi bi-check-lg fs-5"></i> } else { <span class="fw-bold">1</span> }
+                                        </div>
+                                        <div class="mt-2 fw-semibold">Waiting</div>
+                                        <div class="text-muted small">Checked In</div>
+                                    </div>
+
+                                    <!-- Step 2: Calling -->
+                                    <div class="d-flex flex-column align-items-center position-relative text-center" style="z-index: 1;">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center border-3 @(entry.Status == "Calling" ? "bg-primary border-primary text-white animate-pulse" : (entry.Status == "InConsultation" || entry.Status == "Completed" ? "bg-success border-success text-white" : "bg-white border-light text-muted"))" style="width: 48px; height: 48px;">
+                                            @if (entry.Status == "InConsultation" || entry.Status == "Completed") { <i class="bi bi-check-lg fs-5"></i> } else { <span class="fw-bold">2</span> }
+                                        </div>
+                                        <div class="mt-2 fw-semibold">Calling</div>
+                                        <div class="text-muted small">Arrive at Chamber</div>
+                                    </div>
+
+                                    <!-- Step 3: Consultation -->
+                                    <div class="d-flex flex-column align-items-center position-relative text-center" style="z-index: 1;">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center border-3 @(entry.Status == "InConsultation" ? "bg-primary border-primary text-white" : (entry.Status == "Completed" ? "bg-success border-success text-white" : "bg-white border-light text-muted"))" style="width: 48px; height: 48px;">
+                                            @if (entry.Status == "Completed") { <i class="bi bi-check-lg fs-5"></i> } else { <span class="fw-bold">3</span> }
+                                        </div>
+                                        <div class="mt-2 fw-semibold">In Consultation</div>
+                                        <div class="text-muted small">Meeting Doctor</div>
+                                    </div>
+
+                                    <!-- Step 4: Completed -->
+                                    <div class="d-flex flex-column align-items-center position-relative text-center" style="z-index: 1;">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center border-3 @(entry.Status == "Completed" ? "bg-success border-success text-white" : "bg-white border-light text-muted")" style="width: 48px; height: 48px;">
+                                            <span class="fw-bold">4</span>
+                                        </div>
+                                        <div class="mt-2 fw-semibold">Completed</div>
+                                        <div class="text-muted small">Rx Prescribed</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Doctor Info & Availability Details -->
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-heart-pulse-fill"></i> Doctor Availability</h5>
+                                
+                                <div class="d-flex align-items-center gap-3 border-bottom pb-3 mb-3">
+                                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2.5 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <i class="bi bi-person-fill fs-3"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-0">Dr. @entry.Appointment.Doctor.User.FullName</h6>
+                                        <span class="text-muted small">@entry.Appointment.Doctor.Specialization</span>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-secondary">Chamber Status</span>
+                                    @if (ViewBag.DoctorStatus == "Serving Patients")
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-activity me-1 animate-pulse"></i> Serving Patients</span>
+                                    }
+                                    else if (ViewBag.DoctorStatus == "On Break")
+                                    {
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-cup-hot me-1"></i> On Lunch Break</span>
+                                    }
+                                    else if (ViewBag.DoctorStatus == "On Vacation")
+                                    {
+                                        <span class="badge bg-danger"><i class="bi bi-airplane me-1"></i> On Vacation</span>
+                                    }
+                                    else if (ViewBag.DoctorStatus == "Available")
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary"><i class="bi bi-moon me-1"></i> Offline</span>
+                                    }
+                                </div>
+
+                                @{
+                                    var sched = ViewBag.DoctorSchedule as DoctorSchedule;
+                                    if (sched != null)
+                                    {
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="text-secondary">Working Hours</span>
+                                            <span class="fw-semibold">@sched.StartTime - @sched.EndTime</span>
+                                        </div>
+                                        if (!string.IsNullOrEmpty(sched.BreakStartTime))
+                                        {
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-secondary">Scheduled Break</span>
+                                                <span class="fw-semibold text-warning">@sched.BreakStartTime - @sched.BreakEndTime</span>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Live Polling Notice -->
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-light text-center d-flex flex-column align-items-center justify-content-center">
+                                <div class="spinner-grow text-success mb-3" role="status" style="width: 2.5rem; height: 2.5rem;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <h6 class="fw-bold mb-1">Live Queue Tracker</h6>
+                                <p class="text-muted small mb-0 px-md-4">This screen refreshes automatically to reflect the doctor's live progress. Please keep an eye on your token status.</p>
+                                <button onclick="location.reload();" class="btn btn-outline-primary btn-sm rounded-pill mt-3 px-4">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>Refresh Manually
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-5">
+                        <div class="bg-light rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-4 mx-auto" style="width: 80px; height: 80px;">
+                            <i class="bi bi-calendar-x fs-1 text-secondary"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">No Active Queue for Today</h4>
+                        <p class="text-muted mb-0 px-md-5">You do not have any confirmed appointments scheduled for today, @DateTime.Today.ToString("dd MMMM yyyy").</p>
+                        <a href="/Appointment/Book" class="btn btn-primary rounded-pill mt-4 px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-plus-circle me-2"></i>Book an Appointment
+                        </a>
+                    </div>
+                }
             }
 
         </div>

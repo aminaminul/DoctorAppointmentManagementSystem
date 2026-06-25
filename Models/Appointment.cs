@@ -42,6 +42,8 @@ namespace DoctorAppointmentManagementSystem.Models
         [Required]
         public string AppointmentStatus { get; set; } // Pending, Confirmed, Completed, Cancelled
         
+        public bool IsEmergency { get; set; } = false;
+
         public DateTime BookingDateTime { get; set; } = DateTime.Now;
 
         public Patient Patient { get; set; }

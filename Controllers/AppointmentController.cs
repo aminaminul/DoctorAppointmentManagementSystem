@@ -180,7 +180,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         public IActionResult Confirm(int DoctorId, string Date, string TimeSlot,
-                                     string ReasonForVisit,
+                                     string ReasonForVisit, bool IsEmergency,
                                      string PaymentMethod, string CardType)
         {
             // Guard: must be logged in
@@ -199,6 +199,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             TempData["Date"]           = Date;
             TempData["TimeSlot"]       = TimeSlot;
             TempData["ReasonForVisit"] = ReasonForVisit;
+            TempData["IsEmergency"]    = IsEmergency;
             TempData["PaymentMethod"]  = PaymentMethod;
             TempData["CardType"]       = CardType;
 
@@ -248,6 +249,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             string dateStr       = TempData["Date"]?.ToString() ?? "";
             string timeSlot      = TempData["TimeSlot"]?.ToString() ?? "";
             string reason        = TempData["ReasonForVisit"]?.ToString() ?? "";
+            bool   isEmergency   = Convert.ToBoolean(TempData["IsEmergency"]);
 
             if (!DateTime.TryParse(dateStr, out DateTime bookingDate))
             {
@@ -283,6 +285,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 AppointmentDate    = bookingDate,
                 AppointmentTime    = timeSlot,
                 ReasonForVisit     = reason,
+                IsEmergency        = isEmergency,
                 AppointmentStatus  = "Pending",
                 BookingDateTime    = DateTime.Now
             };

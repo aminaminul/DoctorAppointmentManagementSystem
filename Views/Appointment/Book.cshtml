@@ -294,8 +294,26 @@
                           placeholder="e.g. Chest pain, fever for 3 days, routine check-up..."></textarea>
             </div>
 
+            <!-- ===== SECTION 4: Priority ===== -->
+            <div class="section-title">
+                <i class="bi bi-exclamation-triangle"></i>Booking Priority
+            </div>
+            
+            <div class="mb-4">
+                <div class="form-check form-switch p-3 bg-light rounded-3 shadow-sm border d-flex align-items-center justify-content-between">
+                    <div class="me-3">
+                        <label class="form-check-label fw-bold text-danger mb-0" for="isEmergencySwitch">
+                            🚨 Emergency Priority
+                        </label>
+                        <div class="text-muted small">Check this if you require urgent care. You will be prioritized at the front of the live queue.</div>
+                    </div>
+                    <input class="form-check-input me-1" type="checkbox" id="isEmergencySwitch" style="width: 2.4em; height: 1.2em;">
+                </div>
+            </div>
+
             <!-- Hidden fields passed to SelectTime -->
             <input type="hidden" name="reason" id="reasonHidden" />
+            <input type="hidden" name="isEmergency" id="isEmergencyHidden" value="false" />
 
             <!-- Submit -->
             <button type="submit" class="btn-book" id="nextBtn" disabled>
@@ -387,9 +405,10 @@
         checkReady();
     });
 
-    // Pass reason to form (since we have 2 name="reason" fields, sync them)
+    // Pass reason and emergency toggle to form
     document.getElementById('bookingForm').addEventListener('submit', function (e) {
         document.getElementById('reasonHidden').value = reasonArea.value;
+        document.getElementById('isEmergencyHidden').value = document.getElementById('isEmergencySwitch').checked ? "true" : "false";
         document.getElementById('stepItem3').classList.add('active');
     });
 </script>

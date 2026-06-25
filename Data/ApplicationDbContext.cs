@@ -22,6 +22,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Feedback> Feedbacks { get; set; }
     public DbSet<AdminLog> AdminLogs { get; set; }
+    public DbSet<QueueEntry> QueueEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -233,6 +234,13 @@ public class ApplicationDbContext : DbContext
             .HasOne(al => al.Admin)
             .WithMany()
             .HasForeignKey(al => al.AdminId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // QueueEntry → Appointment
+        modelBuilder.Entity<QueueEntry>()
+            .HasOne(q => q.Appointment)
+            .WithMany()
+            .HasForeignKey(q => q.AppointmentId)
             .OnDelete(DeleteBehavior.NoAction);
     }
 }

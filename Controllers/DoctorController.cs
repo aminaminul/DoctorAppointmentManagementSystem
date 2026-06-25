@@ -2,6 +2,7 @@ using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DoctorAppointmentManagementSystem.Data;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
@@ -70,6 +71,22 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.ProfileImage   = doctor.ProfileImage ?? "doctor_default.png";
 
             ViewBag.Section = section ?? "overview";
+
+            if (ViewBag.Section == "queue")
+            {
+                QueueManager.EnsureQueueGenerated(_context, doctor.Id, today);
+                var queueEntries = _context.QueueEntries
+                    .Include(q => q.Appointment)
+                    .ThenInclude(a => a.Patient)
+                    .ThenInclude(p => p.User)
+                    .Where(q => q.Appointment.DoctorId == doctor.Id 
+                             && q.Appointment.AppointmentDate.Date == today)
+                    .OrderBy(q => q.SequenceNumber)
+                    .ToList();
+
+                ViewBag.QueueEntries = queueEntries;
+                ViewBag.DoctorStatus = QueueManager.GetDoctorStatus(_context, doctor.Id, today);
+            }
 
             return View(appointments);
         }

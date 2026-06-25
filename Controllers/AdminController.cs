@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using DoctorAppointmentManagementSystem.Data;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
@@ -31,6 +32,39 @@ namespace DoctorAppointmentManagementSystem.Controllers
                     .Include(a => a.Patient).ThenInclude(p => p.User)
                     .Include(a => a.Doctor).ThenInclude(d => d.User)
                     .ToList();
+
+            if (section == "queue")
+            {
+                ViewBag.Doctors = _context.Doctors.Include(d => d.User).ToList();
+                
+                int selectedDocId = 0;
+                string docQuery = Request.Query["doctorId"].ToString();
+                if (int.TryParse(docQuery, out int dId))
+                {
+                    selectedDocId = dId;
+                }
+                else if (ViewBag.Doctors.Count > 0)
+                {
+                    selectedDocId = ViewBag.Doctors[0].Id;
+                }
+
+                ViewBag.SelectedDoctorId = selectedDocId;
+
+                var today = DateTime.Today;
+                if (selectedDocId > 0)
+                {
+                    QueueManager.EnsureQueueGenerated(_context, selectedDocId, today);
+                    ViewBag.QueueEntries = _context.QueueEntries
+                        .Include(q => q.Appointment)
+                        .ThenInclude(a => a.Patient)
+                        .ThenInclude(p => p.User)
+                        .Where(q => q.Appointment.DoctorId == selectedDocId 
+                                 && q.Appointment.AppointmentDate.Date == today)
+                        .OrderBy(q => q.SequenceNumber)
+                        .ToList();
+                    ViewBag.DoctorStatus = QueueManager.GetDoctorStatus(_context, selectedDocId, today);
+                }
+            }
 
             ViewBag.Section = section;
 

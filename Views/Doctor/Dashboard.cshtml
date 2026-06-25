@@ -207,6 +207,10 @@
                 </span>
             }
         </a>
+        <a href="/Doctor/Dashboard?section=queue"
+           class="dash-nav-link @(section == "queue" ? "active" : "")">
+            <span class="nav-icon"><i class="bi bi-people-fill"></i></span>Live Queue
+        </a>
 
         <span class="nav-section-label">Schedule</span>
         <a href="/Doctor/Schedule"
@@ -422,6 +426,310 @@
                     }
                 </div>
             </div>
+        }
+
+        <!-- ══ LIVE QUEUE MANAGEMENT ════════════════════════════════════════ -->
+        @if (section == "queue")
+        {
+            var queueEntries = ViewBag.QueueEntries as List<QueueEntry> ?? new List<QueueEntry>();
+            var activeEntry = queueEntries.FirstOrDefault(q => q.Status == "Calling" || q.Status == "InConsultation");
+            var waitingEntries = queueEntries.Where(q => q.Status == "Waiting").ToList();
+            var completedOrSkipped = queueEntries.Where(q => q.Status == "Completed" || q.Status == "Skipped").ToList();
+
+            <div class="dash-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h1>Live Queue Management</h1>
+                    <p>Track tokens and manage consult flow for today: @DateTime.Today.ToString("dd MMMM yyyy")</p>
+                </div>
+                <div>
+                    @if (ViewBag.DoctorStatus == "Serving Patients")
+                    {
+                        <span class="badge bg-success p-2.5 rounded-pill fs-6"><i class="bi bi-activity me-1 animate-pulse"></i> Serving Patients</span>
+                    }
+                    else if (ViewBag.DoctorStatus == "On Break")
+                    {
+                        <span class="badge bg-warning text-dark p-2.5 rounded-pill fs-6"><i class="bi bi-cup-hot me-1"></i> Lunch Break</span>
+                    }
+                    else if (ViewBag.DoctorStatus == "On Vacation")
+                    {
+                        <span class="badge bg-danger p-2.5 rounded-pill fs-6"><i class="bi bi-airplane me-1"></i> Vacation</span>
+                    }
+                    else if (ViewBag.DoctorStatus == "Available")
+                    {
+                        <span class="badge bg-success p-2.5 rounded-pill fs-6"><i class="bi bi-check-circle me-1"></i> Available</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary p-2.5 rounded-pill fs-6"><i class="bi bi-moon me-1"></i> Offline</span>
+                    }
+                </div>
+            </div>
+
+            @if (ViewBag.DoctorStatus == "On Vacation")
+            {
+                <div class="card border-0 shadow-sm rounded-4 text-center p-5 mt-4">
+                    <div class="bg-light rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-4 mx-auto" style="width: 80px; height: 80px;">
+                        <i class="bi bi-calendar-x fs-1 text-danger"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2">Chamber Closed — Vacation</h4>
+                    <p class="text-muted mb-0">Your schedule for today is marked as a vacation. The queue is inactive.</p>
+                </div>
+            }
+            else
+            {
+                <!-- Queue Stats Row -->
+                <div class="row g-3 mb-4 mt-2">
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3 bg-light text-center">
+                            <div class="text-muted small fw-semibold">Total Scheduled</div>
+                            <h3 class="fw-bold mb-0 text-primary">@queueEntries.Count</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3 bg-light text-center">
+                            <div class="text-muted small fw-semibold">Currently Waiting</div>
+                            <h3 class="fw-bold mb-0 text-warning">@waitingEntries.Count</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3 bg-light text-center">
+                            <div class="text-muted small fw-semibold">Completed</div>
+                            <h3 class="fw-bold mb-0 text-success">@queueEntries.Count(q => q.Status == "Completed")</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3 bg-light text-center">
+                            <div class="text-muted small fw-semibold">Skipped</div>
+                            <h3 class="fw-bold mb-0 text-secondary">@queueEntries.Count(q => q.Status == "Skipped")</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Left Column: Active Patient Panel -->
+                    <div class="col-lg-5">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-header bg-dark text-white p-3">
+                                <h5 class="mb-0 fw-bold"><i class="bi bi-person-workspace me-2 text-warning"></i>Active Consultation</h5>
+                            </div>
+                            <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center text-center">
+                                @if (activeEntry != null)
+                                {
+                                    <div class="w-100">
+                                        <div class="text-secondary small fw-semibold mb-2">Token Number</div>
+                                        <h1 class="display-3 fw-extrabold text-primary mb-3">#@activeEntry.TokenNumber</h1>
+                                        
+                                        @if (activeEntry.Appointment.IsEmergency)
+                                        {
+                                            <div class="mb-3">
+                                                <span class="badge bg-danger text-white px-3 py-1.5 rounded-pill fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> EMERGENCY</span>
+                                            </div>
+                                        }
+
+                                        <h4 class="fw-bold text-dark mb-1">@activeEntry.Appointment.Patient.User.FullName</h4>
+                                        <p class="text-muted mb-3">@activeEntry.Appointment.Patient.Gender, @activeEntry.Appointment.Patient.Age years</p>
+                                        
+                                        <div class="p-3 bg-light rounded-3 text-start mb-4">
+                                            <span class="text-muted small d-block mb-1">Scheduled Time: <strong>@activeEntry.Appointment.AppointmentTime</strong></span>
+                                            <span class="text-muted small d-block">Reason: <strong>@(activeEntry.Appointment.ReasonForVisit ?? "Not specified")</strong></span>
+                                        </div>
+
+                                        @if (activeEntry.Status == "Calling")
+                                        {
+                                            <div class="d-grid gap-2">
+                                                <form method="post" action="/Queue/StartConsultation">
+                                                    <input type="hidden" name="Id" value="@activeEntry.Id" />
+                                                    <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill"><i class="bi bi-play-fill me-1"></i> Start Consultation</button>
+                                                </form>
+                                                <form method="post" action="/Queue/SkipPatient">
+                                                    <input type="hidden" name="Id" value="@activeEntry.Id" />
+                                                    <button type="submit" class="btn btn-outline-danger w-100 rounded-pill"><i class="bi bi-x-circle me-1"></i> Skip / No Show</button>
+                                                </form>
+                                            </div>
+                                        }
+                                        else if (activeEntry.Status == "InConsultation")
+                                        {
+                                            <div class="d-grid gap-2">
+                                                <form method="post" action="/Queue/CompleteConsultation">
+                                                    <input type="hidden" name="Id" value="@activeEntry.Id" />
+                                                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill"><i class="bi bi-check2-circle-fill me-1"></i> Complete & Write Rx</button>
+                                                </form>
+                                                <form method="post" action="/Queue/SkipPatient">
+                                                    <input type="hidden" name="Id" value="@activeEntry.Id" />
+                                                    <button type="submit" class="btn btn-outline-danger w-100 rounded-pill"><i class="bi bi-slash-circle me-1"></i> Skip / Terminate</button>
+                                                </form>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="py-4">
+                                        <div class="bg-light rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                                            <i class="bi bi-person-fill-slash fs-1 text-muted"></i>
+                                        </div>
+                                        <h5 class="fw-bold mb-1">No Active Consultation</h5>
+                                        <p class="text-muted small px-3">Call the next patient in line when you are ready to begin.</p>
+                                        
+                                        @if (waitingEntries.Any())
+                                        {
+                                            <form method="post" action="/Queue/CallNext">
+                                                <input type="hidden" name="DoctorId" value="@ViewBag.DoctorId" />
+                                                <button type="submit" class="btn btn-success btn-lg rounded-pill px-5 shadow-sm mt-3"><i class="bi bi-megaphone-fill me-2"></i> Call Next Patient</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button disabled class="btn btn-secondary btn-lg rounded-pill px-5 mt-3">Queue Empty</button>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Queue list -->
+                    <div class="col-lg-7">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-header bg-dark text-white p-3">
+                                <h5 class="mb-0 fw-bold"><i class="bi bi-list-ol me-2 text-warning"></i>Waiting List</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                @if (waitingEntries.Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead>
+                                                <tr class="table-light">
+                                                    <th class="ps-3">Seq</th>
+                                                    <th>Token</th>
+                                                    <th>Patient</th>
+                                                    <th>Scheduled Time</th>
+                                                    <th>Priority</th>
+                                                    <th class="pe-3 text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in waitingEntries)
+                                                {
+                                                    <tr>
+                                                        <td class="ps-3 fw-semibold">@item.SequenceNumber</td>
+                                                        <td><span class="badge bg-primary rounded-pill">#@item.TokenNumber</span></td>
+                                                        <td>
+                                                            <div class="fw-bold">@item.Appointment.Patient.User.FullName</div>
+                                                            <div class="text-muted small">@item.Appointment.Patient.Gender, @item.Appointment.Patient.Age yrs</div>
+                                                        </td>
+                                                        <td>@item.Appointment.AppointmentTime</td>
+                                                        <td>
+                                                            @if (item.Appointment.IsEmergency)
+                                                            {
+                                                                <span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill me-1 animate-pulse"></i> EMERGENCY</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-secondary">Normal</span>
+                                                            }
+                                                        </td>
+                                                        <td class="pe-3 text-end">
+                                                            <div class="d-flex justify-content-end gap-1">
+                                                                @if (!item.Appointment.IsEmergency)
+                                                                {
+                                                                    <form method="post" action="/Queue/BumpEmergency" style="display:inline;">
+                                                                        <input type="hidden" name="Id" value="@item.Id" />
+                                                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-2.5" title="Mark as Emergency"><i class="bi bi-exclamation-octagon"></i> Bump</button>
+                                                                    </form>
+                                                                }
+                                                                <form method="post" action="/Queue/SkipPatient" style="display:inline;">
+                                                                    <input type="hidden" name="Id" value="@item.Id" />
+                                                                    <button type="submit" class="btn btn-outline-secondary btn-sm rounded-pill px-2.5" title="Skip Patient"><i class="bi bi-slash-circle"></i> Skip</button>
+                                                                </form>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="p-5 text-center text-muted">
+                                        <i class="bi bi-check2-all fs-1 text-success mb-3 d-block"></i>
+                                        <p class="mb-0 fw-semibold">No patients are waiting in the queue.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Queue History/Completed & Skipped -->
+                    <div class="col-12 mt-3">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-header bg-secondary text-white p-3">
+                                <h6 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>Consultation History (Today)</h6>
+                            </div>
+                            <div class="card-body p-0">
+                                @if (completedOrSkipped.Any())
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead>
+                                                <tr class="table-light">
+                                                    <th class="ps-3">Token</th>
+                                                    <th>Patient Name</th>
+                                                    <th>Scheduled Time</th>
+                                                    <th>Priority</th>
+                                                    <th>Status</th>
+                                                    <th class="pe-3">Processed Time</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in completedOrSkipped)
+                                                {
+                                                    <tr>
+                                                        <td class="ps-3 fw-bold">#@item.TokenNumber</td>
+                                                        <td>@item.Appointment.Patient.User.FullName</td>
+                                                        <td>@item.Appointment.AppointmentTime</td>
+                                                        <td>
+                                                            @if (item.Appointment.IsEmergency)
+                                                            {
+                                                                <span class="badge bg-danger">EMERGENCY</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-secondary">Normal</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (item.Status == "Completed")
+                                                            {
+                                                                <span class="badge bg-success">Completed</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-secondary">Skipped</span>
+                                                            }
+                                                        </td>
+                                                        <td class="pe-3 text-muted small">
+                                                            @(item.CompletionTime?.ToString("hh:mm tt") ?? "—")
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="p-4 text-center text-muted small">
+                                        No patients processed yet today.
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         }
 
     </main>

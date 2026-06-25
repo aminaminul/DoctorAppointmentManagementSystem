@@ -17,6 +17,7 @@ namespace DoctorAppointmentManagementSystem.ViewModels
         public string? TimeSlot { get; set; }
 
         public string? ReasonForVisit { get; set; }
+        public bool IsEmergency { get; set; }
 
         // Doctor info for display
         public string? DoctorName { get; set; }

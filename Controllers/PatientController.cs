@@ -1,6 +1,7 @@
 using DoctorAppointmentManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DoctorAppointmentManagementSystem.Data;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
@@ -37,6 +38,51 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.Gender = patient.Gender;
 
             ViewBag.Section = section;
+
+            if (section == "queue")
+            {
+                var today = DateTime.Today;
+                var activeQueueEntry = _context.QueueEntries
+                    .Include(q => q.Appointment)
+                    .ThenInclude(a => a.Doctor)
+                    .ThenInclude(d => d.User)
+                    .FirstOrDefault(q => q.Appointment.PatientId == patient.Id 
+                                      && q.Appointment.AppointmentDate.Date == today
+                                      && q.Appointment.AppointmentStatus == "Confirmed"
+                                      && (q.Status == "Waiting" || q.Status == "Calling" || q.Status == "InConsultation"));
+
+                if (activeQueueEntry != null)
+                {
+                    ViewBag.ActiveQueueEntry = activeQueueEntry;
+                    
+                    // Make sure queue for this doctor is updated/sequenced
+                    QueueManager.EnsureQueueGenerated(_context, activeQueueEntry.Appointment.DoctorId, today);
+                    
+                    // Fetch queue stats
+                    var doctorQueue = _context.QueueEntries
+                        .Where(q => q.Appointment.DoctorId == activeQueueEntry.Appointment.DoctorId 
+                                 && q.Appointment.AppointmentDate.Date == today)
+                        .OrderBy(q => q.SequenceNumber)
+                        .ToList();
+
+                    // Currently serving
+                    var servingEntry = doctorQueue.FirstOrDefault(q => q.Status == "InConsultation" || q.Status == "Calling");
+                    ViewBag.ServingToken = servingEntry?.TokenNumber ?? 0;
+
+                    // Position ahead of current patient
+                    int patientsAhead = doctorQueue
+                        .Count(q => q.SequenceNumber < activeQueueEntry.SequenceNumber 
+                                 && q.Status == "Waiting");
+                    ViewBag.PatientsAhead = patientsAhead;
+
+                    // Doctor schedule & status
+                    var schedule = _context.DoctorSchedules
+                        .FirstOrDefault(ds => ds.DoctorId == activeQueueEntry.Appointment.DoctorId 
+                                           && ds.AvailableDate.Date == today);
+                    ViewBag.DoctorSchedule = schedule;
+                    ViewBag.DoctorStatus = QueueManager.GetDoctorStatus(_context, activeQueueEntry.Appointment.DoctorId, today);
+                }
+            }
 
             return View(appointments);
         }
