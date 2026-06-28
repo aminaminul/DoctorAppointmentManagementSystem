@@ -24,7 +24,7 @@ namespace DoctorAppointmentManagementSystem.Data
             var appointments = context.Appointments
                 .Where(a => a.DoctorId == doctorId 
                          && a.AppointmentDate.Date == date.Date 
-                         && a.AppointmentStatus == "Confirmed")
+                         && (a.AppointmentStatus == "Confirmed" || a.AppointmentStatus == "Approved"))
                 .ToList();
 
             if (!appointments.Any()) return;

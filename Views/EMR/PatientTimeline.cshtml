@@ -1,0 +1,245 @@
+@using DoctorAppointmentManagementSystem.Models
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "EMR Patient Timeline";
+    var patient = ViewBag.Patient as Patient;
+    int? roleId = ViewBag.RoleId as int?;
+    int? currentDoctorId = ViewBag.DoctorId as int?;
+
+    var records = (ViewBag.MedicalRecords as List<MedicalRecord> ?? new List<MedicalRecord>())
+        .Select(r => new { Date = r.RecordDate, Type = "Record", Id = r.Id, Object = (object)r });
+
+    var prescriptions = (ViewBag.Prescriptions as List<Prescription> ?? new List<Prescription>())
+        .Select(p => new { Date = p.PrescriptionDateTime, Type = "Prescription", Id = p.Id, Object = (object)p });
+
+    var timeline = records.Concat(prescriptions).OrderByDescending(t => t.Date).ToList();
+}
+
+<div class="container py-4">
+
+    <!-- Header Navigation -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        @if (roleId == 3)
+        {
+            <a href="/Patient/Dashboard?section=appointments" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        }
+        else
+        {
+            <a href="/EMR/Index" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-2"></i>Back to Patient List
+            </a>
+        }
+
+        @if (roleId == 2)
+        {
+            <a href="/EMR/Create?patientId=@patient.Id" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                <i class="bi bi-plus-circle me-2"></i>Add EMR Entry
+            </a>
+        }
+    </div>
+
+    <!-- Patient Profile Summary Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+        <div class="card-header text-white p-3" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-person-badge-fill me-2 text-warning"></i>Patient Clinical Profile</h4>
+                <span class="badge bg-white text-primary rounded-pill px-3">EMR Active</span>
+            </div>
+        </div>
+        <div class="card-body p-4 bg-light">
+            <div class="row g-4">
+                <!-- Primary Stats -->
+                <div class="col-md-3 border-end">
+                    <div class="text-center py-2">
+                        <div class="bg-white rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3 shadow-sm text-primary" style="width: 70px; height: 70px;">
+                            <i class="bi bi-person-fill fs-1"></i>
+                        </div>
+                        <h5 class="fw-bold mb-1">@patient.User.FullName</h5>
+                        <p class="text-muted small mb-0">@patient.User.Email</p>
+                    </div>
+                </div>
+
+                <!-- Personal details -->
+                <div class="col-md-4 border-end">
+                    <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-clipboard-pulse me-2"></i>Personal Details</h6>
+                    <div class="d-flex justify-content-between border-bottom pb-1.5 mb-2 small">
+                        <span class="text-muted">Age / Gender:</span>
+                        <span class="fw-semibold">@patient.Age years / @patient.Gender</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom pb-1.5 mb-2 small">
+                        <span class="text-muted">Blood Group:</span>
+                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2.5 py-1 fw-bold">@patient.BloodGroup</span>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                        <span class="text-muted">Emergency Contact:</span>
+                        <span class="fw-semibold">@patient.EmergencyContact</span>
+                    </div>
+                </div>
+
+                <!-- Medical history & allergies -->
+                <div class="col-md-5">
+                    <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-shield-exclamation me-2"></i>Medical Summary</h6>
+                    <div class="mb-3">
+                        <span class="text-muted small d-block mb-1">Known Allergies:</span>
+                        @if (!string.IsNullOrEmpty(patient.Allergies))
+                        {
+                            <span class="badge bg-danger text-white rounded-3 px-2 py-1">@patient.Allergies</span>
+                        }
+                        else
+                        {
+                            <span class="text-success small fw-semibold"><i class="bi bi-check-circle-fill me-1"></i>No known allergies</span>
+                        }
+                    </div>
+                    <div>
+                        <span class="text-muted small d-block mb-1">Clinical History Notes:</span>
+                        <p class="mb-0 text-dark small italic" style="white-space: pre-line;">@(patient.MedicalHistory ?? "No medical history recorded.")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline Title -->
+    <h3 class="fw-bold mb-4 text-center text-primary"><i class="bi bi-clock-history me-2"></i>Patient Timeline & Case File</h3>
+
+    <!-- Timeline Render -->
+    @if (timeline.Any())
+    {
+        <div class="position-relative px-md-5">
+            <!-- Timeline vertical connector line -->
+            <div class="position-absolute h-100 bg-secondary bg-opacity-25 d-none d-md-block" style="width: 4px; left: 50%; transform: translateX(-50%); top: 0; z-index: 0;"></div>
+
+            <div class="row g-4">
+                @for (int i = 0; i < timeline.Count; i++)
+                {
+                    var item = timeline[i];
+                    var isEven = i % 2 == 0;
+
+                    <!-- Left/Right columns structure for desktop timeline alignment -->
+                    <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-center position-relative mb-4" style="z-index: 1;">
+                        
+                        <!-- Timeline circle node -->
+                        <div class="position-absolute bg-white rounded-circle border border-4 d-none d-md-flex align-items-center justify-content-center shadow" 
+                             style="width: 50px; height: 50px; left: 50%; top: 20px; transform: translateX(-50%); z-index: 2; @(item.Type == "Prescription" ? "border-color: #3b82f6;" : "border-color: #10b981;")">
+                            @if (item.Type == "Prescription")
+                            {
+                                <i class="bi bi-file-earmark-medical text-primary fs-5"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-journal-text text-success fs-5"></i>
+                            }
+                        </div>
+
+                        <!-- Card Column -->
+                        <div class="w-100 @(isEven ? "pe-md-5 text-md-end" : "ps-md-5 order-md-2")" style="max-width: 46%;">
+                            
+                            @if (item.Type == "Prescription")
+                            {
+                                var prescription = item.Object as Prescription;
+                                <div class="card border-0 shadow-sm rounded-4 text-start h-100 border-start border-primary border-4" style="background: #fbfdff;">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span class="badge bg-primary rounded-pill"><i class="bi bi-prescription me-1"></i>Prescription</span>
+                                            <span class="text-muted small"><i class="bi bi-calendar-event me-1"></i>@prescription.PrescriptionDateTime.ToString("dd MMM yyyy, hh:mm tt")</span>
+                                        </div>
+                                        <h5 class="fw-bold text-primary mb-1">Diagnosis: @prescription.Diagnosis</h5>
+                                        <p class="text-muted small mb-3">Written by: <strong>Dr. @prescription.Doctor.User.FullName</strong></p>
+                                        
+                                        <div class="mb-3 bg-white p-3 rounded-3 border">
+                                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-capsule me-1 text-primary"></i>Medicines</h6>
+                                            <p class="mb-0 text-secondary" style="white-space: pre-line;">@prescription.Medicines</p>
+                                        </div>
+
+                                        @if (!string.IsNullOrEmpty(prescription.Instructions))
+                                        {
+                                            <div class="bg-light p-3 rounded-3 border-start border-warning border-3">
+                                                <h6 class="fw-bold text-warning-emphasis mb-1"><i class="bi bi-info-circle me-1"></i>Doctor's Instructions</h6>
+                                                <p class="mb-0 text-secondary small">@prescription.Instructions</p>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                var record = item.Object as MedicalRecord;
+                                <div class="card border-0 shadow-sm rounded-4 text-start h-100 border-start border-success border-4" style="background: #fcfdfc;">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span class="badge bg-success rounded-pill"><i class="bi bi-clipboard-pulse me-1"></i>EMR Case Record</span>
+                                            <span class="text-muted small"><i class="bi bi-calendar-event me-1"></i>@record.RecordDate.ToString("dd MMM yyyy, hh:mm tt")</span>
+                                        </div>
+                                        <h5 class="fw-bold text-success mb-1">Diagnosis: @record.Diagnosis</h5>
+                                        <p class="text-muted small mb-3">Recorded by: <strong>Dr. @record.Doctor.User.FullName</strong></p>
+
+                                        @if (!string.IsNullOrEmpty(record.TreatmentDetails))
+                                        {
+                                            <div class="mb-3 bg-white p-3 rounded-3 border">
+                                                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-heart-pulse me-1 text-success"></i>Treatment History & Details</h6>
+                                                <p class="mb-0 text-secondary small" style="white-space: pre-line;">@record.TreatmentDetails</p>
+                                            </div>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(record.TestReports))
+                                        {
+                                            <div class="mb-3 bg-white p-3 rounded-3 border border-info">
+                                                <h6 class="fw-bold text-info-emphasis mb-2"><i class="bi bi-file-earmark-ruled me-1 text-info"></i>Test Reports & Lab Results</h6>
+                                                <p class="mb-0 text-secondary small" style="white-space: pre-line;">@record.TestReports</p>
+                                            </div>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(record.Notes))
+                                        {
+                                            <div class="mb-3 bg-light p-3 rounded-3 border-start border-secondary border-3">
+                                                <h6 class="fw-bold text-secondary mb-1"><i class="bi bi-sticky me-1"></i>Clinical / Doctor Notes</h6>
+                                                <p class="mb-0 text-secondary small">@record.Notes</p>
+                                            </div>
+                                        }
+
+                                        <!-- Edit/Delete Buttons (For creating Doctor and Admins) -->
+                                        @if (roleId == 1 || (roleId == 2 && record.DoctorId == currentDoctorId))
+                                        {
+                                            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                                                @if (roleId == 2 && record.DoctorId == currentDoctorId)
+                                                {
+                                                    <a href="/EMR/Edit/@record.Id" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                                        <i class="bi bi-pencil me-1"></i>Edit
+                                                    </a>
+                                                }
+                                                <form method="post" action="/EMR/Delete" onsubmit="return confirm('Are you sure you want to delete this EMR entry?');" style="margin:0;">
+                                                    <input type="hidden" name="id" value="@record.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                                        <i class="bi bi-trash me-1"></i>Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+
+                        <!-- Empty Column for desktop timeline alignment -->
+                        <div class="w-100 d-none d-md-block @(isEven ? "order-md-2" : "")" style="max-width: 46%;"></div>
+
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-4 text-center p-5 mt-4">
+            <div class="bg-light rounded-circle p-4 d-inline-flex align-items-center justify-content-center mb-4 mx-auto" style="width: 80px; height: 80px;">
+                <i class="bi bi-folder-x fs-1 text-muted"></i>
+            </div>
+            <h4 class="fw-bold mb-2">No Records Available</h4>
+            <p class="text-muted mb-0 px-md-5">This patient does not have any recorded medical records or prescriptions in their EMR timeline.</p>
+        </div>
+    }
+
+</div>

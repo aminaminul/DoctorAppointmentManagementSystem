@@ -1,0 +1,79 @@
+@model DoctorAppointmentManagementSystem.Models.MedicalRecord
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Add EMR Entry";
+    var patient = ViewBag.Patient as DoctorAppointmentManagementSystem.Models.Patient;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="card border-0 shadow rounded-4 overflow-hidden">
+                
+                <!-- Card Header -->
+                <div class="card-header text-white p-4" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-white bg-opacity-20 rounded-circle p-2.5 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <i class="bi bi-file-earmark-medical-fill fs-3 text-warning"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-bold">New Medical Record Entry</h4>
+                            <p class="mb-0 text-white text-opacity-75 small">Adding case record for <strong>@patient.User.FullName</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body p-4 p-md-5">
+
+                    <form method="post" action="/EMR/Create">
+
+                        <!-- Hidden fields -->
+                        <input type="hidden" name="PatientId" value="@patient.Id" />
+                        <input type="hidden" name="AppointmentId" value="@ViewBag.AppointmentId" />
+
+                        <!-- Diagnosis -->
+                        <div class="mb-4">
+                            <label asp-for="Diagnosis" class="form-label fw-bold text-secondary"><i class="bi bi-tag-fill me-1 text-primary"></i>Diagnosis <span class="text-danger">*</span></label>
+                            <input asp-for="Diagnosis" class="form-control form-control-lg rounded-3" placeholder="Enter primary diagnosis or clinical code..." required />
+                            <span asp-validation-for="Diagnosis" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Treatment Details -->
+                        <div class="mb-4">
+                            <label asp-for="TreatmentDetails" class="form-label fw-bold text-secondary"><i class="bi bi-activity me-1 text-success"></i>Treatment Details / History</label>
+                            <textarea asp-for="TreatmentDetails" class="form-control rounded-3" rows="4" placeholder="Describe the treatment plan, procedure details, or medical history..."></textarea>
+                            <span asp-validation-for="TreatmentDetails" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Test Reports -->
+                        <div class="mb-4">
+                            <label asp-for="TestReports" class="form-label fw-bold text-secondary"><i class="bi bi-file-earmark-ruled-fill me-1 text-info"></i>Test Reports / Diagnostic Lab Results</label>
+                            <textarea asp-for="TestReports" class="form-control rounded-3" rows="4" placeholder="Enter findings from diagnostic tests, scans, or lab recommendations..."></textarea>
+                            <span asp-validation-for="TestReports" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Doctor Notes -->
+                        <div class="mb-4">
+                            <label asp-for="Notes" class="form-label fw-bold text-secondary"><i class="bi bi-sticky-fill me-1 text-warning"></i>Doctor's Notes (Clinical observations)</label>
+                            <textarea asp-for="Notes" class="form-control rounded-3" rows="3" placeholder="Enter private clinical observations, checkup details, or follow-up notes..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex gap-3 justify-content-end mt-5 pt-3 border-top">
+                            <a href="/EMR/PatientTimeline?patientId=@patient.Id" class="btn btn-outline-secondary btn-lg rounded-pill px-4">Cancel</a>
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
+                                <i class="bi bi-check-circle-fill me-2"></i>Save EMR Entry
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

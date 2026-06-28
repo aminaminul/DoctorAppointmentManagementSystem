@@ -194,6 +194,13 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(mr => mr.DoctorId)
             .OnDelete(DeleteBehavior.NoAction);
 
+        // MedicalRecord → Appointment
+        modelBuilder.Entity<MedicalRecord>()
+            .HasOne(mr => mr.Appointment)
+            .WithMany()
+            .HasForeignKey(mr => mr.AppointmentId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         // Payment → Appointment
         modelBuilder.Entity<Payment>()
             .HasOne(p => p.Appointment)

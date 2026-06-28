@@ -14,9 +14,14 @@ namespace DoctorAppointmentManagementSystem.Models
         
         public string? TreatmentDetails { get; set; }
         
+        public string? TestReports { get; set; }
+        
         public string? Notes { get; set; }
         
         public DateTime RecordDate { get; set; } = DateTime.Now;
+
+        public int? AppointmentId { get; set; }
+        public Appointment? Appointment { get; set; }
 
         public Patient Patient { get; set; }
         public Doctor Doctor { get; set; }

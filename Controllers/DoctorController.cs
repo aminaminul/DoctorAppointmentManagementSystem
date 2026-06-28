@@ -164,7 +164,19 @@ namespace DoctorAppointmentManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPrescription(Prescription model)
         {
+            var appointment = _context.Appointments.FirstOrDefault(a => a.Id == model.AppointmentId);
+            if (appointment != null)
+            {
+                model.DoctorId = appointment.DoctorId;
+                model.PatientId = appointment.PatientId;
+            }
+            model.Status = "Active";
             model.PrescriptionDateTime = DateTime.Now;
+            if (string.IsNullOrEmpty(model.Diagnosis))
+            {
+                model.Diagnosis = "General Consultation";
+            }
+
             _context.Prescriptions.Add(model);
             _context.SaveChanges();
 

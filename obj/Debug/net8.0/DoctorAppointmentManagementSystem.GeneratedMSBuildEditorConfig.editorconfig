@@ -95,6 +95,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG9jdG9yXFNjaGVkdWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/EMR/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRU1SXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/EMR/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRU1SXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/EMR/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRU1SXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/EMR/PatientTimeline.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRU1SXFBhdGllbnRUaW1lbGluZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Importent/Projects/DoctorAppointmentManagementSystem/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

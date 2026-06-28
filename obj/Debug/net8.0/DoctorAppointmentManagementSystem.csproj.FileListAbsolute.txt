@@ -312,3 +312,4 @@ D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorA
 D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.genruntimeconfig.cache
 D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\ref\DoctorAppointmentManagementSystem.dll
 D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\DoctorAppointmentManagementSystem.sourcelink.json
+D:\Importent\Projects\DoctorAppointmentManagementSystem\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

@@ -1,0 +1,96 @@
+@model List<DoctorAppointmentManagementSystem.Models.Patient>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Patient EMR Search";
+    int? roleId = ViewBag.RoleId as int?;
+}
+
+<div class="container py-4">
+
+    <div class="dash-header mb-4">
+        <h1 class="fw-bold text-dark"><i class="bi bi-folder-fill text-primary me-2"></i>Patient Electronic Medical Records (EMR)</h1>
+        <p class="text-muted">Search and manage electronic health profiles, diagnostic files, and case histories.</p>
+    </div>
+
+    <!-- Search Form Card -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4 bg-light rounded-4">
+            <form method="get" action="/EMR/Index" class="row g-3 align-items-center">
+                <div class="col-md-9">
+                    <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="searchQuery" value="@ViewBag.SearchQuery" class="form-control border-0 px-2" placeholder="Search patient by Name, Email, or Phone Number..." style="box-shadow:none;" />
+                    </div>
+                </div>
+                <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-3 shadow-sm"><i class="bi bi-search me-2"></i>Search Patient</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Patients List Table Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header text-white p-3 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-people-fill me-2 text-warning"></i>Patient Registry</h5>
+            <span class="badge bg-white text-primary rounded-pill px-3">@Model.Count Patient(s)</span>
+        </div>
+
+        <div class="card-body p-0">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr class="table-light">
+                                <th class="ps-4">Full Name</th>
+                                <th>Email Address</th>
+                                <th>Gender</th>
+                                <th>Age</th>
+                                <th>Phone Number</th>
+                                <th>Emergency Contact</th>
+                                <th class="pe-4 text-end">Clinical Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var patient in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark">@patient.User.FullName</div>
+                                    </td>
+                                    <td>@patient.User.Email</td>
+                                    <td>@patient.Gender</td>
+                                    <td>@patient.Age years</td>
+                                    <td>@patient.User.PhoneNumber</td>
+                                    <td><span class="text-danger">@patient.EmergencyContact</span></td>
+                                    <td class="pe-4 text-end">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <a href="/EMR/PatientTimeline?patientId=@patient.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                                                <i class="bi bi-clock-history me-1"></i>EMR Timeline
+                                            </a>
+                                            @if (roleId == 2)
+                                            {
+                                                <a href="/EMR/Create?patientId=@patient.Id" class="btn btn-sm btn-success text-white rounded-pill px-3 fw-semibold">
+                                                    <i class="bi bi-plus-circle me-1"></i>Add Entry
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-person-x fs-1 d-block mb-3 text-secondary"></i>
+                    <p class="mb-0 fw-semibold">No patients found matching the search criteria.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>

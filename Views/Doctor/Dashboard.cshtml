@@ -224,6 +224,10 @@
                 </span>
             }
         </a>
+        <a href="/EMR/Index"
+           class="dash-nav-link">
+            <span class="nav-icon"><i class="bi bi-folder-fill"></i></span>Patient EMR Records
+        </a>
 
         <span class="nav-section-label">Schedule</span>
         <a href="/Doctor/Schedule"
@@ -374,6 +378,9 @@
                                 </span>
                             </td>
                             <td style="white-space:nowrap;">
+                                <a href="/EMR/PatientTimeline?patientId=@a.PatientId" class="btn-action" style="background:#e0f2fe;color:#0369a1;" title="View EMR Timeline">
+                                    <i class="bi bi-folder-fill"></i> EMR
+                                </a>
                                 @if (a.AppointmentStatus == "Pending")
                                 {
                                     <a href="/Doctor/Approve/@a.Id" class="btn-action btn-approve">

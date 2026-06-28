@@ -96,6 +96,21 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 }
             }
 
+            if (section == "emr")
+            {
+                ViewBag.MedicalRecords = _context.MedicalRecords
+                    .Include(mr => mr.Doctor).ThenInclude(d => d.User)
+                    .Where(mr => mr.PatientId == patient.Id)
+                    .OrderByDescending(mr => mr.RecordDate)
+                    .ToList();
+
+                ViewBag.Prescriptions = _context.Prescriptions
+                    .Include(p => p.Doctor).ThenInclude(d => d.User)
+                    .Where(p => p.PatientId == patient.Id)
+                    .OrderByDescending(p => p.PrescriptionDateTime)
+                    .ToList();
+            }
+
             return View(appointments);
         }
 
