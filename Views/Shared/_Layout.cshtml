@@ -33,9 +33,24 @@
                             <a class="nav-link px-3" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
-                    <div class="d-flex gap-3">
-                        <a href="/Account/Login" class="btn btn-modern-outline">Log in</a>
-                        <a href="/Account/Register" class="btn btn-modern">Sign up</a>
+                    <div class="d-flex gap-3 align-items-center">
+                        @if (Context.Session.GetInt32("UserId") != null)
+                        {
+                            var userName = Context.Session.GetString("UserName") ?? "User";
+                            var userRole = Context.Session.GetString("UserRole") ?? "Patient";
+                            var dashboardUrl = userRole == "Doctor" ? "/Doctor/Dashboard" : (userRole == "Admin" ? "/Admin/Dashboard" : "/Patient/Dashboard");
+
+                            <span class="navbar-text me-2" style="font-weight: 600; color: #4b5563;">
+                                <i class="bi bi-person-circle text-primary me-1"></i> Hello, @userName (@userRole)
+                            </span>
+                            <a href="@dashboardUrl" class="btn btn-modern-outline py-2 px-3 fs-6">My Profile</a>
+                            <a href="/Account/Logout" class="btn btn-modern py-2 px-3 fs-6" style="background-color: #dc3545; color: white;">Log out</a>
+                        }
+                        else
+                        {
+                            <a href="/Account/Login" class="btn btn-modern-outline">Log in</a>
+                            <a href="/Account/Register" class="btn btn-modern">Sign up</a>
+                        }
                     </div>
                 </div>
             </div>

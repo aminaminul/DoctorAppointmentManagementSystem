@@ -124,6 +124,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             // 🔥 STEP 3: Session set
             HttpContext.Session.SetInt32("UserId", user.Id);
             HttpContext.Session.SetString("UserRole", user.Role?.RoleName ?? "Patient");
+            HttpContext.Session.SetString("UserName", user.FullName);
 
             // 🔥 STEP 4: Role-based redirect (IMPORTANT)
             if (user.RoleId == 3) // Patient

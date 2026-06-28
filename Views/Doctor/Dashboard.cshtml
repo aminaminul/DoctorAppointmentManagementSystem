@@ -13,36 +13,36 @@
 
 /* Sidebar */
 .dash-sidebar {
-    width: 260px; flex-shrink: 0;
+    width: 200px; flex-shrink: 0;
     background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
     padding: 1.75rem 0;
     display: flex; flex-direction: column;
     position: sticky; top: 0; height: 100vh; overflow-y: auto;
 }
 .sidebar-profile {
-    text-align: center; padding: 0 1.5rem 1.5rem;
+    text-align: center; padding: 0 1rem 1rem;
     border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 1rem;
 }
 .sidebar-avatar {
-    width: 72px; height: 72px; border-radius: 50%;
+    width: 60px; height: 60px; border-radius: 50%;
     background: linear-gradient(135deg,#667eea,#764ba2);
     display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; color: white; margin: 0 auto .75rem;
+    font-size: 1.6rem; color: white; margin: 0 auto .75rem;
     border: 3px solid rgba(255,255,255,.15);
 }
-.sidebar-name  { color: white; font-weight: 700; font-size: .95rem; margin-bottom: .15rem; }
-.sidebar-spec  { color: #94a3b8; font-size: .78rem; }
+.sidebar-name  { color: white; font-weight: 700; font-size: .88rem; margin-bottom: .15rem; }
+.sidebar-spec  { color: #94a3b8; font-size: .74rem; }
 
 .nav-section-label {
-    color: #475569; font-size: .7rem; font-weight: 700;
+    color: #94a3b8; font-size: .65rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: .1em;
-    padding: .5rem 1.5rem .25rem;
+    padding: .5rem 1rem .25rem;
 }
 .dash-nav-link {
-    display: flex; align-items: center; gap: .75rem;
-    padding: .65rem 1.5rem;
-    color: #94a3b8; text-decoration: none;
-    font-size: .875rem; font-weight: 500;
+    display: flex; align-items: center; gap: .5rem;
+    padding: .65rem 1rem;
+    color: #ffffff; text-decoration: none;
+    font-size: .82rem; font-weight: 500;
     border-left: 3px solid transparent;
     transition: all .2s;
 }
@@ -52,19 +52,19 @@
     border-left-color: #667eea;
 }
 .dash-nav-link .nav-icon {
-    width: 32px; height: 32px; border-radius: 8px;
+    width: 28px; height: 28px; border-radius: 6px;
     display: flex; align-items: center; justify-content: center;
-    font-size: .9rem; flex-shrink: 0;
+    font-size: .8rem; flex-shrink: 0;
     background: rgba(255,255,255,.05);
 }
 .dash-nav-link.active .nav-icon { background: rgba(102,126,234,.3); }
-.sidebar-footer { margin-top: auto; padding: 1rem 1.5rem 0; }
+.sidebar-footer { margin-top: auto; padding: 1rem 1rem 0; }
 .btn-logout {
     display: flex; align-items: center; justify-content: center; gap: .5rem;
     background: rgba(239,68,68,.1); color: #f87171;
     border: 1px solid rgba(239,68,68,.2); border-radius: 10px;
-    padding: .6rem 1rem; width: 100%;
-    font-size: .875rem; font-weight: 600; text-decoration: none;
+    padding: .6rem .8rem; width: 100%;
+    font-size: .82rem; font-weight: 600; text-decoration: none;
     transition: all .2s;
 }
 .btn-logout:hover { background: rgba(239,68,68,.2); color: #f87171; }
