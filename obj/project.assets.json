@@ -3468,11 +3468,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Importent\\Projects\\DoctorAppointmentManagementSystem\\DoctorAppointmentManagementSystem.csproj",
+      "projectUniqueName": "F:\\DoctorAppointmentManagementSystem\\DoctorAppointmentManagementSystem.csproj",
       "projectName": "DoctorAppointmentManagementSystem",
-      "projectPath": "D:\\Importent\\Projects\\DoctorAppointmentManagementSystem\\DoctorAppointmentManagementSystem.csproj",
+      "projectPath": "F:\\DoctorAppointmentManagementSystem\\DoctorAppointmentManagementSystem.csproj",
       "packagesPath": "C:\\Users\\amina\\.nuget\\packages\\",
-      "outputPath": "D:\\Importent\\Projects\\DoctorAppointmentManagementSystem\\obj\\",
+      "outputPath": "F:\\DoctorAppointmentManagementSystem\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

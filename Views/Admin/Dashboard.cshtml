@@ -6,7 +6,7 @@
     <div class="row">
 
         <!-- 🔷 SIDEBAR -->
-        <div class="col-md-2 bg-dark text-white p-3" style="min-height:90vh;">
+        <div class="col-md-3 bg-dark text-white p-3" style="min-height:90vh;">
 
             <h4>Admin Panel</h4>
 
@@ -27,26 +27,26 @@
                     </a>
                 </li>
 
-                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white @(ViewBag.Section == "doctors" ? "active" : "")" href="/Admin/Dashboard?section=doctors">
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/Admin/Dashboard?section=doctors">
                         🩺 Manage Doctors
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white @(ViewBag.Section == "patients" ? "active" : "")" href="/Admin/Dashboard?section=patients">
+                    <a class="nav-link text-white" href="/Admin/Dashboard?section=patients">
                         🧍 Manage Patients
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white @(ViewBag.Section == "appointments" ? "active" : "")" href="/Admin/Dashboard?section=appointments">
+                    <a class="nav-link text-white" href="/Admin/Dashboard?section=appointments">
                         📅 Appointments
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white @(ViewBag.Section == "queue" ? "active" : "")" href="/Admin/Dashboard?section=queue">
+                    <a class="nav-link text-white" href="/Admin/Dashboard?section=queue">
                         🚶 Queue Control
                     </a>
                 </li>
@@ -62,7 +62,7 @@
         </div>
 
         <!-- 🔷 RIGHT CONTENT -->
-        <div class="col-md-10">
+        <div class="col-md-9">
 
             @if (ViewBag.Section == null)
             {

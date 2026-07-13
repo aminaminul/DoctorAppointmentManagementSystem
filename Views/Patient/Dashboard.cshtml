@@ -8,52 +8,56 @@
     <div class="row">
 
         <!-- 🔷 SIDEBAR -->
-        <div class="col-md-2">
+        <div class="col-md-3">
 
-            <div class="bg-dark text-white p-3 rounded shadow"
+            <div class="bg-dark text-white p-4 rounded shadow"
                  style="min-height:90vh;">
 
-                <h4 class="fw-bold mb-4 text-center">
+                <h2 class="fw-bold mb-5">
                     Patient Panel
-                </h4>
+                </h2>
 
                 <ul class="nav flex-column">
 
                     <!-- My Appointment -->
-                    <li class="nav-item mb-3">
-                        <a class="nav-link text-white fs-6 px-2 @(ViewBag.Section == "appointments" ? "active" : "")"
+                    <li class="nav-item mb-4">
+                        <a class="nav-link text-white fs-5"
                            href="/Patient/Dashboard?section=appointments">
+
                             📅 My Appointments
                         </a>
                     </li>
 
                     <!-- Book Appointment -->
-                    <li class="nav-item mb-3">
-                        <a class="nav-link text-white fs-6 px-2"
+                    <li class="nav-item mb-4">
+                        <a class="nav-link text-white fs-5"
                            href="/Appointment/Book">
+
                             ➕ Book Appointment
                         </a>
                     </li>
 
                     <!-- View Profile -->
-                    <li class="nav-item mb-3">
-                        <a class="nav-link text-white fs-6 px-2 @(ViewBag.Section == "profile" ? "active" : "")"
+                    <li class="nav-item mb-4">
+                        <a class="nav-link text-white fs-5"
                            href="/Patient/Dashboard?section=profile">
+
                             👤 View Profile
                         </a>
                     </li>
 
                     <!-- Live Queue Tracker -->
-                    <li class="nav-item mb-3">
-                        <a class="nav-link text-white fs-6 px-2 @(ViewBag.Section == "queue" ? "active" : "")"
+                    <li class="nav-item mb-4">
+                        <a class="nav-link text-white fs-5"
                            href="/Patient/Dashboard?section=queue">
+
                             🚶 Live Queue Tracker
                         </a>
                     </li>
 
                     <!-- Notifications -->
-                    <li class="nav-item mb-3">
-                        <a class="nav-link text-white fs-6 px-2 d-flex align-items-center justify-content-between @(ViewBag.Section == "notifications" ? "active" : "")"
+                    <li class="nav-item mb-4">
+                        <a class="nav-link text-white fs-5 d-flex align-items-center justify-content-between"
                            href="/Patient/Dashboard?section=notifications">
                             <span>🔔 Notifications</span>
                             @if (ViewBag.UnreadNotificationCount != null && ViewBag.UnreadNotificationCount > 0)
@@ -66,17 +70,19 @@
                     </li>
 
                     <!-- Medical History / EMR -->
-                    <li class="nav-item mb-4">
-                        <a class="nav-link text-white fs-6 px-2 @(ViewBag.Section == "emr" ? "active" : "")"
+                    <li class="nav-item mb-5">
+                        <a class="nav-link text-white fs-5"
                            href="/Patient/Dashboard?section=emr">
-                            📂 My EMR
+
+                            📂 My EMR (Medical History)
                         </a>
                     </li>
 
                     <!-- Logout -->
                     <li class="nav-item mt-4">
                         <a href="/Account/Logout"
-                           class="btn btn-danger w-100 fs-6 p-2">
+                           class="btn btn-danger w-100 fs-5 p-2">
+
                             Logout
                         </a>
                     </li>
@@ -88,7 +94,7 @@
         </div>
 
         <!-- 🔷 RIGHT CONTENT -->
-        <div class="col-md-10">
+        <div class="col-md-9">
 
             @if (ViewBag.Section == null)
             {
