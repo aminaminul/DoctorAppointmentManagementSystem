@@ -2,333 +2,235 @@
     Layout = "_Layout";
 }
 
-<div class="container-fluid mt-3">
+<div class="container-fluid mt-4">
     <div class="row">
-
-        <!-- 🔷 SIDEBAR -->
-        <div class="col-md-3 bg-dark text-white p-3" style="min-height:90vh;">
-
-            <h4>Admin Panel</h4>
-
-            <!-- 🔷 ADD SECTION -->
-            
-
-            <ul class="nav flex-column mt-3">
-
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/Admin/AddPatient">
-                        ➕ Add Patient
-                    </a>
-                </li>
-
-                <li class="nav-item mb-3">
-                    <a class="nav-link text-white" href="/Admin/AddDoctor">
-                        ➕ Add Doctor
-                    </a>
-                </li>
-
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/Admin/Dashboard?section=doctors">
-                        🩺 Manage Doctors
-                    </a>
-                </li>
-
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/Admin/Dashboard?section=patients">
-                        🧍 Manage Patients
-                    </a>
-                </li>
-
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/Admin/Dashboard?section=appointments">
-                        📅 Appointments
-                    </a>
-                </li>
-
-                <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="/Admin/Dashboard?section=queue">
-                        🚶 Queue Control
-                    </a>
-                </li>
-
-                <!-- 🔷 LOGOUT -->
-                <li class="nav-item mt-3">
-                    <a href="/Account/Logout" class="btn btn-danger w-100">
-                        Logout
-                    </a>
-                </li>
-
-            </ul>
-        </div>
-
-        <!-- 🔷 RIGHT CONTENT -->
-        <div class="col-md-9">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="fw-bold">Admin Dashboard</h2>
+                <div>
+                    <a href="/Admin/AddDoctor" class="btn btn-outline-dark me-2">Add Doctor</a>
+                    <a href="/Admin/AddPatient" class="btn btn-outline-dark">Add Patient</a>
+                </div>
+            </div>
 
             @if (ViewBag.Section == null)
             {
-                <div class="alert alert-info mt-4">
-                    👉 Please select an option from sidebar
-                </div>
+                <div class="alert alert-info">Please select a section: Doctors, Patients, Appointments, or Queue.</div>
             }
 
-            <!-- 🔷 USERS -->
-            @if (ViewBag.Section == "users")
-            {
-                <h3>All Users</h3>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                    </tr>
-
-                    @foreach (var user in ViewBag.Users)
-                    {
-                        <tr>
-                            <td>@user.Name</td>
-                            <td>@user.Email</td>
-                            <td>@user.Role</td>
-                        </tr>
-                    }
-                </table>
-            }
-
-            <!-- 🔷 DOCTORS -->
             @if (ViewBag.Section == "doctors")
             {
-                <h3>Manage Doctors</h3>
-
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Name</th>
-                        <th>Specialization</th>
-                        <th>Availability</th>
-                        <th>Action</th>
-                    </tr>
-
-                    @foreach (var doc in ViewBag.Doctors)
-                    {
-                        <tr>
-                            <td>@doc.User?.Name</td>
-                            <td>@doc.Specialization</td>
-                            <td>@doc.Availability</td>
-                            <td>
-                                <a href="/Admin/EditDoctor/@doc.Id" class="btn btn-warning btn-sm">Edit</a>
-                                <a href="/Admin/DeleteDoctor/@doc.Id" class="btn btn-danger btn-sm">Delete</a>
-                            </td>
-                        </tr>
-                    }
-                </table>
-            }
-
-            
-            @if (ViewBag.Section == "patients")
-            {
-                <h3>Manage Patients</h3>
-
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Gender</th>
-                        <th>Action</th>
-                    </tr>
-
-                    @foreach (var p in ViewBag.Patients)
-                    {
-                        <tr>
-                            <td>@p.User.Name</td>
-                            <td>@p.Age</td>
-                            <td>@p.Gender</td>
-                            <td>
-                                <a href="/Admin/PatientDetails/@p.Id" class="btn btn-primary btn-sm">Details</a>
-                                <a href="/Admin/DeletePatient/@p.Id" class="btn btn-danger btn-sm">Delete</a>
-                            </td>
-                        </tr>
-                    }
-                </table>
-            }
-
-            <!-- 🔷 APPOINTMENTS -->
-            @if (ViewBag.Section == "appointments")
-            {
-                <h3>Appointments</h3>
-                <table class="table table-striped">
-                    <tr>
-                        <th>Patient</th>
-                        <th>Doctor</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-
-                    @foreach (var app in ViewBag.Appointments)
-                    {
-                        <tr>
-                            <td>@app.Patient.User.Name</td>
-                            <td>@app.Doctor.User.Name</td>
-                            <td>@app.Date.ToShortDateString()</td>
-                            <td>@app.Status</td>
-                        </tr>
-                    }
-                </table>
-            }
-
-            <!-- 🔷 QUEUE CONTROL -->
-            @if (ViewBag.Section == "queue")
-            {
-                <h3>Queue Control Center</h3>
-                <p class="text-muted">Monitor patient queues, bump emergency status, and oversee active consultations.</p>
-                
-                <!-- Doctor Filter Dropdown -->
-                <div class="card shadow-sm border-0 mb-4 bg-light">
-                    <div class="card-body p-3">
-                        <form method="get" action="/Admin/Dashboard">
-                            <input type="hidden" name="section" value="queue" />
-                            <div class="row g-2 align-items-center">
-                                <div class="col-auto">
-                                    <label class="col-form-label fw-bold text-secondary">Select Doctor:</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <select name="doctorId" class="form-select" onchange="this.form.submit()">
-                                        @foreach (var doc in ViewBag.Doctors)
-                                        {
-                                            <option value="@doc.Id" selected="@(doc.Id == ViewBag.SelectedDoctorId ? "selected" : null)">
-                                                Dr. @doc.User.FullName (@doc.Specialization)
-                                            </option>
-                                        }
-                                    </select>
-                                </div>
-                                <div class="col-auto">
-                                    <button type="submit" class="btn btn-dark">Load Queue</button>
-                                </div>
-                                <div class="col-auto ms-auto">
-                                    <span class="text-secondary small fw-bold">Doctor Status:</span>
-                                    @if (ViewBag.DoctorStatus == "Serving Patients")
-                                    {
-                                        <span class="badge bg-success"><i class="bi bi-activity me-1"></i> Serving Patients</span>
-                                    }
-                                    else if (ViewBag.DoctorStatus == "On Break")
-                                    {
-                                        <span class="badge bg-warning text-dark"><i class="bi bi-cup-hot me-1"></i> Lunch Break</span>
-                                    }
-                                    else if (ViewBag.DoctorStatus == "On Vacation")
-                                    {
-                                        <span class="badge bg-danger"><i class="bi bi-airplane me-1"></i> Vacation</span>
-                                    }
-                                    else if (ViewBag.DoctorStatus == "Available")
-                                    {
-                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Active</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary"><i class="bi bi-moon me-1"></i> Offline</span>
-                                    }
-                                </div>
-                            </div>
-                        </form>
+                <div class="card shadow-sm rounded-3">
+                    <div class="card-header" style="background-color:#4DA8DA;color:#fff;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Manage Doctors</h5>
+                            <a href="/Admin/AddDoctor" class="btn btn-sm btn-light">New Doctor</a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Specialization</th>
+                                        <th>Availability</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var doc in ViewBag.Doctors)
+                                {
+                                    <tr>
+                                        <td>@doc.User?.FullName</td>
+                                        <td>@doc.Specialization</td>
+                                        <td>@doc.Availability</td>
+                                        <td class="text-end">
+                                            <a href="/Admin/EditDoctor/@doc.Id" class="btn btn-outline-secondary btn-sm me-1">Edit</a>
+                                            <a href="/Admin/DeleteDoctor/@doc.Id" class="btn btn-outline-danger btn-sm">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Queue List Table -->
-                @if (ViewBag.QueueEntries != null)
-                {
-                    var queue = ViewBag.QueueEntries as List<QueueEntry>;
-                    
-                    <div class="card shadow-sm border-0">
-                        <div class="card-header bg-dark text-white p-3">
-                            <h5 class="mb-0 fw-bold">Live Queue List</h5>
-                        </div>
-                        <div class="card-body p-0">
-                            @if (queue.Any())
-                            {
-                                <div class="table-responsive">
-                                    <table class="table table-hover align-middle mb-0">
-                                        <thead>
-                                            <tr class="table-light">
-                                                <th class="ps-3">Seq</th>
-                                                <th>Token</th>
-                                                <th>Patient Name</th>
-                                                <th>Scheduled Time</th>
-                                                <th>Priority</th>
-                                                <th>Status</th>
-                                                <th class="pe-3 text-end">Override</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var item in queue)
-                                            {
-                                                <tr class="@(item.Status == "InConsultation" ? "table-info" : (item.Status == "Calling" ? "table-success" : ""))">
-                                                    <td class="ps-3 fw-bold">@item.SequenceNumber</td>
-                                                    <td><span class="badge bg-primary">#@item.TokenNumber</span></td>
-                                                    <td>
-                                                        <div class="fw-bold">@item.Appointment.Patient.User.FullName</div>
-                                                        <div class="text-muted small">@item.Appointment.Patient.Gender, @item.Appointment.Patient.Age yrs</div>
-                                                    </td>
-                                                    <td>@item.Appointment.AppointmentTime</td>
-                                                    <td>
-                                                        @if (item.Appointment.IsEmergency)
-                                                        {
-                                                            <span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i> EMERGENCY</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="badge bg-secondary">Normal</span>
-                                                        }
-                                                    </td>
-                                                    <td>
-                                                        @if (item.Status == "Waiting")
-                                                        {
-                                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">Waiting</span>
-                                                        }
-                                                        else if (item.Status == "Calling")
-                                                        {
-                                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 animate-pulse">Calling</span>
-                                                        }
-                                                        else if (item.Status == "InConsultation")
-                                                        {
-                                                            <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">In Consultation</span>
-                                                        }
-                                                        else if (item.Status == "Completed")
-                                                        {
-                                                            <span class="badge bg-success">Completed</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="badge bg-secondary text-muted">Skipped</span>
-                                                        }
-                                                    </td>
-                                                    <td class="pe-3 text-end">
-                                                        @if (!item.Appointment.IsEmergency && item.Status == "Waiting")
-                                                        {
-                                                            <form method="post" action="/Queue/BumpEmergency" style="display:inline;">
-                                                                <input type="hidden" name="Id" value="@item.Id" />
-                                                                <input type="hidden" name="redirectSection" value="admin" />
-                                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill"><i class="bi bi-exclamation-triangle-fill"></i> Bump to Emergency</button>
-                                                            </form>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="text-muted small">—</span>
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="p-5 text-center text-muted">
-                                    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                                    <p class="mb-0 fw-semibold">No appointments scheduled for today.</p>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
             }
 
+            @if (ViewBag.Section == "patients")
+            {
+                <div class="card shadow-sm rounded-3">
+                    <div class="card-header" style="background-color:#4DA8DA;color:#fff;">
+                        <h5 class="mb-0">Manage Patients</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var p in ViewBag.Patients)
+                                {
+                                    <tr>
+                                        <td>@p.User.FullName</td>
+                                        <td>@p.Age</td>
+                                        <td>@p.Gender</td>
+                                        <td class="text-end">
+                                            <a href="/Admin/PatientDetails/@p.Id" class="btn btn-outline-primary btn-sm me-1">Details</a>
+                                            <a href="/Admin/DeletePatient/@p.Id" class="btn btn-outline-danger btn-sm">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.Section == "appointments")
+            {
+                <div class="card shadow-sm rounded-3">
+                    <div class="card-header" style="background-color:#4DA8DA;color:#fff;">
+                        <h5 class="mb-0">Appointments</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var app in ViewBag.Appointments)
+                                {
+                                    <tr>
+                                        <td>@app.Patient.User.FullName</td>
+                                        <td>@app.Doctor.User.FullName</td>
+                                        <td>@app.AppointmentDate.ToString("MMM dd, yyyy")</td>
+                                        <td>
+                                            <span class="badge rounded-pill" style="background:#e9f7fb;color:#0369a1;">@app.AppointmentStatus</span>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.Section == "queue")
+            {
+                <div class="card shadow-sm rounded-3">
+                    <div class="card-header" style="background-color:#4DA8DA;color:#fff;">
+                        <h5 class="mb-0">Queue Control</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="get" action="/Admin/Dashboard" class="row g-2 align-items-center">
+                            <input type="hidden" name="section" value="queue" />
+                            <div class="col-auto">
+                                <label class="col-form-label fw-bold text-secondary">Select Doctor:</label>
+                            </div>
+                            <div class="col-md-4">
+                                <select name="doctorId" class="form-select" onchange="this.form.submit()">
+                                    @foreach (var doc in ViewBag.Doctors)
+                                    {
+                                        <option value="@doc.Id" selected="@(doc.Id == ViewBag.SelectedDoctorId ? "selected" : null)">Dr. @doc.User.FullName (@doc.Specialization)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-dark">Load Queue</button>
+                            </div>
+                            <div class="col-auto ms-auto">
+                                <span class="text-secondary small fw-bold">Doctor Status:</span>
+                                @if (ViewBag.DoctorStatus == "Serving Patients")
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-activity me-1"></i> Serving Patients</span>
+                                }
+                                else if (ViewBag.DoctorStatus == "On Break")
+                                {
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-cup-hot me-1"></i> Lunch Break</span>
+                                }
+                                else if (ViewBag.DoctorStatus == "On Vacation")
+                                {
+                                    <span class="badge bg-danger"><i class="bi bi-airplane me-1"></i> Vacation</span>
+                                }
+                                else if (ViewBag.DoctorStatus == "Available")
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary"><i class="bi bi-moon me-1"></i> Offline</span>
+                                }
+                            </div>
+                        </form>
+
+                        @if (ViewBag.QueueEntries != null)
+                        {
+                            var queue = ViewBag.QueueEntries as List<QueueEntry>;
+                            <div class="table-responsive mt-3">
+                                <table class="table align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Seq</th>
+                                            <th>Token</th>
+                                            <th>Patient Name</th>
+                                            <th>Scheduled Time</th>
+                                            <th>Priority</th>
+                                            <th class="text-end">Override</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var item in queue)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold">@item.SequenceNumber</td>
+                                            <td><span class="badge bg-primary rounded-pill">#@item.TokenNumber</span></td>
+                                            <td>@item.Appointment.Patient.User.Username</td>
+                                            <td>@item.Appointment.AppointmentTime</td>
+                                            <td>
+                                                @if (item.Appointment.IsEmergency)
+                                                {
+                                                    <span class="badge bg-danger">EMERGENCY</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Normal</span>
+                                                }
+                                            </td>
+                                            <td class="text-end">
+                                                @if (!item.Appointment.IsEmergency && item.Status == "Waiting")
+                                                {
+                                                    <form method="post" action="/Queue/BumpEmergency" style="display:inline;">
+                                                        <input type="hidden" name="Id" value="@item.Id" />
+                                                        <input type="hidden" name="redirectSection" value="admin" />
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">Bump to Emergency</button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>

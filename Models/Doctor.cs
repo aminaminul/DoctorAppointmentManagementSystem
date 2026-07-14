@@ -29,8 +29,6 @@ namespace DoctorAppointmentManagementSystem.Models
         
         public string? AvailableTime { get; set; }
         
-        public string? ProfileImage { get; set; }
-        
         public bool ActiveStatus { get; set; } = true;
 
         public User User { get; set; }

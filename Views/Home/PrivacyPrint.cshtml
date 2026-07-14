@@ -1,0 +1,82 @@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Privacy Policy (Print)";
+}
+
+@{ ViewData["HideSidebar"] = true; ViewData["NavbarTheme"] = "white"; }
+
+<style>
+    /* Print-optimized styles: minimal header/footer, black text, remove shadows */
+    @@media print {
+        body { background: #fff; color: #000; }
+        .card { box-shadow: none !important; border: none !important; }
+        .no-print { display: none !important; }
+        a { color: #000; text-decoration: underline; }
+    }
+    @@media screen {
+        .print-toolbar { margin-bottom: 1rem; }
+    }
+</style>
+
+<div class="container py-4">
+    <div class="print-toolbar no-print d-flex justify-content-end">
+        <a class="btn btn-outline-secondary me-2" href="/Home/Privacy">Back</a>
+        <button class="btn btn-primary" id="printBtn">Print / Save as PDF</button>
+    </div>
+
+    <div class="card rounded-0">
+        <div class="card-body p-0">
+            <div class="p-4">
+                <h1 class="h4 fw-bold mb-2 text-dark">Privacy Policy</h1>
+                <p class="text-muted mb-3">Your privacy matters. This page explains what information we collect and how we use it.</p>
+
+                <div class="policy-content text-dark">
+                    @if (!string.IsNullOrEmpty(ViewBag.PrivacyContent))
+                    {
+                        @Html.Raw(ViewBag.PrivacyContent)
+                    }
+                    else
+                    {
+                        <section class="mb-4">
+                            <h2 class="h6 fw-semibold text-dark">1. Information We Collect</h2>
+                            <p class="text-dark">We collect information you provide directly when you create an account, book appointments, or communicate with our support. This includes name, email, phone number, and profile details. We also collect appointment details and medical data you choose to share.</p>
+                        </section>
+                        <section class="mb-4">
+                            <h2 class="h6 fw-semibold text-dark">2. How We Use Information</h2>
+                            <p class="text-dark">Collected data is used to provide, maintain, and improve our services, to process bookings, send notifications, and for support. We never sell your personal information to third parties.</p>
+                        </section>
+                        <section class="mb-4">
+                            <h2 class="h6 fw-semibold text-dark">3. Data Security</h2>
+                            <p class="text-dark">We take reasonable measures to protect your data. Access to personal information is restricted to authorized personnel only. However, no system is completely secure; please contact us if you suspect any issue.</p>
+                        </section>
+                        <section class="mb-4">
+                            <h2 class="h6 fw-semibold text-dark">4. Cookies & Tracking</h2>
+                            <p class="text-dark">We use cookies to improve site experience and analytics. You can control cookie preferences via your browser settings.</p>
+                        </section>
+                        <section class="mb-4">
+                            <h2 class="h6 fw-semibold text-dark">5. Third-Party Links</h2>
+                            <p class="text-dark">Our site may include links to third-party services. We are not responsible for the privacy practices of external sites. Please review their privacy policies before sharing information.</p>
+                        </section>
+                        <section class="mb-0">
+                            <h2 class="h6 fw-semibold text-dark">Contact Us</h2>
+                            <p class="text-dark mb-2">If you have questions about this privacy policy, contact our support:</p>
+                            <p class="mb-0"><strong class="text-dark">Email:</strong> <a href="mailto:support@example.com" class="text-decoration-none">support@example.com</a></p>
+                        </section>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('printBtn')?.addEventListener('click', function () {
+        // Hide the print toolbar then call print
+        window.print();
+    });
+
+    // Auto-trigger print when opened in a new tab with ?autoprint=1
+    if (new URLSearchParams(window.location.search).get('autoprint') === '1') {
+        window.onload = function () { window.print(); };
+    }
+</script>

@@ -33,12 +33,12 @@
                         <div class="row g-3 mb-4">
                             <!-- Full Name -->
                             <div class="col-md-6">
-                                <label asp-for="User.Name" class="form-label fw-semibold text-secondary small">Full Name</label>
+                                <label asp-for="User.Username" class="form-label fw-semibold text-secondary small">Full Name</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="bi bi-person text-muted"></i></span>
-                                    <input asp-for="User.Name" class="form-control" placeholder="John Doe" required />
+                                    <input asp-for="User.Username" class="form-control" placeholder="John Doe" required />
                                 </div>
-                                <span asp-validation-for="User.Name" class="text-danger small"></span>
+                                <span asp-validation-for="User.Username" class="text-danger small"></span>
                             </div>
 
                             <!-- Email -->

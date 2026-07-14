@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,16 +7,9 @@ namespace DoctorAppointmentManagementSystem.Models
     public class User
     {
         public int Id { get; set; }
-        
         [Required]
-        public string FullName { get; set; }
-
-        [NotMapped]
-        public string Name
-        {
-            get => FullName;
-            set => FullName = value;
-        }
+        // Primary username for the user; use this property throughout the app
+        public string Username { get; set; }
         
         [Required]
         [EmailAddress]

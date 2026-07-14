@@ -32,7 +32,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             // 🔷 Profile Data
             ViewBag.Patient = patient;
-            ViewBag.PatientName = patient.User.Name;
+            ViewBag.PatientName = patient.User.Username;
             ViewBag.Email = patient.User.Email;
             ViewBag.Age = patient.Age;
             ViewBag.Gender = patient.Gender;
@@ -148,7 +148,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 patient.Allergies = model.Allergies;
 
                 // 🔷 Update User Info
-                patient.User.Name = model.User.Name;
+                patient.User.Username = model.User.Username;
                 patient.User.Email = model.User.Email;
                 patient.User.PhoneNumber = model.User.PhoneNumber;
 

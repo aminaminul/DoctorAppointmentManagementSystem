@@ -2,6 +2,7 @@ using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DoctorAppointmentManagementSystem.Data;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
@@ -17,11 +18,18 @@ namespace DoctorAppointmentManagementSystem.Controllers
         // ================= REGISTER =================
         public IActionResult Register()
         {
+            // Provide roles excluding Admin for registration dropdown
+            // Use the mapped property 'Name' (RoleName is [NotMapped] and cannot be translated to SQL)
+            ViewBag.Roles = _context.Roles.Where(r => r.Name != "Admin").ToList();
             return View();
         }
         [HttpPost]
         public IActionResult Register(RegisterViewModel model)
         {
+            // Ensure roles are available when re-displaying the view after validation errors
+            // Use the mapped property 'Name' for server-side filtering
+            ViewBag.Roles = _context.Roles.Where(r => r.Name != "Admin").ToList();
+
             // 🔥 STEP 1: Model validation
             if (!ModelState.IsValid)
             {
@@ -44,45 +52,77 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return View(model);
             }
 
-            // 🔥 STEP 4: Save User
-            int roleId = model.Role switch
+            // 🔥 STEP 3.5: Determine intended role and perform role-specific validation
+            // Determine intended role id (use numeric RoleId if provided, otherwise infer from RoleName, default to Patient = 3)
+            int selRoleId = model.RoleId > 0 ? model.RoleId : 3;
+            if (!string.IsNullOrEmpty(model.RoleName))
             {
-                "Admin" => 1,
-                "Doctor" => 2,
-                "Patient" => 3,
-                _ => 3
-            };
+                selRoleId = model.RoleName switch
+                {
+                    "Admin" => 1,
+                    "Doctor" => 2,
+                    "Patient" => 3,
+                    _ => selRoleId
+                };
+            }
+
+            if (selRoleId == 2)
+            {
+                // Doctor must provide specialization
+                if (string.IsNullOrWhiteSpace(model.Specialization))
+                {
+                    ModelState.AddModelError("Specialization", "Specialization is required for doctors.");
+                    return View(model);
+                }
+            }
+            else if (selRoleId == 3)
+            {
+                // Patient must provide age or date of birth
+                if (!model.Age.HasValue && !model.DateOfBirth.HasValue)
+                {
+                    ModelState.AddModelError("Age", "Please provide Age or Date of Birth for patients.");
+                    return View(model);
+                }
+            }
+
+            // 🔥 STEP 4: Save User
+        // Determine final role id (validated above in selRoleId)
+        int roleId = selRoleId;
 
             User user = new User()
             {
-                Name = model.Name,
+                Username = model.Username,
                 Email = model.Email,
                 Password = model.Password,
+                PhoneNumber = model.PhoneNumber,
                 RoleId = roleId
             };
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            // 🔥 STEP 5: Role wise create
-            if (roleId == 3) // Patient
+        // 🔥 STEP 5: Role-wise create using provided fields
+        if (roleId == 3) // Patient
+        {
+            Patient patient = new Patient()
             {
-                Patient patient = new Patient()
-                {
-                    UserId = user.Id,
-                    Age = 20,
-                    Gender = model.Gender
-                };
+                UserId = user.Id,
+                Age = model.Age ?? 0,
+                Gender = model.Gender,
+                DateOfBirth = (DateTime)model.DateOfBirth
+            };
 
-                _context.Patients.Add(patient);
-            }
+            _context.Patients.Add(patient);
+        }
             else if (roleId == 2) // Doctor
             {
+                // Combine Department enum with specialization for storage, keep backward compatible string column
+                var deptPart = model.Department.HasValue ? model.Department.Value.ToString() + " - " : "";
                 Doctor doctor = new Doctor()
                 {
                     UserId = user.Id,
-                    Specialization = "General",
-                    Availability = "10AM-5PM"
+                    Specialization = deptPart + (model.Specialization ?? ""),
+                    Availability = model.Availability ?? ""
                 };
 
                 _context.Doctors.Add(doctor);
@@ -90,8 +130,21 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             _context.SaveChanges();
 
-            // 🔥 STEP 6: Redirect
-            return RedirectToAction("Login");
+            // Set session and redirect based on role
+            HttpContext.Session.SetInt32("UserId", user.Id);
+            var role = _context.Roles.Find(roleId);
+            var roleName = role?.RoleName ?? role?.Name ?? "Patient";
+            HttpContext.Session.SetString("UserRole", roleName);
+            HttpContext.Session.SetString("UserName", user.Username ?? user.Email);
+
+            if (roleId == 1) // Admin
+                return RedirectToAction("Dashboard", "Admin");
+
+            if (roleId == 2) // Doctor
+                return RedirectToAction("Dashboard", "Doctor");
+
+            // Default (Patient and others)
+            return RedirectToAction("Index", "Home");
         }
 
         // ================= LOGIN =================
@@ -124,18 +177,19 @@ namespace DoctorAppointmentManagementSystem.Controllers
             // 🔥 STEP 3: Session set
             HttpContext.Session.SetInt32("UserId", user.Id);
             HttpContext.Session.SetString("UserRole", user.Role?.RoleName ?? "Patient");
+            // Store display name for navbar
+            HttpContext.Session.SetString("UserName", user.Username ?? user.Email);
 
-            // 🔥 STEP 4: Role-based redirect (IMPORTANT)
-            if (user.RoleId == 3) // Patient
-                return RedirectToAction("Dashboard", "Patient");
+            // After successful login, preserve role-based redirects for Admin and Doctor
+            // while sending Patients to the public homepage.
+            if (user.RoleId == 1) // Admin
+                return RedirectToAction("Dashboard", "Admin");
 
             if (user.RoleId == 2) // Doctor
                 return RedirectToAction("Dashboard", "Doctor");
 
-            if (user.RoleId == 1) // Admin
-                return RedirectToAction("Dashboard", "Admin");
-
-            return View();
+            // Default (Patient and others) -> public homepage
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Logout()

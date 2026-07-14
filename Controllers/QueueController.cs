@@ -168,7 +168,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                     id = q.Id,
                     tokenNumber = q.TokenNumber,
                     sequenceNumber = q.SequenceNumber,
-                    patientName = q.Appointment.Patient.User.FullName,
+                    patientName = q.Appointment.Patient.User.Username,
                     timeSlot = q.Appointment.AppointmentTime,
                     status = q.Status,
                     isEmergency = q.Appointment.IsEmergency

@@ -1,0 +1,1 @@
+Reading likely view files for User.Username usages: Views/Shared/_Navbar.cshtml, Views/Shared/_Layout.cshtml, Views/_ViewStart.cshtml, Views/Shared/Components/Sidebar/Default.cshtml

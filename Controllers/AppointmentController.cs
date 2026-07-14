@@ -3,6 +3,7 @@ using DoctorAppointmentManagementSystem.ViewModels;
 using DoctorAppointmentManagementSystem.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DoctorAppointmentManagementSystem.Data;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
@@ -50,11 +51,10 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .Select(d => new
                 {
                     id           = d.Id,
-                    name         = d.User.FullName,
+                    name         = d.User.Username,
                     specialization = d.Specialization,
                     experience   = d.Experience,
                     fee          = d.ConsultationFee,
-                    profileImage = d.ProfileImage ?? "doctor_default.png",
                     availableDays = d.AvailableDays ?? ""
                 })
                 .ToList();
@@ -170,11 +170,10 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.DateDisplay  = date.ToString("dddd, MMMM dd, yyyy");
             ViewBag.Slots        = slots;
             ViewBag.BookedSlots  = booked;
-            ViewBag.DoctorName   = doctor.User.FullName;
+            ViewBag.DoctorName   = doctor.User.Username;
             ViewBag.Specialization = doctor.Specialization;
             ViewBag.Fee          = doctor.ConsultationFee;
             ViewBag.Experience   = doctor.Experience;
-            ViewBag.ProfileImage = doctor.ProfileImage ?? "doctor_default.png";
 
             return View();
         }
@@ -337,10 +336,9 @@ namespace DoctorAppointmentManagementSystem.Controllers
             var doctor = _context.Doctors.Include(d => d.User)
                                          .FirstOrDefault(d => d.Id == doctorId);
 
-            ViewBag.DoctorName   = doctor?.User?.FullName ?? "Doctor";
+            ViewBag.DoctorName   = doctor?.User?.Username ?? "Doctor";
             ViewBag.Specialization = doctor?.Specialization ?? "";
             ViewBag.Fee          = doctor?.ConsultationFee ?? 0;
-            ViewBag.ProfileImage = doctor?.ProfileImage ?? "doctor_default.png";
             ViewBag.Date         = TempData["BookedDate"];
             ViewBag.TimeSlot     = TempData["BookedTime"];
             ViewBag.Reason       = TempData["BookedReason"];

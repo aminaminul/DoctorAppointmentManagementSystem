@@ -1,0 +1,1 @@
+Debug steps: Will inspect Models/Role.cs and usages of RoleName. Then search for other Role classes. Then build errors. User reports same error. Proceed with reading Role.cs and searching for RoleName usages.

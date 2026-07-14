@@ -32,7 +32,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                query = query.Where(p => p.User.FullName.Contains(searchQuery) 
+                query = query.Where(p => p.User.Username.Contains(searchQuery) 
                                       || p.User.Email.Contains(searchQuery)
                                       || p.User.PhoneNumber.Contains(searchQuery));
             }

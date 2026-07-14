@@ -144,7 +144,7 @@
                                         {
                                             <tr>
                                                 <td class="ps-3">
-                                                    <div class="fw-bold">Dr. @item.Doctor.User.FullName</div>
+                                                    <div class="fw-bold">Dr. @item.Doctor.User.Username</div>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2">
@@ -218,7 +218,7 @@
                                             <i class="bi bi-person-fill fs-1"></i>
                                         </div>
                                         <div>
-                                            <h3 class="fw-bold mb-0">@(patient?.User?.FullName ?? ViewBag.PatientName)</h3>
+                                            <h3 class="fw-bold mb-0">@(patient?.User?.Username ?? ViewBag.PatientName)</h3>
                                             <p class="text-white text-opacity-75 mb-0"><i class="bi bi-envelope-fill me-2"></i>@(patient?.User?.Email ?? ViewBag.Email)</p>
                                         </div>
                                     </div>
@@ -355,7 +355,7 @@
                                 <div class="card-body p-4 text-white d-flex align-items-center justify-content-between flex-wrap gap-3">
                                     <div>
                                         <h4 class="fw-bold mb-1"><i class="bi bi-broadcast me-2"></i>Live Queue is Active</h4>
-                                        <p class="mb-0 text-white text-opacity-80">Tracking your appointment with Dr. @entry.Appointment.Doctor.User.FullName today</p>
+                                        <p class="mb-0 text-white text-opacity-80">Tracking your appointment with Dr. @entry.Appointment.Doctor.User.Username today</p>
                                     </div>
                                     @if (entry.Appointment.IsEmergency)
                                     {
@@ -473,7 +473,7 @@
                                         <i class="bi bi-person-fill fs-3"></i>
                                     </div>
                                     <div>
-                                        <h6 class="fw-bold mb-0">Dr. @entry.Appointment.Doctor.User.FullName</h6>
+                                        <h6 class="fw-bold mb-0">Dr. @entry.Appointment.Doctor.User.Username</h6>
                                         <span class="text-muted small">@entry.Appointment.Doctor.Specialization</span>
                                     </div>
                                 </div>
@@ -659,7 +659,7 @@
                                                     <span class="text-muted small">@pr.PrescriptionDateTime.ToString("dd MMM yyyy, hh:mm tt")</span>
                                                 </div>
                                                 <h6 class="fw-bold text-primary mb-1">Diagnosis: @pr.Diagnosis</h6>
-                                                <p class="text-muted small mb-3">By Dr. @pr.Doctor.User.FullName</p>
+                                                <p class="text-muted small mb-3">By Dr. @pr.Doctor.User.Username</p>
                                                 
                                                 <div class="mb-2 bg-light p-2.5 rounded border small">
                                                     <strong>Medicines:</strong>
@@ -685,7 +685,7 @@
                                                     <span class="text-muted small">@mr.RecordDate.ToString("dd MMM yyyy, hh:mm tt")</span>
                                                 </div>
                                                 <h6 class="fw-bold text-success mb-1">Diagnosis: @mr.Diagnosis</h6>
-                                                <p class="text-muted small mb-3">Recorded by Dr. @mr.Doctor.User.FullName</p>
+                                                <p class="text-muted small mb-3">Recorded by Dr. @mr.Doctor.User.Username</p>
 
                                                 @if (!string.IsNullOrEmpty(mr.TreatmentDetails))
                                                 {

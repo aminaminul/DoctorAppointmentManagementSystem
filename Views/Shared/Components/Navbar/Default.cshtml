@@ -1,0 +1,71 @@
+@{
+    var controller = ViewData["controller"]?.ToString() ?? "";
+    var theme = (ViewData["NavbarTheme"] as string ?? "primary").ToLowerInvariant();
+    var userId = ViewData["UserId"] != null ? Convert.ToInt32(ViewData["UserId"]) : (int?)null;
+    var userRole = (ViewData["UserRole"] as string ?? "").ToLowerInvariant();
+    var userName = ViewData["UserName"] as string ?? "";
+
+    var navClass = "navbar navbar-expand-lg navbar-glass"; // use fixed glass base for positioning
+    var navStyle = "";
+    if (theme == "white") { navClass += " bg-white navbar-light"; navStyle = "background-color:#FFFFFF;"; }
+    else if (theme == "dark") { navClass += " bg-dark navbar-dark"; navStyle = "background-color:#1F1F1F;"; }
+    else { navClass += " navbar-dark"; navStyle = "background-color:#4DA8DA;"; }
+}
+
+<header>
+    <nav class="@navClass" style="@navStyle; position:fixed; top:0; left:0; right:0; width:100%; z-index:1100;">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-heart-pulse-fill fs-4" style="color:inherit;"></i>
+                <span>DAMS</span>
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#topNav"
+                    aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="topNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 @(controller == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 @(controller == "Home" && ViewData["action"]?.ToString() == "Privacy" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center">
+                    @if (userId == null)
+                    {
+                        <a href="/Account/Login" class="btn btn-sm me-2 @(theme=="white"?"btn-outline-dark":"btn-light")">Login</a>
+                        <a href="/Account/Register" class="btn btn-sm @(theme=="white"?"btn-outline-primary":"btn-outline-light")">Sign up</a>
+                    }
+                    else
+                    {
+                        <div class="dropdown">
+                            <a class="d-flex align-items-center text-decoration-none" href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+-                                <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;">
+-                                    <i class="bi bi-person-fill" style="color:#4DA8DA"></i>
+-                                </div>
+-                                <strong class="me-2">@userName</strong>
++                                <strong class="me-2">@userName</strong>
+                                 <small class="text-muted me-2">(@userRole)</small>
+                                 <i class="bi bi-chevron-down"></i>
+                             </a>
+                             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                                 <li><a class="dropdown-item" href="/Account/Profile">Profile</a></li>
+                                 <li><a class="dropdown-item" href="/Account/Settings">Settings</a></li>
+                                 <li><hr class="dropdown-divider"></li>
+                                 @if (userRole == "admin") { <li><a class="dropdown-item" href="/Admin/Dashboard">Admin Dashboard</a></li> }
+                                 @if (userRole == "doctor") { <li><a class="dropdown-item" href="/Doctor/Dashboard">Doctor Dashboard</a></li> }
+                                 @if (userRole == "patient") { <li><a class="dropdown-item" href="/Patient/Dashboard">My Appointments</a></li> }
+                                 <li><a class="dropdown-item text-danger" href="/Account/Logout">Sign out</a></li>
+                             </ul>
+                         </div>
+                     }
+                 </div>
+             </div>
+         </div>
+     </nav>
+ </header>

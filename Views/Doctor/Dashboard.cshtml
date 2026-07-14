@@ -185,75 +185,9 @@
 .empty-state i { font-size:3rem; display:block; margin-bottom:.75rem; }
 </style>
 
-<div class="dash-wrapper">
-
-    <!-- ── SIDEBAR ── -->
-    <aside class="dash-sidebar">
-        <div class="sidebar-profile">
-            <div class="sidebar-avatar"><i class="bi bi-person-circle"></i></div>
-            <div class="sidebar-name">Dr. @ViewBag.DoctorName</div>
-            <div class="sidebar-spec">@ViewBag.Specialization</div>
-        </div>
-
-        <span class="nav-section-label">Main</span>
-        <a href="/Doctor/Dashboard?section=overview"
-           class="dash-nav-link @(section == "overview" ? "active" : "")">
-            <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>Overview
-        </a>
-        <a href="/Doctor/Dashboard?section=appointments"
-           class="dash-nav-link @(section == "appointments" ? "active" : "")">
-            <span class="nav-icon"><i class="bi bi-calendar-check"></i></span>Appointments
-            @if ((int)ViewBag.PendingCount > 0)
-            {
-                <span style="margin-left:auto;background:#ef4444;color:white;border-radius:20px;padding:.1rem .5rem;font-size:.72rem;font-weight:700;">
-                    @ViewBag.PendingCount
-                </span>
-            }
-        </a>
-        <a href="/Doctor/Dashboard?section=queue"
-           class="dash-nav-link @(section == "queue" ? "active" : "")">
-            <span class="nav-icon"><i class="bi bi-people-fill"></i></span>Live Queue
-        </a>
-        <a href="/Doctor/Dashboard?section=notifications"
-           class="dash-nav-link @(section == "notifications" ? "active" : "")">
-            <span class="nav-icon"><i class="bi bi-bell-fill"></i></span>Notifications
-            @if (ViewBag.UnreadNotificationCount != null && (int)ViewBag.UnreadNotificationCount > 0)
-            {
-                <span style="margin-left:auto;background:#ef4444;color:white;border-radius:20px;padding:.1rem .5rem;font-size:.72rem;font-weight:700;">
-                    @ViewBag.UnreadNotificationCount
-                </span>
-            }
-        </a>
-        <a href="/EMR/Index"
-           class="dash-nav-link">
-            <span class="nav-icon"><i class="bi bi-folder-fill"></i></span>Patient EMR Records
-        </a>
-
-        <span class="nav-section-label">Schedule</span>
-        <a href="/Doctor/Schedule"
-           class="dash-nav-link @(section == "schedule" ? "active" : "")">
-            <span class="nav-icon"><i class="bi bi-calendar3"></i></span>My Schedule
-        </a>
-        <a href="/Doctor/AddSchedule"
-           class="dash-nav-link">
-            <span class="nav-icon"><i class="bi bi-calendar-plus"></i></span>Add Schedule
-        </a>
-
-        <span class="nav-section-label">Account</span>
-        <a href="/Doctor/Dashboard?section=profile"
-           class="dash-nav-link @(section == "profile" ? "active" : "")">
-            <span class="nav-icon"><i class="bi bi-person-badge"></i></span>My Profile
-        </a>
-
-        <div class="sidebar-footer">
-            <a href="/Account/Logout" class="btn-logout">
-                <i class="bi bi-box-arrow-right"></i>Logout
-            </a>
-        </div>
-    </aside>
-
-    <!-- ── MAIN CONTENT ── -->
-    <main class="dash-main">
+<div class="doctor-dashboard-content">
+    <!-- Note: shared sidebar is used from the site layout. Removed internal sidebar to rely on shared navigation. -->
+    <div class="dash-main">
 
         @if (TempData["Success"] != null)
         {
@@ -318,7 +252,7 @@
                     @foreach (var a in Model.Take(5))
                     {
                         <tr>
-                            <td><strong>@a.Patient.User.FullName</strong></td>
+                            <td><strong>@a.Patient.User.Username</strong></td>
                             <td>@a.AppointmentDate.ToString("MMM dd, yyyy")</td>
                             <td>@a.AppointmentTime</td>
                             <td>@(a.ReasonForVisit ?? "—")</td>
@@ -363,7 +297,7 @@
                     @foreach (var a in Model)
                     {
                         <tr>
-                            <td><strong>@a.Patient.User.FullName</strong></td>
+                            <td><strong>@a.Patient.User.Username</strong></td>
                             <td>@a.AppointmentDate.ToString("MMM dd, yyyy")</td>
                             <td>@a.AppointmentTime</td>
                             <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
@@ -560,7 +494,7 @@
                                             </div>
                                         }
 
-                                        <h4 class="fw-bold text-dark mb-1">@activeEntry.Appointment.Patient.User.FullName</h4>
+                                        <h4 class="fw-bold text-dark mb-1">@activeEntry.Appointment.Patient.User.Username</h4>
                                         <p class="text-muted mb-3">@activeEntry.Appointment.Patient.Gender, @activeEntry.Appointment.Patient.Age years</p>
                                         
                                         <div class="p-3 bg-light rounded-3 text-start mb-4">
@@ -650,7 +584,7 @@
                                                         <td class="ps-3 fw-semibold">@item.SequenceNumber</td>
                                                         <td><span class="badge bg-primary rounded-pill">#@item.TokenNumber</span></td>
                                                         <td>
-                                                            <div class="fw-bold">@item.Appointment.Patient.User.FullName</div>
+                                                            <div class="fw-bold">@item.Appointment.Patient.User.Username</div>
                                                             <div class="text-muted small">@item.Appointment.Patient.Gender, @item.Appointment.Patient.Age yrs</div>
                                                         </td>
                                                         <td>@item.Appointment.AppointmentTime</td>
@@ -722,7 +656,7 @@
                                                 {
                                                     <tr>
                                                         <td class="ps-3 fw-bold">#@item.TokenNumber</td>
-                                                        <td>@item.Appointment.Patient.User.FullName</td>
+                                                        <td>@item.Appointment.Patient.User.Username</td>
                                                         <td>@item.Appointment.AppointmentTime</td>
                                                         <td>
                                                             @if (item.Appointment.IsEmergency)
@@ -840,5 +774,5 @@
             </div>
         }
 
-    </main>
+    </div>
 </div>

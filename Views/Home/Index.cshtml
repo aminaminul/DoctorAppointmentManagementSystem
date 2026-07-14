@@ -2,6 +2,8 @@
     ViewData["Title"] = "Home";
 }
 
+@{ ViewData["HideSidebar"] = true; ViewData["NavbarTheme"] = "white"; }
+
 <div class="hero-section position-relative" style="min-height: 85vh; display: flex; align-items: center; overflow: hidden; margin-top: -80px; padding-top: 80px;">
     <!-- Background Image with Parallax Effect -->
     <div style="
@@ -25,10 +27,10 @@
                 <span class="badge bg-light text-primary mb-3 px-3 py-2 rounded-pill shadow-sm" style="font-weight: 600; letter-spacing: 1px;">
                     <i class="bi bi-star-fill text-warning me-1"></i> TOP RATED PLATFORM
                 </span>
-                <h1 class="display-3 fw-bold mb-4" style="line-height: 1.2; text-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h1 class="display-3 fw-bold mb-4 text-dark" style="line-height: 1.2; color: #1F1F1F; text-shadow: none;">
                     Book Your Doctor Appointment Online
                 </h1>
-                <p class="lead mb-5" style="font-size: 1.25rem; opacity: 0.9;">
+                <p class="lead mb-5 text-dark" style="font-size: 1.25rem; color: #1F1F1F; opacity: 1;">
                     Experience fast, secure, and easy healthcare management. Connect with top specialists from the comfort of your home.
                 </p>
                 <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
@@ -61,8 +63,6 @@
                         <small class="text-muted">24/7 Availability</small>
                     </div>
                 </div>
-                <!-- Mockup placeholder -->
-                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Doctor" class="img-fluid rounded-circle border border-5 border-white shadow-lg" style="width: 450px; height: 450px; object-fit: cover; box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;">
             </div>
         </div>
     </div>

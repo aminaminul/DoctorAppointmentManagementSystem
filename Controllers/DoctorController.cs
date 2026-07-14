@@ -76,14 +76,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             // Doctor profile
             ViewBag.DoctorId       = doctor.Id;
-            ViewBag.DoctorName     = doctor.User.FullName;
+            ViewBag.DoctorName     = doctor.User.Username;
             ViewBag.Email          = doctor.User.Email;
             ViewBag.Specialization = doctor.Specialization;
             ViewBag.Qualification  = doctor.Qualification;
             ViewBag.Experience     = doctor.Experience;
             ViewBag.Fee            = doctor.ConsultationFee;
             ViewBag.AvailableDays  = doctor.AvailableDays;
-            ViewBag.ProfileImage   = doctor.ProfileImage ?? "doctor_default.png";
 
             ViewBag.Section = section ?? "overview";
 
@@ -205,7 +204,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .ToList();
 
             ViewBag.DoctorId   = doctor.Id;
-            ViewBag.DoctorName = doctor.User.FullName;
+            ViewBag.DoctorName = doctor.User.Username;
             ViewBag.Month      = m;
             ViewBag.Year       = y;
             ViewBag.MonthName  = new DateTime(y, m, 1).ToString("MMMM yyyy");

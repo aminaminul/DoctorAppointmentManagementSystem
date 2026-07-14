@@ -3,6 +3,7 @@ using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using DoctorAppointmentManagementSystem.Data;
+using System.Linq;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
@@ -15,8 +16,42 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context = context;
         }
 
+        // GET: /Admin/EditPrivacy
+        public IActionResult EditPrivacy()
+        {
+            var policy = _context.PrivacyPolicies.OrderByDescending(p => p.UpdatedAt).FirstOrDefault();
+            return View(policy ?? new DoctorAppointmentManagementSystem.Models.PrivacyPolicy());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditPrivacy(DoctorAppointmentManagementSystem.Models.PrivacyPolicy model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var existing = _context.PrivacyPolicies.OrderByDescending(p => p.UpdatedAt).FirstOrDefault();
+            if (existing == null)
+            {
+                model.UpdatedAt = DateTime.Now;
+                _context.PrivacyPolicies.Add(model);
+            }
+            else
+            {
+                existing.Content = model.Content;
+                existing.UpdatedAt = DateTime.Now;
+                _context.PrivacyPolicies.Update(existing);
+            }
+            _context.SaveChanges();
+            TempData["Success"] = "Privacy policy updated.";
+            return RedirectToAction("Dashboard");
+        }
+
         public IActionResult Dashboard(string section)
         {
+            var roles = _context.Roles.ToList();
+            ViewBag.Roles = roles;
+
             if (section == "doctors")
                 ViewBag.Doctors = _context.Doctors
                      .Include(d => d.User)
@@ -92,7 +127,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             // 1️⃣ Create User
             User user = new User()
             {
-                Name = model.Name,
+                Username = model.Name,
                 Email = model.Email,
                 Password = model.Password,
                 RoleId = 2
@@ -168,7 +203,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             // 1️⃣ Create User
             User user = new User()
             {
-                Name = model.Name,
+                Username = model.Name,
                 Email = model.Email,
                 Password = model.Password,
                 RoleId = 3
@@ -221,7 +256,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
                 if (patient.User != null && model.User != null)
                 {
-                    patient.User.Name = model.User.Name;
+                    patient.User.Username = model.User.Username;
                     patient.User.Email = model.User.Email;
                     patient.User.PhoneNumber = model.User.PhoneNumber;
                 }

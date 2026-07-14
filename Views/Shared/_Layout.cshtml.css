@@ -7,20 +7,46 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+.nav-link,
 a {
-  color: #0077cc;
+  color: #4DA8DA;
 }
 
 .btn-primary {
   color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+  background-color: #4DA8DA;
+  border-color: #4DA8DA;
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
   color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+  background-color: #4DA8DA;
+  border-color: #4DA8DA;
+}
+
+/* Topbar contrast rules: ensure readable text depending on navbar background */
+.navbar.bg-white .navbar-brand,
+.navbar.bg-white .nav-link,
+.navbar.bg-white .dropdown-toggle {
+  color: #1F1F1F !important;
+}
+
+.navbar.bg-dark .navbar-brand,
+.navbar.bg-dark .nav-link,
+.navbar.bg-dark .dropdown-toggle {
+  color: #FFFFFF !important;
+}
+
+/* Inline-styled navbars (dark or primary) */
+.navbar[style*="#1F1F1F"] .navbar-brand,
+.navbar[style*="#1F1F1F"] .nav-link,
+.navbar[style*="#1F1F1F"] .dropdown-toggle {
+  color: #FFFFFF !important;
+}
+.navbar[style*="#4DA8DA"] .navbar-brand,
+.navbar[style*="#4DA8DA"] .nav-link,
+.navbar[style*="#4DA8DA"] .dropdown-toggle {
+  color: #FFFFFF !important;
 }
 
 .border-top {

@@ -1,0 +1,168 @@
+@model DoctorAppointmentManagementSystem.ViewModels.DashboardViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Dashboard";
+}
+
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 fw-bold">Dashboard</h1>
+        <div class="text-muted small">Welcome back — overview of system activity</div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+            <a href="/Admin/Dashboard?section=doctors" class="text-decoration-none">
+            <div class="card rounded-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-3 me-3" style="background-color:#E9F7FB;">
+                            <i class="bi bi-person-badge fs-3 text-primary" style="color:#4DA8DA;"></i>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Total Doctors</div>
+                            <div class="h4 fw-bold">@Model.TotalDoctors</div>
+                            <div class="small mt-1"><span class="text-muted">View and manage doctors</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <a href="/Admin/Dashboard?section=patients" class="text-decoration-none">
+            <div class="card rounded-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-3 me-3" style="background-color:#E9F7FB;">
+                            <i class="bi bi-people fs-3" style="color:#4DA8DA"></i>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Total Patients</div>
+                            <div class="h4 fw-bold">@Model.TotalPatients</div>
+                            <div class="small mt-1"><span class="text-muted">View patient records</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <a href="/Admin/Dashboard?section=appointments" class="text-decoration-none">
+            <div class="card rounded-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-3 me-3" style="background-color:#E9F7FB;">
+                            <i class="bi bi-calendar3 fs-3" style="color:#4DA8DA"></i>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Total Appointments</div>
+                            <div class="h4 fw-bold">@Model.TotalAppointments</div>
+                            <div class="small mt-1"><span class="text-muted">Manage all appointments</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <a href="/Appointment/Book" class="text-decoration-none">
+            <div class="card rounded-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-3 me-3" style="background-color:#E9F7FB;">
+                            <i class="bi bi-calendar-check fs-3" style="color:#4DA8DA"></i>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Today's Appointments</div>
+                            <div class="h4 fw-bold">@Model.TodaysAppointments</div>
+                            <div class="small mt-1"><span class="text-muted">View today's schedule</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card rounded-3 shadow-sm" title="Pending Requests">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-3 me-3" style="background-color:#E9F7FB;">
+                            <i class="bi bi-clock-history fs-3" style="color:#4DA8DA"></i>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Pending Requests</div>
+                            <div class="h4 fw-bold">@Model.PendingRequests</div>
+                            <div class="small mt-1"><span class="text-muted">Respond to pending bookings</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card rounded-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-3 me-3" style="background-color:#E9F7FB;">
+                            <i class="bi bi-check-circle fs-3" style="color:#4DA8DA"></i>
+                        </div>
+                        <div>
+                            <div class="small text-muted">Completed Appointments</div>
+                            <div class="h4 fw-bold">@Model.CompletedAppointments</div>
+                            <div class="small mt-1"><span class="text-muted">Review completed visits</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple SVG sparkline for appointments (last 7 days) -->
+    <div class="row mt-4">
+        <div class="col-12 col-lg-7">
+            <div class="card rounded-3 shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <div class="small text-muted">Appointments (last 7 days)</div>
+                        <div class="h5 fw-bold">@Model.AppointmentsLast7Days.Sum()</div>
+                    </div>
+                    <div class="small text-muted">Trend</div>
+                </div>
+                <div class="pt-2">
+                    @if (Model.AppointmentsLast7Days != null && Model.AppointmentsLast7Days.Length > 0)
+                    {
+                        var max = Model.AppointmentsLast7Days.Max();
+                        var points = new List<string>();
+                        for (int i = 0; i < Model.AppointmentsLast7Days.Length; i++)
+                        {
+                            var val = Model.AppointmentsLast7Days[i];
+                            var x = i * (100.0f / (Model.AppointmentsLast7Days.Length - 1));
+                            var y = max == 0 ? 50 : 100 - (val / (double)max * 100);
+                            points.Add($"{x},{y}");
+                        }
+                        <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="w-100" style="height:72px;">
+                            <polyline points="@string.Join(" ", points)" fill="none" stroke="#4DA8DA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                        </svg>
+                        <div class="d-flex justify-content-between small text-muted mt-2">
+                            @foreach (var lbl in Model.LabelsLast7Days)
+                            {
+                                <div>@lbl</div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted small">No data available.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
