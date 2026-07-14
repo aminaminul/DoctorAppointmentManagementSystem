@@ -19,6 +19,17 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         public IActionResult Index()
         {
+            // If user is logged in, redirect to role-based dashboard
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (!string.IsNullOrEmpty(userRole))
+            {
+                if (userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                    return RedirectToAction("Dashboard", "Admin");
+                if (userRole.Equals("Doctor", StringComparison.OrdinalIgnoreCase))
+                    return RedirectToAction("Dashboard", "Doctor");
+                if (userRole.Equals("Patient", StringComparison.OrdinalIgnoreCase))
+                    return RedirectToAction("Dashboard", "Patient");
+            }
             return View();
         }
 

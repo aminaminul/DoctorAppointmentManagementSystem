@@ -107,10 +107,20 @@ namespace DoctorAppointmentManagementSystem.Controllers
             Patient patient = new Patient()
             {
                 UserId = user.Id,
-                Age = model.Age ?? 0,
-                Gender = model.Gender,
-                DateOfBirth = (DateTime)model.DateOfBirth
+                Gender = model.Gender
             };
+            if (model.DateOfBirth.HasValue)
+            {
+                patient.DateOfBirth = model.DateOfBirth.Value;
+            }
+            else if (model.Age.HasValue)
+            {
+                patient.Age = model.Age.Value;
+            }
+            else
+            {
+                patient.DateOfBirth = DateTime.Today;
+            }
 
             _context.Patients.Add(patient);
         }
@@ -143,8 +153,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             if (roleId == 2) // Doctor
                 return RedirectToAction("Dashboard", "Doctor");
 
-            // Default (Patient and others)
-            return RedirectToAction("Index", "Home");
+            // Default (Patient) -> Patient Dashboard
+            return RedirectToAction("Dashboard", "Patient");
         }
 
         // ================= LOGIN =================
@@ -157,13 +167,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
-            // 🔥 STEP 1: Model validation (Email + Gmail check)
+            // 🔥 STEP 1: Model validation
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // 🔥 STEP 2: Check user from DB
+            // 🔥 STEP 2: Check user from DB using Email
             var user = _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
@@ -180,16 +190,15 @@ namespace DoctorAppointmentManagementSystem.Controllers
             // Store display name for navbar
             HttpContext.Session.SetString("UserName", user.Username ?? user.Email);
 
-            // After successful login, preserve role-based redirects for Admin and Doctor
-            // while sending Patients to the public homepage.
+            // Role-based redirect after login
             if (user.RoleId == 1) // Admin
                 return RedirectToAction("Dashboard", "Admin");
 
             if (user.RoleId == 2) // Doctor
                 return RedirectToAction("Dashboard", "Doctor");
 
-            // Default (Patient and others) -> public homepage
-            return RedirectToAction("Index", "Home");
+            // Patient -> Patient Dashboard
+            return RedirectToAction("Dashboard", "Patient");
         }
 
         public IActionResult Logout()

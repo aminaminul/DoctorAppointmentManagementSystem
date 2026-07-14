@@ -1,107 +1,29 @@
 @{
-    ViewData["Title"] = "Home";
+    Layout = "_Layout";
 }
 
-@{ ViewData["HideSidebar"] = true; ViewData["NavbarTheme"] = "white"; }
+<div class="container mt-5 pt-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1 class="display-5 fw-bold">Welcome to DAMS</h1>
+            <p class="lead text-muted">Doctor Appointment Management System — book appointments, manage schedules, and track medical records easily.</p>
 
-<div class="hero-section position-relative" style="min-height: 85vh; display: flex; align-items: center; overflow: hidden; margin-top: -80px; padding-top: 80px;">
-    <!-- Background Image with Parallax Effect -->
-    <div style="
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: url('/images/doctor.jpg') no-repeat center center;
-        background-size: cover;
-        z-index: -2;">
-    </div>
-    
-    <!-- Gradient Overlay -->
-    <div class="hero-gradient" style="
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        z-index: -1;">
-    </div>
-
-    <div class="container position-relative z-index-1 text-white">
-        <div class="row align-items-center">
-            <div class="col-lg-6 text-center text-lg-start animate-fade-in-up">
-                <span class="badge bg-light text-primary mb-3 px-3 py-2 rounded-pill shadow-sm" style="font-weight: 600; letter-spacing: 1px;">
-                    <i class="bi bi-star-fill text-warning me-1"></i> TOP RATED PLATFORM
-                </span>
-                <h1 class="display-3 fw-bold mb-4 text-dark" style="line-height: 1.2; color: #1F1F1F; text-shadow: none;">
-                    Book Your Doctor Appointment Online
-                </h1>
-                <p class="lead mb-5 text-dark" style="font-size: 1.25rem; color: #1F1F1F; opacity: 1;">
-                    Experience fast, secure, and easy healthcare management. Connect with top specialists from the comfort of your home.
-                </p>
-                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
-                    <a href="/Account/Login" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold text-primary shadow" style="transition: transform 0.3s;">
-                        Book Now <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
-                    <a href="/Account/Register" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-bold" style="border-width: 2px;">
-                        Create Account
-                    </a>
-                </div>
+            <div class="d-flex gap-2 mt-4">
+                <a href="/Account/Login" class="btn btn-primary btn-lg">Login</a>
+                <a href="/Account/Register" class="btn btn-outline-primary btn-lg">Register</a>
             </div>
-            <div class="col-lg-6 d-none d-lg-block text-center position-relative mt-5 mt-lg-0">
-                <!-- Floating Elements for visual flair -->
-                <div class="bg-white rounded-4 p-4 shadow-lg position-absolute d-flex align-items-center gap-3" style="top: 10%; right: 10%; animation: float 6s ease-in-out infinite; z-index: 2;">
-                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                        <i class="bi bi-check-lg fs-4"></i>
-                    </div>
-                    <div class="text-start">
-                        <h6 class="mb-0 text-dark fw-bold">Verified Doctors</h6>
-                        <small class="text-muted">100+ Specialists</small>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-4 p-4 shadow-lg position-absolute d-flex align-items-center gap-3" style="bottom: 10%; left: 0; animation: float 8s ease-in-out infinite alternate; z-index: 2;">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                        <i class="bi bi-calendar-check fs-4"></i>
-                    </div>
-                    <div class="text-start">
-                        <h6 class="mb-0 text-dark fw-bold">Instant Booking</h6>
-                        <small class="text-muted">24/7 Availability</small>
-                    </div>
-                </div>
+
+            <div class="mt-5">
+                <h5>Features</h5>
+                <ul class="list-unstyled text-muted">
+                    <li>• Simple appointment booking</li>
+                    <li>• Role-based dashboards for Admin/Doctor/Patient</li>
+                    <li>• Electronic medical records</li>
+                </ul>
             </div>
         </div>
-    </div>
-</div>
-
-
-<!-- Features Section -->
-<div class="container py-5 my-5">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold">Why Choose DAMS?</h2>
-        <p class="text-muted">The best platform for managing your healthcare needs.</p>
-    </div>
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="glass-card text-center h-100">
-                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
-                    <i class="bi bi-search fs-1"></i>
-                </div>
-                <h4 class="fw-bold">Find Top Doctors</h4>
-                <p class="text-muted mb-0">Search through our extensive list of verified specialists based on your specific health requirements.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="glass-card text-center h-100">
-                <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
-                    <i class="bi bi-calendar-plus fs-1"></i>
-                </div>
-                <h4 class="fw-bold">Easy Scheduling</h4>
-                <p class="text-muted mb-0">Book, reschedule, or cancel your appointments effortlessly through our intuitive interface.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="glass-card text-center h-100">
-                <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
-                    <i class="bi bi-shield-check fs-1"></i>
-                </div>
-                <h4 class="fw-bold">Secure Records</h4>
-                <p class="text-muted mb-0">Your privacy is our priority. Access your medical history and prescriptions securely anywhere, anytime.</p>
-            </div>
+        <div class="col-md-6 d-none d-md-block text-center">
+            <i class="bi bi-hospital-fill" style="font-size:140px;color:#4DA8DA"></i>
         </div>
     </div>
 </div>

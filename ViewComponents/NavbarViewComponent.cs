@@ -27,21 +27,24 @@ namespace DoctorAppointmentManagementSystem.ViewComponents
             // Prefer session values (set at login / register)
             var http = _httpContextAccessor.HttpContext;
             var session = http?.Session;
+            var userId = session?.GetInt32("UserId");
             var userName = session?.GetString("UserName");
             var userRole = session?.GetString("UserRole");
 
-            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(userRole))
+            if (userId == null && (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(userRole)))
             {
                 // fallback to first user (legacy) — keep behavior but safer
                 var user = _db.Users.FirstOrDefault();
                 if (user != null)
                 {
+                    userId = user.Id;
                     userName = user.Username ?? user.Email;
                     var role = _db.Roles.FirstOrDefault(r => r.Id == user.RoleId);
                     userRole = role?.RoleName ?? "";
                 }
             }
 
+            ViewData["UserId"] = userId;
             ViewData["UserRole"] = (userRole ?? "").ToLowerInvariant();
             ViewData["UserName"] = userName ?? "";
 

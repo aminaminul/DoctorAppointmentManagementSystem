@@ -45,16 +45,11 @@
                     {
                         <div class="dropdown">
                             <a class="d-flex align-items-center text-decoration-none" href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
--                                <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;">
--                                    <i class="bi bi-person-fill" style="color:#4DA8DA"></i>
--                                </div>
--                                <strong class="me-2">@userName</strong>
-+                                <strong class="me-2">@userName</strong>
-                                 <small class="text-muted me-2">(@userRole)</small>
-                                 <i class="bi bi-chevron-down"></i>
-                             </a>
-                             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
-                                 <li><a class="dropdown-item" href="/Account/Profile">Profile</a></li>
+                                <strong class="me-2">@userName</strong>
+                                <i class="bi bi-chevron-down"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="/Account/Profile">Profile</a></li>
                                  <li><a class="dropdown-item" href="/Account/Settings">Settings</a></li>
                                  <li><hr class="dropdown-divider"></li>
                                  @if (userRole == "admin") { <li><a class="dropdown-item" href="/Admin/Dashboard">Admin Dashboard</a></li> }

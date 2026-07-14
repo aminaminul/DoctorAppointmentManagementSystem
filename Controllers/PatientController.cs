@@ -20,9 +20,17 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
 
+            // Not logged in
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
             var patient = _context.Patients
                 .Include(p => p.User)
                 .FirstOrDefault(p => p.UserId == userId);
+
+            // User is not a patient (no patient record)
+            if (patient == null)
+                return RedirectToAction("Login", "Account");
 
             var appointments = _context.Appointments
                 .Include(a => a.Doctor)
@@ -32,8 +40,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             // 🔷 Profile Data
             ViewBag.Patient = patient;
-            ViewBag.PatientName = patient.User.Username;
-            ViewBag.Email = patient.User.Email;
+            ViewBag.PatientName = patient.User?.Username ?? patient.User?.Email ?? "Patient";
+            ViewBag.Email = patient.User?.Email;
             ViewBag.Age = patient.Age;
             ViewBag.Gender = patient.Gender;
 

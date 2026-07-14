@@ -26,14 +26,14 @@
         }
 
             <form method="post">
-                <!-- Username -->
+                <!-- Email -->
                 <div class="mb-3">
-                    <label class="form-label fw-semibold text-secondary small">Username</label>
+                    <label class="form-label fw-semibold text-secondary small">Email Address</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-person-fill text-muted"></i></span>
-                        <input asp-for="Username" class="form-control form-control-lg rounded-3 border-start-0 ps-0" placeholder="your_username" />
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-envelope-fill text-muted"></i></span>
+                        <input asp-for="Email" class="form-control form-control-lg rounded-3 border-start-0 ps-0" placeholder="name@example.com" />
                     </div>
-                    <span asp-validation-for="Username" class="text-danger small mt-1 d-block"></span>
+                    <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
                 </div>
 
                 <!-- Password -->
