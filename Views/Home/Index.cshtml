@@ -1,29 +1,135 @@
 @{
     Layout = "_Layout";
+    ViewData["HideSidebar"] = true;
 }
 
-<div class="container mt-5 pt-5">
-    <div class="row align-items-center">
-        <div class="col-md-6">
-            <h1 class="display-5 fw-bold">Welcome to DAMS</h1>
-            <p class="lead text-muted">Doctor Appointment Management System — book appointments, manage schedules, and track medical records easily.</p>
+<section class="position-relative" style="min-height:85vh;">
+    <div class="position-absolute top-0 start-0 w-100 h-100"
+         style="background-image: linear-gradient(rgba(31,31,31,0.45), rgba(31,31,31,0.45)), url('@Url.Content("~/Images/doctor.jpg")'); background-size:cover; background-position:center;">
+    </div>
 
-            <div class="d-flex gap-2 mt-4">
-                <a href="/Account/Login" class="btn btn-primary btn-lg">Login</a>
-                <a href="/Account/Register" class="btn btn-outline-primary btn-lg">Register</a>
-            </div>
+    <div class="container h-100 d-flex align-items-center position-relative" style="z-index:2;">
+        <div class="row w-100">
+            <div class="col-12 text-center text-white">
+                <div class="py-5">
+                    <h1 class="display-4 fw-bold" style="color:#FFFFFF; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+                        Avoid Hassles & Delays.
+                    </h1>
 
-            <div class="mt-5">
-                <h5>Features</h5>
-                <ul class="list-unstyled text-muted">
-                    <li>• Simple appointment booking</li>
-                    <li>• Role-based dashboards for Admin/Doctor/Patient</li>
-                    <li>• Electronic medical records</li>
-                </ul>
+                    <p class="lead text-white-50 mx-auto" style="max-width:760px; font-size:1.05rem;">
+                        Find your doctor, book appointments instantly and manage visits — a smoother experience for patients and clinicians.
+                        Fast booking, clear schedules and secure records — all in one place.
+                    </p>
+
+                    <div class="mt-4 d-flex justify-content-center gap-3">
+                        <a href="/Appointment/Book" class="btn btn-lg text-white rounded-3" style="background-color:#4DA8DA;">
+                            <i class="bi bi-calendar-plus me-2"></i> Make Appointment
+                        </a>
+
+                        <a href="/Account/Register" class="btn btn-lg btn-outline-light rounded-3 border-white text-white">
+                            <i class="bi bi-person-plus me-2"></i> Sign up
+                        </a>
+                    </div>
+
+                    <div class="mt-5 d-none d-md-flex justify-content-center gap-4">
+                        <div class="text-center">
+                            <div class="fw-bold h4 mb-0" style="color:#FFFFFF;">480+</div>
+                            <div class="small text-white-50">Patients</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="fw-bold h4 mb-0" style="color:#FFFFFF;">86</div>
+                            <div class="small text-white-50">Doctors</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="fw-bold h4 mb-0" style="color:#FFFFFF;">180</div>
+                            <div class="small text-white-50">Appointments</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-6 d-none d-md-block text-center">
-            <i class="bi bi-hospital-fill" style="font-size:140px;color:#4DA8DA"></i>
         </div>
     </div>
-</div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8 text-center">
+                <h3 class="fw-bold" style="color:#1F1F1F;">Everything you need for clinic scheduling</h3>
+                <p class="text-muted">Lightweight, secure and designed for medical teams. Quick bookings, clear schedules and patient history at your fingertips.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card rounded-3 shadow-sm h-100">
+                    <div class="card-body d-flex gap-3">
+                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;border:2px solid rgba(77,168,218,0.12);">
+                            <i class="bi bi-calendar-check" style="color:#4DA8DA; font-size:22px;"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">Fast Booking</div>
+                            <div class="small text-muted">Create appointments in seconds</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card rounded-3 shadow-sm h-100">
+                    <div class="card-body d-flex gap-3">
+                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;border:2px solid rgba(77,168,218,0.12);">
+                            <i class="bi bi-person-badge" style="color:#4DA8DA; font-size:22px;"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">Role-based Dashboards</div>
+                            <div class="small text-muted">Admin, Doctor & Patient</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card rounded-3 shadow-sm h-100">
+                    <div class="card-body d-flex gap-3">
+                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;border:2px solid rgba(77,168,218,0.12);">
+                            <i class="bi bi-shield-lock" style="color:#4DA8DA; font-size:22px;"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">Secure Records</div>
+                            <div class="small text-muted">Patient history & EMR</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card rounded-3 shadow-sm h-100">
+                    <div class="card-body d-flex gap-3">
+                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;border:2px solid rgba(77,168,218,0.12);">
+                            <i class="bi bi-bar-chart-line" style="color:#4DA8DA; font-size:22px;"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">Reports</div>
+                            <div class="small text-muted">Exportable summaries & charts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h5 class="fw-bold">Ready to streamline your clinic?</h5>
+                <p class="small text-muted">Create an account and start accepting appointments today.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="/Account/Register" class="btn btn-lg text-white rounded-3" style="background-color:#4DA8DA;"><i class="bi bi-person-plus-fill me-2"></i> Start Now</a>
+            </div>
+        </div>
+    </div>
+</section>

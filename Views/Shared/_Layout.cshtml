@@ -4,45 +4,48 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - DAMS</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 </head>
-<body>
+<body class="bg-white text-dark">
+
+    @* Top Navbar Component *@
     @await Component.InvokeAsync("Navbar")
 
     <div class="container-fluid">
-        @if (ViewData["HideSidebar"] as bool? == true)
-        {
-            <main class="py-4" style="background-color:#FFFFFF; min-height:100vh;">
-                <div class="container-fluid">
-                    @RenderBody()
-                </div>
-            </main>
-        }
-        else
-        {
-            <div class="row">
-                @await Component.InvokeAsync("Sidebar")
-
-                <main class="col-12 col-md-9 col-lg-10 py-4" style="background-color:#FFFFFF; min-height:100vh;">
+        <div class="row">
+            @* Sidebar when not hidden *@
+            @if (ViewData["HideSidebar"] as bool? == true)
+            {
+                <main class="col-12 py-4" role="main" style="min-height:80vh;">
                     <div class="container-fluid">
                         @RenderBody()
                     </div>
                 </main>
-            </div>
-        }
+            }
+            else
+            {
+                <aside class="col-12 col-md-3 col-lg-2 p-0">
+                    @await Component.InvokeAsync("Sidebar")
+                </aside>
+
+                <main class="col-12 col-md-9 col-lg-10 py-4" role="main" style="min-height:80vh;">
+                    <div class="container-fluid">
+                        @RenderBody()
+                    </div>
+                </main>
+            }
+        </div>
     </div>
 
-    <partial name="_Footer" />
+    <footer class="py-3 mt-4 border-top">
+        <div class="container text-center small text-muted">© @DateTime.Now.Year DAMS</div>
+    </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
