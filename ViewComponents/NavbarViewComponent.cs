@@ -30,21 +30,18 @@ namespace DoctorAppointmentManagementSystem.ViewComponents
             var userName = session?.GetString("UserName");
             var userRole = session?.GetString("UserRole");
 
-            if (userId == null && (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(userRole)))
+            bool isLoggedIn = userId.HasValue && !string.IsNullOrEmpty(userRole);
+
+            if (!isLoggedIn)
             {
-                var user = _db.Users.FirstOrDefault();
-                if (user != null)
-                {
-                    userId = user.Id;
-                    userName = user.Username ?? user.Email;
-                    var role = _db.Roles.FirstOrDefault(r => r.Id == user.RoleId);
-                    userRole = role?.RoleName ?? "";
-                }
+                userName = null;
+                userRole = null;
             }
 
             ViewData["UserId"] = userId;
-            ViewData["UserRole"] = (userRole ?? "").ToLowerInvariant();
+            ViewData["UserRole"] = isLoggedIn ? (userRole ?? "").ToLowerInvariant() : "";
             ViewData["UserName"] = userName ?? "";
+            ViewData["IsLoggedIn"] = isLoggedIn;
 
             return View("Default");
         }

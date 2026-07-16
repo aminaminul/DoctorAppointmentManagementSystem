@@ -1,64 +1,279 @@
 @{
-    var controller = ViewData["controller"]?.ToString() ?? "";
-    var action = ViewData["action"]?.ToString() ?? "";
-    var themeBg = "#4DA8DA"; // Light Blue primary
-    var userName = ViewData["UserName"] as string ?? "";
-    var userRole = (ViewData["UserRole"] as string ?? "").ToLowerInvariant();
+    var controller  = ViewData["controller"]?.ToString() ?? "";
+    var action      = ViewData["action"]?.ToString() ?? "";
+    var userName    = ViewData["UserName"] as string ?? "";
+    var userRole    = (ViewData["UserRole"] as string ?? "").ToLowerInvariant();
+    var isLoggedIn  = (bool)(ViewData["IsLoggedIn"] ?? false);
+    var isHomePage  = controller.Equals("Home", StringComparison.OrdinalIgnoreCase)
+                   && action.Equals("Index", StringComparison.OrdinalIgnoreCase);
+
+    string avatarInitial = !string.IsNullOrEmpty(userName) ? userName.Substring(0, 1).ToUpper() : "U";
+
+    string dashboardUrl = userRole switch {
+        "admin"   => "/Admin/Dashboard",
+        "doctor"  => "/Doctor/Dashboard",
+        "patient" => "/Patient/Dashboard",
+        _         => "/"
+    };
 }
 
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:@themeBg;">
-    <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center gap-2 text-white" asp-controller="Home" asp-action="Index">
-            <i class="bi bi-hospital-fill fs-4"></i>
-            <span class="fw-bold">DAMS</span>
+<style>
+    .dams-nav {
+        background: linear-gradient(135deg, #1a6b9a 0%, #2e8bc0 60%, #4DA8DA 100%);
+        box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+        padding: 0 1.5rem;
+        min-height: 64px;
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+    }
+
+    .dams-brand {
+        font-size: 1.3rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: #fff !important;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: opacity 0.2s;
+    }
+    .dams-brand:hover { opacity: 0.88; }
+
+    .dams-brand-icon {
+        width: 38px; height: 38px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .dams-nav-link {
+        color: rgba(255,255,255,0.85) !important;
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.9rem !important;
+        border-radius: 8px;
+        transition: background 0.2s, color 0.2s;
+        text-decoration: none;
+    }
+    .dams-nav-link:hover {
+        background: rgba(255,255,255,0.12);
+        color: #fff !important;
+    }
+    .dams-nav-link.active-link {
+        background: rgba(255,255,255,0.18);
+        color: #fff !important;
+        font-weight: 600;
+    }
+
+    /* ─── Guest Buttons ─────────────────── */
+    .btn-nav-login {
+        background: rgba(255,255,255,0.12);
+        border: 1.5px solid rgba(255,255,255,0.45);
+        color: #fff !important;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 6px 20px;
+        border-radius: 24px;
+        transition: all 0.22s;
+        text-decoration: none;
+    }
+    .btn-nav-login:hover {
+        background: rgba(255,255,255,0.22);
+        border-color: rgba(255,255,255,0.7);
+        color: #fff !important;
+    }
+
+    .btn-nav-register {
+        background: #fff;
+        border: 1.5px solid #fff;
+        color: #1a6b9a !important;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 6px 20px;
+        border-radius: 24px;
+        transition: all 0.22s;
+        text-decoration: none;
+    }
+    .btn-nav-register:hover {
+        background: #e8f4fb;
+        border-color: #e8f4fb;
+        color: #1a6b9a !important;
+    }
+
+    /* ─── User Avatar & Dropdown ───────── */
+    .nav-avatar {
+        width: 38px; height: 38px;
+        background: rgba(255,255,255,0.2);
+        border: 2px solid rgba(255,255,255,0.4);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #fff;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(4px);
+        transition: border-color 0.2s, background 0.2s;
+    }
+
+    .nav-user-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 50px;
+        padding: 4px 12px 4px 4px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #fff !important;
+        transition: background 0.2s, border-color 0.2s;
+    }
+    .nav-user-btn:hover {
+        background: rgba(255,255,255,0.18);
+        border-color: rgba(255,255,255,0.45);
+    }
+
+    .nav-user-info { line-height: 1.1; }
+    .nav-user-name { font-size: 0.82rem; font-weight: 700; color: #fff; }
+    .nav-user-role { font-size: 0.7rem; color: rgba(255,255,255,0.65); text-transform: capitalize; }
+
+    .nav-dropdown-menu {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+        padding: 8px;
+        min-width: 200px;
+        overflow: hidden;
+    }
+
+    .nav-dropdown-header {
+        padding: 10px 12px 8px;
+        border-bottom: 1px solid #f0f4f8;
+        margin-bottom: 4px;
+    }
+    .nav-dropdown-header .d-name { font-weight: 700; font-size: 0.9rem; color: #1a1a2e; }
+    .nav-dropdown-header .d-role { font-size: 0.75rem; color: #6c757d; text-transform: capitalize; }
+
+    .nav-dropdown-menu .dropdown-item {
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #374151;
+        transition: background 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .nav-dropdown-menu .dropdown-item:hover { background: #f0f8ff; color: #1a6b9a; }
+    .nav-dropdown-menu .dropdown-item.text-danger:hover { background: #fff5f5; color: #dc3545 !important; }
+    .nav-dropdown-menu .dropdown-divider { margin: 4px 0; border-color: #f0f4f8; }
+
+    /* ─── Toggler ───────────────────────── */
+    .dams-toggler {
+        border: 1.5px solid rgba(255,255,255,0.35);
+        border-radius: 8px;
+        padding: 4px 8px;
+    }
+    .dams-toggler .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,255,255,0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+</style>
+
+<nav class="dams-nav navbar navbar-expand-lg">
+    <div class="container-fluid px-0">
+
+        <a class="dams-brand" href="/">
+            <div class="dams-brand-icon">
+                <i class="bi bi-heart-pulse-fill"></i>
+            </div>
+            <span>DAMS</span>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav"
-                aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler dams-toggler border-0 ms-auto" type="button"
+                data-bs-toggle="collapse" data-bs-target="#damsTopNav"
+                aria-controls="damsTopNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="topNav">
-            <form class="d-flex ms-3 me-auto" role="search" asp-controller="Home" asp-action="Index" method="get">
-                <div class="input-group">
-                    <input name="q" class="form-control form-control-sm rounded-pill" type="search" placeholder="Search"
-                           aria-label="Search" />
-                    <span class="input-group-text bg-white border-0 rounded-pill ms-1">
-                        <i class="bi bi-search text-muted"></i>
-                    </span>
-                </div>
-            </form>
+        <div class="collapse navbar-collapse ms-4" id="damsTopNav">
 
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item me-3">
-                    <a class="nav-link text-white position-relative" href="#">
-                        <i class="bi bi-bell-fill"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
-                    </a>
-                </li>
+            @if (isLoggedIn)
+            {
+                <ul class="navbar-nav me-auto align-items-lg-center gap-1">
+                    <li class="nav-item">
+                        <a class="dams-nav-link @(isHomePage ? "active-link" : "")" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="dams-nav-link @(dashboardUrl == controller ? "active-link" : "")" href="@dashboardUrl">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="dams-nav-link" href="/Home/Privacy">Privacy</a>
+                    </li>
+                </ul>
+            }
+            else
+            {
+                <ul class="navbar-nav me-auto align-items-lg-center gap-1">
+                    <li class="nav-item">
+                        <a class="dams-nav-link active-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="dams-nav-link" href="/Home/Privacy">Privacy</a>
+                    </li>
+                </ul>
+            }
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userMenu" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="me-2 text-end d-none d-md-block">
-                            <div class="fw-bold small mb-0">@userName</div>
-                            <div class="small text-white-50">@userRole</div>
-                        </div>
-                        <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width:40px;height:40px;">
-                            <i class="bi bi-person-fill" style="color:#4DA8DA"></i>
-                        </div>
+            <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
+                @if (isLoggedIn)
+                {
+                    <div class="dropdown">
+                        <a class="nav-user-btn dropdown-toggle-split" id="navUserMenu"
+                           data-bs-toggle="dropdown" aria-expanded="false" style="list-style:none;">
+                            <div class="nav-avatar">@avatarInitial</div>
+                            <div class="nav-user-info d-none d-md-block">
+                                <div class="nav-user-name">@userName</div>
+                                <div class="nav-user-role">@userRole</div>
+                            </div>
+                            <i class="bi bi-chevron-down" style="font-size:0.65rem; color:rgba(255,255,255,0.7);"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end nav-dropdown-menu" aria-labelledby="navUserMenu">
+                            <li class="nav-dropdown-header">
+                                <div class="d-name">@userName</div>
+                                <div class="d-role">@userRole</div>
+                            </li>
+                            <li><a class="dropdown-item" href="@dashboardUrl">
+                                <i class="bi bi-grid-1x2"></i> Dashboard
+                            </a></li>
+                            @if (userRole == "patient")
+                            {
+                                <li><a class="dropdown-item" href="/Appointment/Book">
+                                    <i class="bi bi-calendar-plus"></i> Book Appointment
+                                </a></li>
+                            }
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item text-danger" href="/Account/Logout">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a></li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <a class="btn-nav-login" href="/Account/Login">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                        <li><a class="dropdown-item" href="/Account/Profile"><i class="bi bi-person me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="/Account/Settings"><i class="bi bi-gear me-2"></i>Settings</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        @if (userRole == "admin") { <li><a class="dropdown-item" href="/Admin/Dashboard">Admin Dashboard</a></li> }
-                        @if (userRole == "doctor") { <li><a class="dropdown-item" href="/Doctor/Dashboard">Doctor Dashboard</a></li> }
-                        @if (userRole == "patient") { <li><a class="dropdown-item" href="/Patient/Dashboard">My Appointments</a></li> }
-                        <li><a class="dropdown-item text-danger" href="/Account/Logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+                    <a class="btn-nav-register" href="/Account/Register">
+                        <i class="bi bi-person-plus me-1"></i> Register
+                    </a>
+                }
+            </div>
+
         </div>
     </div>
 </nav>
