@@ -218,31 +218,32 @@
 
         <div class="collapse navbar-collapse ms-lg-5" id="damsTopNav">
 
-            @if (isLoggedIn)
-            {
-                <ul class="navbar-nav me-auto align-items-lg-center gap-1">
-                    <li class="nav-item">
-                        <a class="dams-nav-link @(isHomePage ? "active-link" : "")" href="/">Home</a>
-                    </li>
+            <ul class="navbar-nav me-auto align-items-lg-center gap-1">
+                <li class="nav-item">
+                    <a class="dams-nav-link @(isHomePage ? "active-link" : "")" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="dams-nav-link" href="/Home/Index#aboutSection">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="dams-nav-link" href="/Home/Index#servicesSection">Service</a>
+                </li>
+                <li class="nav-item">
+                    <a class="dams-nav-link" href="/Home/Index#doctorsSection">Doctor</a>
+                </li>
+                <li class="nav-item">
+                    <a class="dams-nav-link" href="/Home/Index#contactSection">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="dams-nav-link" href="#">Blog</a>
+                </li>
+                @if (isLoggedIn)
+                {
                     <li class="nav-item">
                         <a class="dams-nav-link @(dashboardUrl == controller ? "active-link" : "")" href="@dashboardUrl">Dashboard</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="dams-nav-link" href="/Home/Privacy">Privacy</a>
-                    </li>
-                </ul>
-            }
-            else
-            {
-                <ul class="navbar-nav me-auto align-items-lg-center gap-1">
-                    <li class="nav-item">
-                        <a class="dams-nav-link active-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="dams-nav-link" href="/Home/Privacy">Privacy</a>
-                    </li>
-                </ul>
-            }
+                }
+            </ul>
 
             <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
                 @if (isLoggedIn)
