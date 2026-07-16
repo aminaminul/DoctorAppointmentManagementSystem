@@ -1,135 +1,832 @@
+@using DoctorAppointmentManagementSystem.Models
 @{
     Layout = "_Layout";
     ViewData["HideSidebar"] = true;
+    var doctors = ViewBag.Doctors as List<Doctor> ?? new List<Doctor>();
 }
 
-<section class="position-relative" style="min-height:85vh;">
-    <div class="position-absolute top-0 start-0 w-100 h-100"
-         style="background-image: linear-gradient(rgba(31,31,31,0.45), rgba(31,31,31,0.45)), url('@Url.Content("~/Images/doctor.jpg")'); background-size:cover; background-position:center;">
-    </div>
+<style>
+    /* ─── Global Styles ─── */
+    .home-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #2c3e50;
+        background-color: #f7fafc;
+        overflow-x: hidden;
+    }
 
-    <div class="container h-100 d-flex align-items-center position-relative" style="z-index:2;">
-        <div class="row w-100">
-            <div class="col-12 text-center text-white">
-                <div class="py-5">
-                    <h1 class="display-4 fw-bold" style="color:#FFFFFF; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
-                        Avoid Hassles & Delays.
+    .text-primary-dams { color: #1a6b9a !important; }
+    .text-accent-dams { color: #4DA8DA !important; }
+    .bg-accent-dams { background-color: #4DA8DA !important; }
+
+    /* ─── Hero Section ─── */
+    .hero-sec {
+        background: linear-gradient(135deg, #eef7fc 0%, #ffffff 100%);
+        padding: 5.5rem 0;
+        position: relative;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1.15;
+        color: #0b1727;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-desc {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: #5c6b73;
+        margin-bottom: 2rem;
+        max-width: 580px;
+    }
+
+    .btn-hero-primary {
+        background-color: #4DA8DA;
+        border: 2px solid #4DA8DA;
+        color: #ffffff !important;
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding: 12px 28px;
+        border-radius: 30px;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 15px rgba(77, 168, 218, 0.3);
+    }
+    .btn-hero-primary:hover {
+        background-color: #3a96c4;
+        border-color: #3a96c4;
+        transform: translateY(-2px);
+    }
+
+    .btn-hero-outline {
+        background-color: transparent;
+        border: 2px solid #1a6b9a;
+        color: #1a6b9a !important;
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding: 12px 28px;
+        border-radius: 30px;
+        transition: all 0.25s ease;
+    }
+    .btn-hero-outline:hover {
+        background-color: rgba(26, 107, 154, 0.05);
+        transform: translateY(-2px);
+    }
+
+    .hero-stats {
+        margin-top: 3.5rem;
+        display: flex;
+        gap: 2.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding-top: 2rem;
+    }
+
+    .hero-stat-item {
+        line-height: 1.2;
+    }
+
+    .hero-stat-number {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #1a6b9a;
+    }
+
+    .hero-stat-label {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .hero-img-wrapper {
+        position: relative;
+        text-align: center;
+    }
+
+    .hero-img-bg {
+        position: absolute;
+        top: 10%;
+        left: 10%;
+        width: 80%;
+        height: 80%;
+        background-color: #e2f2fc;
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        z-index: 1;
+        animation: blobMorph 8s ease-in-out infinite alternate;
+    }
+
+    .hero-img {
+        position: relative;
+        z-index: 2;
+        max-width: 90%;
+        height: auto;
+        border-radius: 20px;
+    }
+
+    /* ─── Trust Us Section ─── */
+    .trust-sec {
+        padding: 6rem 0;
+        background-color: #ffffff;
+    }
+
+    .sec-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .sec-header h6 {
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.8rem;
+    }
+
+    .sec-header h2 {
+        font-weight: 800;
+        color: #0b1727;
+        font-size: 2.2rem;
+    }
+
+    .trust-card {
+        border: none;
+        border-radius: 16px;
+        padding: 2rem;
+        background-color: #f8fbfe;
+        transition: all 0.3s ease;
+        height: 100%;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+
+    .trust-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(26, 107, 154, 0.08);
+        background-color: #ffffff;
+        border-bottom: 4px solid #4DA8DA;
+    }
+
+    .trust-card-icon {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(77, 168, 218, 0.12);
+        color: #4DA8DA;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .trust-card h5 {
+        font-weight: 700;
+        color: #0b1727;
+        margin-bottom: 0.8rem;
+        font-size: 1.15rem;
+    }
+
+    .trust-card p {
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: #7f8c8d;
+        margin-bottom: 1.2rem;
+    }
+
+    .trust-card-link {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #1a6b9a;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: gap 0.2s;
+    }
+    .trust-card-link:hover {
+        color: #4DA8DA;
+        gap: 10px;
+    }
+
+    /* ─── About Us Section ─── */
+    .about-sec {
+        padding: 6rem 0;
+        background-color: #f4f9fd;
+    }
+
+    .about-img {
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .about-subtitle {
+        font-weight: 700;
+        color: #4DA8DA;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+    }
+
+    .about-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #0b1727;
+        margin-bottom: 1.5rem;
+    }
+
+    .about-desc {
+        color: #5c6b73;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+
+    .about-list {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 2.5rem;
+    }
+
+    .about-list li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 0.9rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .about-list-icon {
+        color: #4DA8DA;
+        font-size: 1.2rem;
+    }
+
+    /* ─── Services Section ─── */
+    .services-sec {
+        padding: 6rem 0;
+        background-color: #ffffff;
+    }
+
+    .service-card {
+        background-color: #ffffff;
+        border: 1px solid rgba(0,0,0,0.04);
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        transition: all 0.3s ease;
+        height: 100%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.015);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(77, 168, 218, 0.12);
+        border-color: rgba(77, 168, 218, 0.2);
+    }
+
+    .service-icon-box {
+        width: 60px;
+        height: 60px;
+        background-color: rgba(77, 168, 218, 0.08);
+        color: #4DA8DA;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s;
+    }
+
+    .service-card:hover .service-icon-box {
+        background-color: #4DA8DA;
+        color: #ffffff;
+    }
+
+    .service-card h4 {
+        font-weight: 700;
+        color: #0b1727;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .service-card p {
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: #7f8c8d;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+
+    /* ─── Doctors Section ─── */
+    .doctors-sec {
+        padding: 6rem 0;
+        background-color: #f4f9fd;
+    }
+
+    .doctor-card {
+        background: #ffffff;
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .doctor-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 35px rgba(26, 107, 154, 0.08);
+    }
+
+    .doctor-img-wrapper {
+        position: relative;
+        background-color: #eef6fb;
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .doctor-avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        background-color: rgba(77,168,218,0.12);
+        color: #4DA8DA;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+    }
+
+    .doctor-info-body {
+        padding: 1.5rem;
+    }
+
+    .doctor-name {
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: #0b1727;
+        margin-bottom: 0.3rem;
+    }
+
+    .doctor-specialty {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #4DA8DA;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 1rem;
+    }
+
+    .doctor-stats-row {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #f0f4f8;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        font-size: 0.82rem;
+        color: #7f8c8d;
+    }
+
+    .doctor-stats-row strong {
+        color: #0b1727;
+    }
+
+    /* ─── Consultation Section ─── */
+    .consult-sec {
+        padding: 6rem 0;
+        background-color: #ffffff;
+    }
+
+    .consult-card {
+        background-color: #f4f9fd;
+        border-radius: 24px;
+        padding: 3.5rem;
+        border: 1px solid rgba(77, 168, 218, 0.08);
+    }
+
+    .consult-img {
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .consult-form .form-select, .consult-form .form-control {
+        border: 1px solid rgba(0,0,0,0.08);
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        background-color: #ffffff;
+        color: #2c3e50;
+    }
+
+    .consult-form .form-select:focus, .consult-form .form-control:focus {
+        border-color: #4DA8DA;
+        box-shadow: 0 0 0 3px rgba(77, 168, 218, 0.15);
+    }
+
+    /* ─── Animations ─── */
+    @@keyframes blobMorph {
+        0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        100% { border-radius: 70% 30% 50% 50% / 50% 60% 40% 60%; }
+    }
+</style>
+
+<div class="home-container">
+    <!-- 1️⃣ HERO SECTION -->
+    <section class="hero-sec">
+        <div class="container-fluid px-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">
+                        World-class <span class="text-accent-dams">medical assistance</span> is now just a click away
                     </h1>
-
-                    <p class="lead text-white-50 mx-auto" style="max-width:760px; font-size:1.05rem;">
-                        Find your doctor, book appointments instantly and manage visits — a smoother experience for patients and clinicians.
-                        Fast booking, clear schedules and secure records — all in one place.
+                    <p class="hero-desc">
+                        Find qualified medical professionals, confirm visit schedules instantly, and manage health records securely — a streamlined booking system designed for clinicians and patients.
                     </p>
-
-                    <div class="mt-4 d-flex justify-content-center gap-3">
-                        <a href="/Appointment/Book" class="btn btn-lg text-white rounded-3" style="background-color:#4DA8DA;">
-                            <i class="bi bi-calendar-plus me-2"></i> Make Appointment
+                    <div class="d-flex gap-3">
+                        <a href="/Appointment/Book" class="btn btn-hero-primary">
+                            <i class="bi bi-calendar-check me-2"></i> Book Appointment
                         </a>
-
-                        <a href="/Account/Register" class="btn btn-lg btn-outline-light rounded-3 border-white text-white">
-                            <i class="bi bi-person-plus me-2"></i> Sign up
+                        <a href="#aboutSection" class="btn btn-hero-outline">
+                            Learn More
                         </a>
                     </div>
 
-                    <div class="mt-5 d-none d-md-flex justify-content-center gap-4">
-                        <div class="text-center">
-                            <div class="fw-bold h4 mb-0" style="color:#FFFFFF;">480+</div>
-                            <div class="small text-white-50">Patients</div>
+                    <div class="hero-stats">
+                        <div class="hero-stat-item">
+                            <div class="hero-stat-number">10,000+</div>
+                            <div class="hero-stat-label">Patients</div>
                         </div>
-                        <div class="text-center">
-                            <div class="fw-bold h4 mb-0" style="color:#FFFFFF;">86</div>
-                            <div class="small text-white-50">Doctors</div>
+                        <div class="hero-stat-item">
+                            <div class="hero-stat-number">50+</div>
+                            <div class="hero-stat-label">Doctors</div>
                         </div>
-                        <div class="text-center">
-                            <div class="fw-bold h4 mb-0" style="color:#FFFFFF;">180</div>
-                            <div class="small text-white-50">Appointments</div>
+                        <div class="hero-stat-item">
+                            <div class="hero-stat-number">98%</div>
+                            <div class="hero-stat-label">Satisfaction</div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="hero-img-wrapper">
+                        <div class="hero-img-bg"></div>
+                        <img src="~/Images/doctor.jpg" alt="Doctor" class="hero-img img-fluid" />
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="py-5 bg-white">
-    <div class="container">
-        <div class="row justify-content-center mb-4">
-            <div class="col-lg-8 text-center">
-                <h3 class="fw-bold" style="color:#1F1F1F;">Everything you need for clinic scheduling</h3>
-                <p class="text-muted">Lightweight, secure and designed for medical teams. Quick bookings, clear schedules and patient history at your fingertips.</p>
+    <!-- 2️⃣ TRUST US / GET TO KNOW US SECTION -->
+    <section class="trust-sec">
+        <div class="container-fluid px-5">
+            <div class="sec-header">
+                <h6 class="text-accent-dams">Why you should trust us?</h6>
+                <h2>Get to know about DAMS features</h2>
             </div>
-        </div>
 
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="card rounded-3 shadow-sm h-100">
-                    <div class="card-body d-flex gap-3">
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;border:2px solid rgba(77,168,218,0.12);">
-                            <i class="bi bi-calendar-check" style="color:#4DA8DA; font-size:22px;"></i>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="trust-card">
+                        <div class="trust-card-icon">
+                            <i class="bi bi-shield-check"></i>
                         </div>
-                        <div>
-                            <div class="fw-bold">Fast Booking</div>
-                            <div class="small text-muted">Create appointments in seconds</div>
-                        </div>
+                        <h5>Certified Specialists</h5>
+                        <p>Fully authorized medical clinicians with verified records, qualification data, and complete operational transparency.</p>
+                        <a href="/Appointment/Book" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card rounded-3 shadow-sm h-100">
-                    <div class="card-body d-flex gap-3">
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;border:2px solid rgba(77,168,218,0.12);">
-                            <i class="bi bi-person-badge" style="color:#4DA8DA; font-size:22px;"></i>
+                <div class="col-md-6 col-lg-3">
+                    <div class="trust-card">
+                        <div class="trust-card-icon">
+                            <i class="bi bi-lock"></i>
                         </div>
-                        <div>
-                            <div class="fw-bold">Role-based Dashboards</div>
-                            <div class="small text-muted">Admin, Doctor & Patient</div>
-                        </div>
+                        <h5>Privacy Support</h5>
+                        <p>Your electronic medical reports (EMR), visit history, and prescriptions are protected with strong local security layers.</p>
+                        <a href="/Home/Privacy" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card rounded-3 shadow-sm h-100">
-                    <div class="card-body d-flex gap-3">
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;border:2px solid rgba(77,168,218,0.12);">
-                            <i class="bi bi-shield-lock" style="color:#4DA8DA; font-size:22px;"></i>
+                <div class="col-md-6 col-lg-3">
+                    <div class="trust-card">
+                        <div class="trust-card-icon">
+                            <i class="bi bi-clock-history"></i>
                         </div>
-                        <div>
-                            <div class="fw-bold">Secure Records</div>
-                            <div class="small text-muted">Patient history & EMR</div>
-                        </div>
+                        <h5>24/7 Available</h5>
+                        <p>Schedule your clinic slots at any hour. Receive instant confirmations and real-time email notifications automatically.</p>
+                        <a href="/Appointment/Book" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card rounded-3 shadow-sm h-100">
-                    <div class="card-body d-flex gap-3">
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:56px;height:56px;border:2px solid rgba(77,168,218,0.12);">
-                            <i class="bi bi-bar-chart-line" style="color:#4DA8DA; font-size:22px;"></i>
+                <div class="col-md-6 col-lg-3">
+                    <div class="trust-card">
+                        <div class="trust-card-icon">
+                            <i class="bi bi-chat-heart"></i>
                         </div>
-                        <div>
-                            <div class="fw-bold">Reports</div>
-                            <div class="small text-muted">Exportable summaries & charts</div>
-                        </div>
+                        <h5>Dedicated Care</h5>
+                        <p>Direct communication links between clinic patients, support staff, and doctors to prevent long delays and gaps.</p>
+                        <a href="/Appointment/Book" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="py-5 bg-white border-top">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h5 class="fw-bold">Ready to streamline your clinic?</h5>
-                <p class="small text-muted">Create an account and start accepting appointments today.</p>
-            </div>
-            <div class="col-md-4 text-md-end">
-                <a href="/Account/Register" class="btn btn-lg text-white rounded-3" style="background-color:#4DA8DA;"><i class="bi bi-person-plus-fill me-2"></i> Start Now</a>
+    <!-- 3️⃣ ABOUT US SECTION -->
+    <section class="about-sec" id="aboutSection">
+        <div class="container-fluid px-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <img src="~/Images/about_clinic.png" alt="Our Medical Clinic Lobby" class="about-img img-fluid" />
+                </div>
+                <div class="col-lg-6">
+                    <div class="about-subtitle">About DAMS</div>
+                    <h2 class="about-title">Dedicated to Providing Automated Booking Services</h2>
+                    <p class="about-desc">
+                        Our platform is designed from the ground up to solve the operational bottlenecks of medical scheduling. We enable clinic staff to focus on critical care while automating appointment lists, daily sequences, and prescription generation.
+                    </p>
+                    <ul class="about-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill about-list-icon"></i>
+                            Get access to top certified medical professionals.
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill about-list-icon"></i>
+                            Secure digital medical records and histories.
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill about-list-icon"></i>
+                            Live queue tracking to prevent long waiting times.
+                        </li>
+                    </ul>
+                    <a href="/Appointment/Book" class="btn btn-hero-primary">
+                        <i class="bi bi-calendar-check me-1"></i> Make An Appointment
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+    <!-- 4️⃣ MEDICAL SPECIALITIES / SERVICES SECTION -->
+    <section class="services-sec">
+        <div class="container-fluid px-5">
+            <div class="sec-header">
+                <h6 class="text-accent-dams">Experienced in Multiple Specialties</h6>
+                <h2>Our Medical Services</h2>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <i class="bi bi-heart-pulse"></i>
+                        </div>
+                        <h4>Cardiology</h4>
+                        <p>Complete cardiac health checkups, monitoring, diagnostic reports, and specialized consultation schedules.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <i class="bi bi-activity"></i>
+                        </div>
+                        <h4>Neurology</h4>
+                        <p>Advanced diagnostic procedures for nervous system issues, offering customized and dedicated care plans.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <i class="bi bi-emoji-smile"></i>
+                        </div>
+                        <h4>Pediatrics</h4>
+                        <p>Dedicated child care, vaccination alerts, regular health checkups, and child specialist consultants.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <i class="bi bi-clipboard-pulse"></i>
+                        </div>
+                        <h4>Orthopedics</h4>
+                        <p>Treatment for bone and muscle issues, joint consultations, therapies, and post-surgery recovery tracking.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <i class="bi bi-droplet-half"></i>
+                        </div>
+                        <h4>Dermatology</h4>
+                        <p>Specialized treatments for skin conditions, allergy diagnoses, cosmetic care, and recovery guides.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <i class="bi bi-eye"></i>
+                        </div>
+                        <h4>Ophthalmology</h4>
+                        <p>Comprehensive eye care assessments, vision tests, prescriptions, and lens consulting.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="/Appointment/Book" class="btn btn-hero-primary">See More Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5️⃣ MEET OUR PROFESSIONAL DOCTORS SECTION -->
+    <section class="doctors-sec">
+        <div class="container-fluid px-5">
+            <div class="sec-header">
+                <h6 class="text-accent-dams">Meet Our Professional Doctors</h6>
+                <h2>Qualified Experts Ready to Serve You</h2>
+            </div>
+
+            <div class="row g-4">
+                @if (doctors.Any())
+                {
+                    @foreach (var doc in doctors)
+                    {
+                        <div class="col-md-6 col-lg-3">
+                            <div class="doctor-card">
+                                <div class="doctor-img-wrapper">
+                                    <div class="doctor-avatar-placeholder">
+                                        <i class="bi bi-person-fill-gear"></i>
+                                    </div>
+                                </div>
+                                <div class="doctor-info-body">
+                                    <div class="doctor-name">Dr. @(doc.User?.Username ?? "Medical Consultant")</div>
+                                    <div class="doctor-specialty">@doc.Specialization</div>
+                                    <div class="small text-muted mb-3">Qualifications: @(string.IsNullOrEmpty(doc.Qualification) ? "MBBS" : doc.Qualification)</div>
+                                    
+                                    <div class="doctor-stats-row">
+                                        <div>
+                                            Experience: <strong>@(doc.Experience) Yrs</strong>
+                                        </div>
+                                        <div>
+                                            Consultation Fee: <strong>@(doc.ConsultationFee) BDT</strong>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <a href="/Appointment/Book" class="btn btn-sm btn-outline-primary w-100 rounded-pill">Book Slot</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <!-- Fallback / Seed mock visual cards if DB has no doctors -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="doctor-card">
+                            <div class="doctor-img-wrapper">
+                                <div class="doctor-avatar-placeholder">
+                                    <i class="bi bi-person-fill-gear"></i>
+                                </div>
+                            </div>
+                            <div class="doctor-info-body">
+                                <div class="doctor-name">Dr. Sarah Jenkins</div>
+                                <div class="doctor-specialty">Cardiologist</div>
+                                <div class="small text-muted mb-3">Qualifications: MBBS, MD (Cardiology)</div>
+                                <div class="doctor-stats-row">
+                                    <div>Experience: <strong>12 Yrs</strong></div>
+                                    <div>Fee: <strong>1000 BDT</strong></div>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="/Appointment/Book" class="btn btn-sm btn-outline-primary w-100 rounded-pill">Book Slot</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="doctor-card">
+                            <div class="doctor-img-wrapper">
+                                <div class="doctor-avatar-placeholder">
+                                    <i class="bi bi-person-fill-gear"></i>
+                                </div>
+                            </div>
+                            <div class="doctor-info-body">
+                                <div class="doctor-name">Dr. Albert Ross</div>
+                                <div class="doctor-specialty">Neurologist</div>
+                                <div class="small text-muted mb-3">Qualifications: MBBS, FCPS (Neurology)</div>
+                                <div class="doctor-stats-row">
+                                    <div>Experience: <strong>9 Yrs</strong></div>
+                                    <div>Fee: <strong>800 BDT</strong></div>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="/Appointment/Book" class="btn btn-sm btn-outline-primary w-100 rounded-pill">Book Slot</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="doctor-card">
+                            <div class="doctor-img-wrapper">
+                                <div class="doctor-avatar-placeholder">
+                                    <i class="bi bi-person-fill-gear"></i>
+                                </div>
+                            </div>
+                            <div class="doctor-info-body">
+                                <div class="doctor-name">Dr. Emily Stone</div>
+                                <div class="doctor-specialty">Pediatrician</div>
+                                <div class="small text-muted mb-3">Qualifications: MBBS, DCH</div>
+                                <div class="doctor-stats-row">
+                                    <div>Experience: <strong>8 Yrs</strong></div>
+                                    <div>Fee: <strong>600 BDT</strong></div>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="/Appointment/Book" class="btn btn-sm btn-outline-primary w-100 rounded-pill">Book Slot</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="doctor-card">
+                            <div class="doctor-img-wrapper">
+                                <div class="doctor-avatar-placeholder">
+                                    <i class="bi bi-person-fill-gear"></i>
+                                </div>
+                            </div>
+                            <div class="doctor-info-body">
+                                <div class="doctor-name">Dr. Marcus Vance</div>
+                                <div class="doctor-specialty">Dermatologist</div>
+                                <div class="small text-muted mb-3">Qualifications: MBBS, DDV</div>
+                                <div class="doctor-stats-row">
+                                    <div>Experience: <strong>11 Yrs</strong></div>
+                                    <div>Fee: <strong>900 BDT</strong></div>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="/Appointment/Book" class="btn btn-sm btn-outline-primary w-100 rounded-pill">Book Slot</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- 6️⃣ CONSULTATION FORM SECTION -->
+    <section class="consult-sec">
+        <div class="container-fluid px-5">
+            <div class="consult-card">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6">
+                        <h2 class="fw-bold text-primary-dams mb-3">Consultation with our best doctors</h2>
+                        <p class="text-muted mb-4">
+                            Select a department and instantly schedule a slot. Or get in touch with our front desk team to receive manual guidance regarding a particular specialization.
+                        </p>
+                        
+                        <form class="consult-form row g-3" action="/Appointment/Book" method="get">
+                            <div class="col-12">
+                                <select class="form-select" name="department" aria-label="Select Speciality">
+                                    <option value="" selected>Choose Medical Speciality...</option>
+                                    <option value="Cardiologist">Cardiology</option>
+                                    <option value="Neurologist">Neurology</option>
+                                    <option value="Pediatrician">Pediatrics</option>
+                                    <option value="Orthopedics">Orthopedics</option>
+                                    <option value="Dermatologist">Dermatology</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <input type="date" class="form-control" name="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" placeholder="Choose Date" />
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-hero-primary w-100">
+                                    <i class="bi bi-search me-2"></i> Find Schedules
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <img src="~/Images/consultation_bg.png" alt="Medical consultation interface" class="consult-img img-fluid" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

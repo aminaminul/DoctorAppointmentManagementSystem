@@ -3,6 +3,7 @@ using DoctorAppointmentManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using DoctorAppointmentManagementSystem.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
@@ -29,6 +30,15 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 if (userRole.Equals("Patient", StringComparison.OrdinalIgnoreCase))
                     return RedirectToAction("Dashboard", "Patient");
             }
+
+            var doctors = _db.Doctors
+                .Include(d => d.User)
+                .Where(d => d.ActiveStatus)
+                .Take(4)
+                .ToList();
+
+            ViewBag.Doctors = doctors;
+
             return View();
         }
 
