@@ -1,4 +1,259 @@
-@* Footer partial for DAMS *@
-<footer class="py-3 mt-4 border-top">
-    <div class="container text-center small text-muted">© DAMS</div>
+<style>
+    .dams-footer {
+        background-color: #0b1727;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.9rem;
+        padding-top: 4.5rem;
+        padding-bottom: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dams-footer h5 {
+        color: #ffffff;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        position: relative;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+    }
+
+    .dams-footer h5::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 35px;
+        height: 2.5px;
+        background-color: #4DA8DA;
+        border-radius: 2px;
+    }
+
+    .dams-footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #ffffff !important;
+        font-weight: 800;
+        font-size: 1.4rem;
+        text-decoration: none;
+        margin-bottom: 1.2rem;
+    }
+
+    .dams-footer-brand-icon {
+        color: #4DA8DA;
+        font-size: 1.5rem;
+    }
+
+    .dams-footer-text {
+        line-height: 1.68;
+        font-size: 0.88rem;
+        margin-bottom: 1.5rem;
+        color: rgba(255, 255, 255, 0.65);
+    }
+
+    .dams-footer-socials {
+        display: flex;
+        gap: 10px;
+    }
+
+    .dams-footer-social-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .dams-footer-social-btn:hover {
+        background-color: #4DA8DA;
+        border-color: #4DA8DA;
+        color: #ffffff !important;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(77, 168, 218, 0.35);
+    }
+
+    .dams-footer-links {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+
+    .dams-footer-links li {
+        margin-bottom: 0.85rem;
+    }
+
+    .dams-footer-links a {
+        color: rgba(255, 255, 255, 0.65) !important;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-block;
+    }
+
+    .dams-footer-links a:hover {
+        color: #4DA8DA !important;
+        padding-left: 5px;
+    }
+
+    .dams-footer-contact-item {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 1rem;
+        align-items: flex-start;
+    }
+
+    .dams-footer-contact-icon {
+        color: #4DA8DA;
+        font-size: 1.1rem;
+        margin-top: 2px;
+    }
+
+    .dams-footer-contact-text {
+        font-size: 0.88rem;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.65);
+    }
+
+    .dams-footer-contact-text a {
+        color: rgba(255, 255, 255, 0.65) !important;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .dams-footer-contact-text a:hover {
+        color: #4DA8DA !important;
+    }
+
+    .dams-sub-footer {
+        background-color: #060e18;
+        padding: 1.5rem 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.82rem;
+    }
+
+    .btn-scroll-top {
+        width: 38px;
+        height: 38px;
+        background-color: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.22s ease;
+    }
+
+    .btn-scroll-top:hover {
+        background-color: #4DA8DA;
+        border-color: #4DA8DA;
+        transform: translateY(-2px);
+    }
+</style>
+
+<footer class="dams-footer mt-5">
+    <div class="container-fluid px-5">
+        <div class="row g-5">
+            <div class="col-lg-4 col-md-6">
+                <a class="dams-footer-brand" href="/">
+                    <i class="bi bi-heart-pulse-fill dams-footer-brand-icon"></i>
+                    <span>DAMS</span>
+                </a>
+                <p class="dams-footer-text">
+                    DAMS is a leading medical clinic dedicated to providing comprehensive healthcare services to our community. Our mission is to enhance the well-being of our patients by avoiding clinic hassles, waiting lines, and unnecessary delays.
+                </p>
+                <div class="dams-footer-socials">
+                    <a href="https://facebook.com" target="_blank" class="dams-footer-social-btn">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://twitter.com" target="_blank" class="dams-footer-social-btn">
+                        <i class="bi bi-twitter-x"></i>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" class="dams-footer-social-btn">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" class="dams-footer-social-btn">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6 ms-lg-auto">
+                <h5>Links</h5>
+                <ul class="dams-footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/Appointment/Book">Book Visit</a></li>
+                    <li><a href="/Home/Privacy">Privacy Policy</a></li>
+                    <li><a href="/Account/Register">Create Account</a></li>
+                    <li><a href="/Account/Login">Sign In</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5>Departments</h5>
+                <ul class="dams-footer-links">
+                    <li><a href="/Appointment/Book">Cardiology</a></li>
+                    <li><a href="/Appointment/Book">Neurology</a></li>
+                    <li><a href="/Appointment/Book">Pediatrics</a></li>
+                    <li><a href="/Appointment/Book">Orthopedics</a></li>
+                    <li><a href="/Appointment/Book">Dermatology</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5>Contact</h5>
+                <div class="dams-footer-contact-item">
+                    <i class="bi bi-envelope-fill dams-footer-contact-icon"></i>
+                    <div class="dams-footer-contact-text">
+                        <a href="mailto:info@dams-clinic.com">info@dams-clinic.com</a>
+                    </div>
+                </div>
+                <div class="dams-footer-contact-item">
+                    <i class="bi bi-telephone-fill dams-footer-contact-icon"></i>
+                    <div class="dams-footer-contact-text">
+                        +880 1700-000001<br>
+                        +880 1900-000002
+                    </div>
+                </div>
+                <div class="dams-footer-contact-item">
+                    <i class="bi bi-geo-alt-fill dams-footer-contact-icon"></i>
+                    <div class="dams-footer-contact-text">
+                        120/A Dhanmondi Road,<br>
+                        Dhaka - 1209, Bangladesh
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </footer>
+
+<div class="dams-sub-footer">
+    <div class="container-fluid px-5 d-flex justify-content-between align-items-center">
+        <div>
+            © @DateTime.Now.Year DAMS. All Rights Reserved.
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <span>Site by Antigravity.</span>
+            <button class="btn-scroll-top" id="scrollTopBtn" title="Scroll to top">
+                <i class="bi bi-chevron-up"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('scrollTopBtn').addEventListener('click', function () {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+</script>
