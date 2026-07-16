@@ -32,11 +32,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Database migration failed: " + ex.Message);
     }
 
-    if (!db.Roles.Any())
-    {
-        db.Roles.AddRange(new Role { Id = 1, RoleName = "Admin" }, new Role { Id = 2, RoleName = "Doctor" }, new Role { Id = 3, RoleName = "Patient" });
-        db.SaveChanges();
-    }
+    SeedData.Initialize(db);
 }
 
 if (!app.Environment.IsDevelopment())
