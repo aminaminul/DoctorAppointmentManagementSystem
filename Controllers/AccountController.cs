@@ -44,19 +44,19 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return View(model);
             }
 
-            int selRoleId = model.RoleId > 0 ? model.RoleId : 3;
-            if (!string.IsNullOrEmpty(model.RoleName))
-            {
-                selRoleId = model.RoleName switch
-                {
-                    "Admin" => 1,
-                    "Doctor" => 2,
-                    "Patient" => 3,
-                    _ => selRoleId
-                };
-            }
+            // Determine role name dynamically
+            var selectedRole = _context.Roles.FirstOrDefault(r => r.Id == model.RoleId);
+            string selectedRoleName = selectedRole?.Name ?? "Patient";
 
-            if (selRoleId == 2)
+            int virtualRoleId = selectedRoleName switch
+            {
+                "Admin" => 1,
+                "Doctor" => 2,
+                "Patient" => 3,
+                _ => 3
+            };
+
+            if (virtualRoleId == 2)
             {
                 if (string.IsNullOrWhiteSpace(model.Specialization))
                 {
@@ -64,7 +64,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                     return View(model);
                 }
             }
-            else if (selRoleId == 3)
+            else if (virtualRoleId == 3)
             {
                 if (!model.Age.HasValue && !model.DateOfBirth.HasValue)
                 {
@@ -73,21 +73,19 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 }
             }
 
-            int roleId = selRoleId;
-
             User user = new User()
             {
                 Username = model.Username,
                 Email = model.Email,
                 Password = model.Password,
                 PhoneNumber = model.PhoneNumber,
-                RoleId = roleId
+                RoleId = model.RoleId > 0 ? model.RoleId : (selectedRole?.Id ?? 3)
             };
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            if (roleId == 3)
+            if (virtualRoleId == 3)
             {
                 Patient patient = new Patient()
                 {
@@ -109,7 +107,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
                 _context.Patients.Add(patient);
             }
-            else if (roleId == 2)
+            else if (virtualRoleId == 2)
             {
                 var deptPart = model.Department.HasValue ? model.Department.Value.ToString() + " - " : "";
                 Doctor doctor = new Doctor()
@@ -125,15 +123,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context.SaveChanges();
 
             HttpContext.Session.SetInt32("UserId", user.Id);
-            var role = _context.Roles.Find(roleId);
-            var roleName = role?.RoleName ?? role?.Name ?? "Patient";
-            HttpContext.Session.SetString("UserRole", roleName);
+            HttpContext.Session.SetInt32("RoleId", virtualRoleId);
+            HttpContext.Session.SetString("UserRole", selectedRoleName);
             HttpContext.Session.SetString("UserName", user.Username ?? user.Email);
 
-            if (roleId == 1)
+            if (virtualRoleId == 1)
                 return RedirectToAction("Dashboard", "Admin");
 
-            if (roleId == 2)
+            if (virtualRoleId == 2)
                 return RedirectToAction("Dashboard", "Doctor");
 
             return RedirectToAction("Dashboard", "Patient");
@@ -162,14 +159,24 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return View(model);
             }
 
+            string roleName = user.Role?.Name ?? "Patient";
+            int virtualRoleId = roleName switch
+            {
+                "Admin" => 1,
+                "Doctor" => 2,
+                "Patient" => 3,
+                _ => 3
+            };
+
             HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserRole", user.Role?.RoleName ?? "Patient");
+            HttpContext.Session.SetInt32("RoleId", virtualRoleId);
+            HttpContext.Session.SetString("UserRole", roleName);
             HttpContext.Session.SetString("UserName", user.Username ?? user.Email);
 
-            if (user.RoleId == 1)
+            if (virtualRoleId == 1)
                 return RedirectToAction("Dashboard", "Admin");
 
-            if (user.RoleId == 2)
+            if (virtualRoleId == 2)
                 return RedirectToAction("Dashboard", "Doctor");
 
             return RedirectToAction("Dashboard", "Patient");

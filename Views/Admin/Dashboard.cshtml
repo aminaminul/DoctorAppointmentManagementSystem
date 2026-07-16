@@ -19,25 +19,27 @@
                 <div class="col-md-4">
                     <div class="card p-3">
                         <h6>Total Doctors</h6>
-                        <div class="display-6">@ViewBag.Doctors?.Count ?? 0</div>
+                        <div class="display-6">@ViewBag.TotalDoctorsCount</div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card p-3">
                         <h6>Total Patients</h6>
-                        <div class="display-6">@ViewBag.Patients?.Count ?? 0</div>
+                        <div class="display-6">@ViewBag.TotalPatientsCount</div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card p-3">
                         <h6>Total Appointments</h6>
-                        <div class="display-6">@ViewBag.Appointments?.Count ?? 0</div>
+                        <div class="display-6">@ViewBag.TotalAppointmentsCount</div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+
+            @if (ViewBag.Section == "queue")
+            {
+                <div class="card mt-3">
+                    <div class="card-header bg-dark text-white d-flex align-items-center">
                         <h5 class="mb-0">Queue Control</h5>
                     </div>
                     <div class="card-body">

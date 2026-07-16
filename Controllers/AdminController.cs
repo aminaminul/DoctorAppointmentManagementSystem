@@ -51,6 +51,10 @@ namespace DoctorAppointmentManagementSystem.Controllers
             var roles = _context.Roles.ToList();
             ViewBag.Roles = roles;
 
+            ViewBag.TotalDoctorsCount = _context.Doctors.Count();
+            ViewBag.TotalPatientsCount = _context.Patients.Count();
+            ViewBag.TotalAppointmentsCount = _context.Appointments.Count();
+
             if (section == "doctors")
                 ViewBag.Doctors = _context.Doctors
                      .Include(d => d.User)
@@ -120,12 +124,15 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 ViewBag.Error = "Email already exists!";
                 return View(model);
             }
+            var doctorRole = _context.Roles.FirstOrDefault(r => r.Name == "Doctor");
+            int doctorRoleId = doctorRole?.Id ?? 2;
+
             User user = new User()
             {
                 Username = model.Name,
                 Email = model.Email,
                 Password = model.Password,
-                RoleId = 2
+                RoleId = doctorRoleId
             };
 
             _context.Users.Add(user);
@@ -188,12 +195,15 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return View(model);
             }
 
+            var patientRole = _context.Roles.FirstOrDefault(r => r.Name == "Patient");
+            int patientRoleId = patientRole?.Id ?? 3;
+
             User user = new User()
             {
                 Username = model.Name,
                 Email = model.Email,
                 Password = model.Password,
-                RoleId = 3
+                RoleId = patientRoleId
             };
 
             _context.Users.Add(user);
