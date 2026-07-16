@@ -18,9 +18,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _notificationService = notificationService;
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  Helper — resolve logged-in doctor (returns null if not authenticated)
-        // ─────────────────────────────────────────────────────────────────────────
         private Doctor? GetCurrentDoctor()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -30,9 +27,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                            .FirstOrDefault(d => d.UserId == userId);
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  DASHBOARD
-        // ─────────────────────────────────────────────────────────────────────────
         public IActionResult Dashboard(string? section)
         {
             var doctor = GetCurrentDoctor();
@@ -56,14 +50,12 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .OrderByDescending(a => a.AppointmentDate)
                 .ToList();
 
-            // Stats for dashboard cards
             ViewBag.TotalAppointments  = appointments.Count;
             ViewBag.PendingCount       = appointments.Count(a => a.AppointmentStatus == "Pending");
             ViewBag.ConfirmedCount     = appointments.Count(a => a.AppointmentStatus == "Confirmed"
                                                               || a.AppointmentStatus == "Approved");
             ViewBag.CompletedCount     = appointments.Count(a => a.AppointmentStatus == "Completed");
 
-            // Schedule summary
             var today = DateTime.Today;
             ViewBag.TodaySlots         = _context.DoctorSchedules
                                             .Count(ds => ds.DoctorId == doctor.Id
@@ -74,7 +66,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                                                       && ds.IsVacation
                                                       && ds.AvailableDate.Date >= today);
 
-            // Doctor profile
             ViewBag.DoctorId       = doctor.Id;
             ViewBag.DoctorName     = doctor.User.Username;
             ViewBag.Email          = doctor.User.Email;
@@ -105,9 +96,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View(appointments);
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        //  APPROVE / REJECT APPOINTMENT
-        // ─────────────────────────────────────────────────────────────────────────────
         public async Task<IActionResult> Approve(int id)
         {
             var appt = _context.Appointments.FirstOrDefault(a => a.Id == id);
@@ -151,9 +139,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
-        // ─────────────────────────────────────────────────────────────────────────────
-        //  PRESCRIPTIONS
-        // ─────────────────────────────────────────────────────────────────────────
         public IActionResult AddPrescription(int appointmentId)
         {
             ViewBag.AppointmentId = appointmentId;
@@ -184,9 +169,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  SCHEDULE — LIST
-        // ─────────────────────────────────────────────────────────────────────────
         public IActionResult Schedule(int? month, int? year)
         {
             var doctor = GetCurrentDoctor();
@@ -211,7 +193,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.DaysInMonth = DateTime.DaysInMonth(y, m);
             ViewBag.FirstDayOfWeek = (int)new DateTime(y, m, 1).DayOfWeek;
 
-            // Booked appointment counts per date for conflict indicator
             var bookedDates = _context.Appointments
                 .Where(a => a.DoctorId == doctor.Id
                          && a.AppointmentDate.Month == m
@@ -225,9 +206,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View(schedules);
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  SCHEDULE — ADD
-        // ─────────────────────────────────────────────────────────────────────────
         public IActionResult AddSchedule()
         {
             var doctor = GetCurrentDoctor();
@@ -244,7 +222,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             if (!ModelState.IsValid)
                 return View(vm);
 
-            // Overlap check — skip for vacation days
             if (!vm.IsVacation)
             {
                 bool overlap = _context.DoctorSchedules.Any(ds =>
@@ -283,9 +260,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Schedule");
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  SCHEDULE — EDIT
-        // ─────────────────────────────────────────────────────────────────────────
         public IActionResult EditSchedule(int id)
         {
             var doctor = GetCurrentDoctor();
@@ -336,9 +310,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Schedule");
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  SCHEDULE — DELETE
-        // ─────────────────────────────────────────────────────────────────────────
         [HttpPost]
         public IActionResult DeleteSchedule(int id)
         {
@@ -356,9 +327,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Schedule");
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  SCHEDULE — BULK VACATION RANGE
-        // ─────────────────────────────────────────────────────────────────────────
         [HttpPost]
         public IActionResult SetVacationRange(DateTime from, DateTime to, string? notes)
         {
@@ -374,7 +342,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             int added = 0;
             for (var d = from.Date; d <= to.Date; d = d.AddDays(1))
             {
-                // Skip if already exists
                 bool exists = _context.DoctorSchedules.Any(ds =>
                     ds.DoctorId == doctor.Id && ds.AvailableDate.Date == d);
                 if (!exists)
@@ -398,9 +365,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Schedule");
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  SCHEDULE — JSON for calendar rendering
-        // ─────────────────────────────────────────────────────────────────────────
         public JsonResult GetScheduleJson(int month, int year)
         {
             var doctor = GetCurrentDoctor();
@@ -426,8 +390,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return Json(schedules);
         }
-
-        // ================= MARK NOTIFICATION READ =================
 
         [HttpPost]
         public IActionResult MarkNotificationRead(int id)

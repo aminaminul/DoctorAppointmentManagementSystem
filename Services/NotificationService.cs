@@ -23,9 +23,6 @@ namespace DoctorAppointmentManagementSystem.Services
             _logger       = logger;
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  BOOKING CONFIRMATION  (patient books → status "Pending")
-        // ─────────────────────────────────────────────────────────────────────────
         public async Task SendAppointmentConfirmationAsync(Appointment appointment)
         {
             var appt = await LoadAppointmentAsync(appointment.Id);
@@ -44,9 +41,6 @@ namespace DoctorAppointmentManagementSystem.Services
                     "Your appointment request has been received. You will be notified once the doctor confirms it."));
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  APPOINTMENT CONFIRMED  (doctor approves)
-        // ─────────────────────────────────────────────────────────────────────────
         public async Task SendAppointmentApprovedAsync(Appointment appointment)
         {
             var appt = await LoadAppointmentAsync(appointment.Id);
@@ -69,9 +63,6 @@ namespace DoctorAppointmentManagementSystem.Services
                 $"{appt.AppointmentDate:dd MMM} at {appt.AppointmentTime}. Arrive 10 mins early.");
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  APPOINTMENT CANCELLED  (doctor rejects)
-        // ─────────────────────────────────────────────────────────────────────────
         public async Task SendAppointmentCancelledAsync(Appointment appointment)
         {
             var appt = await LoadAppointmentAsync(appointment.Id);
@@ -94,9 +85,6 @@ namespace DoctorAppointmentManagementSystem.Services
                 $"{appt.AppointmentDate:dd MMM} has been cancelled.");
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  APPOINTMENT DELAYED
-        // ─────────────────────────────────────────────────────────────────────────
         public async Task SendAppointmentDelayedAsync(Appointment appointment)
         {
             var appt = await LoadAppointmentAsync(appointment.Id);
@@ -119,9 +107,6 @@ namespace DoctorAppointmentManagementSystem.Services
                 $"{appt.AppointmentDate:dd MMM} is delayed. The clinic will update you shortly.");
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  PRESCRIPTION READY
-        // ─────────────────────────────────────────────────────────────────────────
         public async Task SendPrescriptionReadyAsync(Prescription prescription)
         {
             var presc = await _context.Prescriptions
@@ -150,9 +135,6 @@ namespace DoctorAppointmentManagementSystem.Services
                     $"<strong>Instructions:</strong> {presc.Instructions ?? "Follow doctor's advice"}"));
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  APPOINTMENT REMINDER  (24h before)
-        // ─────────────────────────────────────────────────────────────────────────
         public async Task SendAppointmentReminderAsync(Appointment appointment)
         {
             var appt = await LoadAppointmentAsync(appointment.Id);
@@ -175,9 +157,6 @@ namespace DoctorAppointmentManagementSystem.Services
                 $"{appt.AppointmentTime}. Arrive 10 mins early.");
         }
 
-        // ─────────────────────────────────────────────────────────────────────────
-        //  HELPERS
-        // ─────────────────────────────────────────────────────────────────────────
         private async Task<Appointment?> LoadAppointmentAsync(int id)
         {
             return await _context.Appointments

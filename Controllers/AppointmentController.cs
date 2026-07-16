@@ -18,11 +18,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _notificationService = notificationService;
         }
 
-        // ================= STEP 1: BOOK PAGE =================
-
         public IActionResult Book()
         {
-            // Guard: must be logged in as patient
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
             {
@@ -30,7 +27,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // Load distinct departments (Specializations)
             ViewBag.Departments = _context.Doctors
                 .Where(d => d.ActiveStatus)
                 .Select(d => d.Specialization)
@@ -40,8 +36,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View();
         }
-
-        // ================= AJAX: LOAD DOCTORS BY DEPARTMENT =================
 
         public JsonResult GetDoctorsByDepartment(string department)
         {
@@ -62,14 +56,11 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return Json(doctors);
         }
 
-        // ================= AJAX: AVAILABLE SLOTS FOR DOCTOR + DATE =================
-
         public JsonResult GetAvailableSlots(int doctorId, string date)
         {
             if (!DateTime.TryParse(date, out DateTime selectedDate))
                 return Json(new List<string>());
 
-            // 1. Try DoctorSchedule table first
             var scheduleSlots = _context.DoctorSchedules
                 .Where(ds => ds.DoctorId == doctorId
                           && ds.AvailableDate.Date == selectedDate.Date
@@ -85,7 +76,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             else
             {
-                // 2. Fall back to comma-separated AvailableTime string on Doctor
                 var doctor = _context.Doctors.FirstOrDefault(d => d.Id == doctorId);
                 if (doctor == null || string.IsNullOrWhiteSpace(doctor.AvailableTime))
                     return Json(new List<string>());
@@ -97,7 +87,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                     .ToList();
             }
 
-            // Remove already-booked slots for that doctor + date
             var booked = _context.Appointments
                 .Where(a => a.DoctorId == doctorId
                          && a.AppointmentDate.Date == selectedDate.Date
@@ -110,16 +99,12 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return Json(slots);
         }
 
-        // ================= STEP 2: SELECT TIME =================
-
         public IActionResult SelectTime(int doctorId, DateTime date)
         {
-            // Guard: must be logged in
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            // Past date validation
             if (date < DateTime.Today)
             {
                 TempData["Error"] = "You cannot select a past date!";
@@ -133,7 +118,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             if (doctor == null)
                 return RedirectToAction("Book");
 
-            // Build slot list — prefer DoctorSchedule, fallback to AvailableTime string
             var scheduleSlots = _context.DoctorSchedules
                 .Where(ds => ds.DoctorId == doctorId
                           && ds.AvailableDate.Date == date.Date
@@ -155,7 +139,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                     .ToList();
             }
 
-            // Remove already-booked slots
             var booked = _context.Appointments
                 .Where(a => a.DoctorId == doctorId
                          && a.AppointmentDate.Date == date.Date
@@ -178,14 +161,11 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View();
         }
 
-        // ================= STEP 3: PAYMENT / CONFIRM =================
-
         [HttpPost]
         public IActionResult Confirm(int DoctorId, string Date, string TimeSlot,
                                      string ReasonForVisit, bool IsEmergency,
                                      string PaymentMethod, string CardType)
         {
-            // Guard: must be logged in
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
                 return RedirectToAction("Login", "Account");
@@ -196,7 +176,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return Redirect($"/Appointment/SelectTime?doctorId={DoctorId}&date={Date}");
             }
 
-            // Store in TempData for FinalConfirm
             TempData["DoctorId"]       = DoctorId;
             TempData["Date"]           = Date;
             TempData["TimeSlot"]       = TimeSlot;
@@ -211,11 +190,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             if (PaymentMethod == "Card")
                 return RedirectToAction("CardPayment");
 
-            // If no payment method (e.g. free / cash), go straight to final confirm
             return RedirectToAction("FinalConfirm");
         }
-
-        // ================= BKASH PAYMENT PAGE =================
 
         public IActionResult BkashPayment()
         {
@@ -224,16 +200,12 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View();
         }
 
-        // ================= CARD PAYMENT PAGE =================
-
         public IActionResult CardPayment()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login", "Account");
             return View();
         }
-
-        // ================= FINAL CONFIRM — SAVE BOOKING =================
 
         [HttpPost]
         public async Task<IActionResult> FinalConfirm(string? PaymentNumber)
@@ -246,7 +218,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             if (patient == null)
                 return RedirectToAction("Login", "Account");
 
-            // Read TempData
             int    doctorId      = Convert.ToInt32(TempData["DoctorId"]);
             string dateStr       = TempData["Date"]?.ToString() ?? "";
             string timeSlot      = TempData["TimeSlot"]?.ToString() ?? "";
@@ -259,14 +230,12 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return RedirectToAction("Book");
             }
 
-            // Past date validation
             if (bookingDate.Date < DateTime.Today)
             {
                 TempData["Error"] = "You cannot book an appointment for a past date!";
                 return RedirectToAction("Book");
             }
 
-            // Double booking check
             bool exists = _context.Appointments.Any(a =>
                 a.DoctorId == doctorId &&
                 a.AppointmentDate.Date == bookingDate.Date &&
@@ -279,7 +248,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return RedirectToAction("Book");
             }
 
-            // Create appointment
             var appointment = new Appointment
             {
                 PatientId          = patient.Id,
@@ -295,7 +263,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context.Appointments.Add(appointment);
             _context.SaveChanges();
 
-            // Mark DoctorSchedule slot as Booked if it exists
             var scheduleSlot = _context.DoctorSchedules
                 .FirstOrDefault(ds => ds.DoctorId == doctorId
                                    && ds.AvailableDate.Date == bookingDate.Date
@@ -307,9 +274,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 _context.SaveChanges();
             }
 
-            // ── Send booking confirmation notification ──
             try { await _notificationService.SendAppointmentConfirmationAsync(appointment); }
-            catch { /* Never block booking on notification failure */ }
+            catch { }
 
             TempData["BookingSuccess"]    = "true";
             TempData["BookedDoctorId"]    = doctorId;
@@ -320,8 +286,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Confirmation");
         }
-
-        // ================= CONFIRMATION PAGE =================
 
         public IActionResult Confirmation()
         {

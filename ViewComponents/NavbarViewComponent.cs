@@ -24,7 +24,6 @@ namespace DoctorAppointmentManagementSystem.ViewComponents
             ViewData["controller"] = controller;
             ViewData["action"] = action;
 
-            // Prefer session values (set at login / register)
             var http = _httpContextAccessor.HttpContext;
             var session = http?.Session;
             var userId = session?.GetInt32("UserId");
@@ -33,7 +32,6 @@ namespace DoctorAppointmentManagementSystem.ViewComponents
 
             if (userId == null && (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(userRole)))
             {
-                // fallback to first user (legacy) — keep behavior but safer
                 var user = _db.Users.FirstOrDefault();
                 if (user != null)
                 {

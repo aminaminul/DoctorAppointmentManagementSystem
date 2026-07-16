@@ -16,7 +16,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context = context;
         }
 
-        // ================= PATIENT SEARCH / LIST =================
         public IActionResult Index(string? searchQuery)
         {
             int? roleId = HttpContext.Session.GetInt32("RoleId");
@@ -44,7 +43,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View(patients);
         }
 
-        // ================= PATIENT EMR TIMELINE =================
         public IActionResult PatientTimeline(int patientId)
         {
             int? roleId = HttpContext.Session.GetInt32("RoleId");
@@ -54,7 +52,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // Authorization check
             var patient = _context.Patients
                 .Include(p => p.User)
                 .FirstOrDefault(p => p.Id == patientId);
@@ -65,7 +62,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Patients can only see their own EMR
             if (roleId == 3)
             {
                 var currentPatient = _context.Patients.FirstOrDefault(p => p.UserId == userId);
@@ -76,14 +72,12 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 }
             }
 
-            // Fetch Medical Records
             var medicalRecords = _context.MedicalRecords
                 .Include(mr => mr.Doctor).ThenInclude(d => d.User)
                 .Where(mr => mr.PatientId == patientId)
                 .OrderByDescending(mr => mr.RecordDate)
                 .ToList();
 
-            // Fetch Prescriptions
             var prescriptions = _context.Prescriptions
                 .Include(p => p.Doctor).ThenInclude(d => d.User)
                 .Where(p => p.PatientId == patientId)
@@ -95,7 +89,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.Prescriptions = prescriptions;
             ViewBag.RoleId = roleId;
 
-            // Resolve logged-in doctor if role is Doctor
             if (roleId == 2)
             {
                 var doctor = _context.Doctors.FirstOrDefault(d => d.UserId == userId);
@@ -105,7 +98,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View();
         }
 
-        // ================= CREATE MEDICAL RECORD =================
         public IActionResult Create(int patientId, int? appointmentId)
         {
             int? roleId = HttpContext.Session.GetInt32("RoleId");
@@ -142,7 +134,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             model.DoctorId = doctor.Id;
             model.RecordDate = DateTime.Now;
 
-            // If linked to an appointment, auto-complete it
             if (model.AppointmentId.HasValue)
             {
                 var appt = _context.Appointments.FirstOrDefault(a => a.Id == model.AppointmentId.Value);
@@ -159,7 +150,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("PatientTimeline", new { patientId = model.PatientId });
         }
 
-        // ================= EDIT MEDICAL RECORD =================
         public IActionResult Edit(int id)
         {
             int? roleId = HttpContext.Session.GetInt32("RoleId");
@@ -220,7 +210,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("PatientTimeline", new { patientId = record.PatientId });
         }
 
-        // ================= DELETE MEDICAL RECORD =================
         [HttpPost]
         public IActionResult Delete(int id)
         {
@@ -239,7 +228,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return RedirectToAction("Index");
             }
 
-            if (roleId == 2) // Doctor check
+            if (roleId == 2)
             {
                 var doctor = _context.Doctors.FirstOrDefault(d => d.UserId == userId);
                 if (doctor == null || record.DoctorId != doctor.Id)

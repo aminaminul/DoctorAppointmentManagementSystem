@@ -16,16 +16,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context = context;
         }
 
-        // ================= CALL NEXT PATIENT =================
         [HttpPost]
         public IActionResult CallNext(int doctorId)
         {
             var today = DateTime.Today;
 
-            // Make sure the daily queue is generated and sequenced
             QueueManager.EnsureQueueGenerated(_context, doctorId, today);
 
-            // If there is currently a patient in consultation or calling, don't allow calling next
             var active = _context.QueueEntries
                 .Include(q => q.Appointment)
                 .FirstOrDefault(q => q.Appointment.DoctorId == doctorId 
@@ -38,7 +35,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return RedirectToAction("Dashboard", "Doctor", new { section = "queue" });
             }
 
-            // Fetch the next waiting patient in sequence
             var nextEntry = _context.QueueEntries
                 .Include(q => q.Appointment)
                 .Where(q => q.Appointment.DoctorId == doctorId 
@@ -62,7 +58,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", "Doctor", new { section = "queue" });
         }
 
-        // ================= START CONSULTATION =================
         [HttpPost]
         public IActionResult StartConsultation(int id)
         {
@@ -80,7 +75,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", "Doctor", new { section = "queue" });
         }
 
-        // ================= COMPLETE CONSULTATION =================
         [HttpPost]
         public IActionResult CompleteConsultation(int id)
         {
@@ -93,20 +87,17 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 entry.Status = "Completed";
                 entry.CompletionTime = DateTime.Now;
 
-                // Automatically update appointment status to Completed
                 entry.Appointment.AppointmentStatus = "Completed";
                 
                 _context.SaveChanges();
                 TempData["Success"] = $"Consultation completed for Token #{entry.TokenNumber}!";
 
-                // Redirect to Add Prescription page for this appointment to streamline flow
                 return RedirectToAction("AddPrescription", "Doctor", new { appointmentId = entry.AppointmentId });
             }
 
             return RedirectToAction("Dashboard", "Doctor", new { section = "queue" });
         }
 
-        // ================= SKIP PATIENT =================
         [HttpPost]
         public IActionResult SkipPatient(int id)
         {
@@ -124,7 +115,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", "Doctor", new { section = "queue" });
         }
 
-        // ================= BUMP TO EMERGENCY PRIORITY =================
         [HttpPost]
         public IActionResult BumpEmergency(int id, string redirectSection = "queue")
         {
@@ -137,7 +127,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 entry.Appointment.IsEmergency = true;
                 _context.SaveChanges();
 
-                // Re-sequence queue to sort emergency patients first
                 QueueManager.ReSequenceQueue(_context, entry.Appointment.DoctorId, entry.Appointment.AppointmentDate);
                 TempData["Success"] = $"Token #{entry.TokenNumber} bumped to Emergency Priority!";
             }
@@ -149,13 +138,11 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", "Doctor", new { section = "queue" });
         }
 
-        // ================= JSON API: GET LIVE QUEUE STATUS (FOR POLLING/AJAX) =================
         [HttpGet]
         public JsonResult GetLiveQueueJson(int doctorId)
         {
             var today = DateTime.Today;
 
-            // Make sure active sequence is correct
             var queue = _context.QueueEntries
                 .Include(q => q.Appointment)
                 .ThenInclude(a => a.Patient)

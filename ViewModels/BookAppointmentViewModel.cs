@@ -5,8 +5,7 @@ namespace DoctorAppointmentManagementSystem.ViewModels
 {
     public class BookAppointmentViewModel
     {
-        // Step 1: Selection fields
-        public string? Department { get; set; }     // Maps to Specialization
+        public string? Department { get; set; }
 
         [Required(ErrorMessage = "Please select a doctor.")]
         public int DoctorId { get; set; }
@@ -19,7 +18,6 @@ namespace DoctorAppointmentManagementSystem.ViewModels
         public string? ReasonForVisit { get; set; }
         public bool IsEmergency { get; set; }
 
-        // Doctor info for display
         public string? DoctorName { get; set; }
         public string? DoctorSpecialization { get; set; }
         public decimal ConsultationFee { get; set; }

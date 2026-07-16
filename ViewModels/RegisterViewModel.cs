@@ -23,16 +23,13 @@ namespace DoctorAppointmentManagementSystem.ViewModels
         [Phone]
         public string? PhoneNumber { get; set; }
 
-        // Patient-specific fields
         public int? Age { get; set; }
         public DateTime? DateOfBirth { get; set; }
         [Required(ErrorMessage = "Please select gender")]
         public string Gender { get; set; }
 
-        // Doctor-specific fields
         public string? Specialization { get; set; }
         public string? Availability { get; set; }
-        // Department selected from enum
         public DoctorAppointmentManagementSystem.Models.Department? Department { get; set; }
     }
 }

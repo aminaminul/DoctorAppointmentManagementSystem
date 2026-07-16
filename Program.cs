@@ -4,17 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Add DbContext (use existing connection string)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Server=(localdb)\\mssqllocaldb;Database=DAMS;Trusted_Connection=True;";
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
-// HttpContext accessor (used by viewcomponents)
 builder.Services.AddHttpContextAccessor();
 
-// Session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -24,18 +20,15 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// Seed roles if missing
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    // Apply any pending migrations so the database schema is created/updated
     try
     {
         db.Database.Migrate();
     }
     catch (Exception ex)
     {
-        // Log to console; in production use proper logging
         Console.WriteLine("Database migration failed: " + ex.Message);
     }
 
@@ -46,7 +39,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

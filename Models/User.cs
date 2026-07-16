@@ -8,7 +8,6 @@ namespace DoctorAppointmentManagementSystem.Models
     {
         public int Id { get; set; }
         [Required]
-        // Primary username for the user; use this property throughout the app
         public string Username { get; set; }
         
         [Required]

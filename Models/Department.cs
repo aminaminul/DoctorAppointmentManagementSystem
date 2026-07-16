@@ -1,6 +1,5 @@
 namespace DoctorAppointmentManagementSystem.Models
 {
-    // Departments for doctors — used to populate registration dropdown
     public enum Department
     {
         General = 0,

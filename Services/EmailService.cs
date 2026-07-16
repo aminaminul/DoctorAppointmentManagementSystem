@@ -23,7 +23,6 @@ namespace DoctorAppointmentManagementSystem.Services
             var senderName   = _config["EmailSettings:SenderName"] ?? "Doctor Appointment System";
             var enableSslStr = _config["EmailSettings:EnableSsl"];
 
-            // Gracefully skip if SMTP credentials are not configured
             if (string.IsNullOrWhiteSpace(smtpHost) || string.IsNullOrWhiteSpace(senderEmail) ||
                 string.IsNullOrWhiteSpace(senderPass))
             {
@@ -58,7 +57,6 @@ namespace DoctorAppointmentManagementSystem.Services
             }
             catch (Exception ex)
             {
-                // Never crash the app due to email failure
                 _logger.LogError(ex, "Failed to send email to {Email} — Subject: {Subject}", toEmail, subject);
             }
         }

@@ -14,13 +14,10 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context = context;
         }
 
-        // ================= DASHBOARD =================
-
         public IActionResult Dashboard(string section)
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
 
-            // Not logged in
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
@@ -28,7 +25,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .Include(p => p.User)
                 .FirstOrDefault(p => p.UserId == userId);
 
-            // User is not a patient (no patient record)
             if (patient == null)
                 return RedirectToAction("Login", "Account");
 
@@ -38,7 +34,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .Where(a => a.PatientId == patient.Id)
                 .ToList();
 
-            // 🔷 Profile Data
             ViewBag.Patient = patient;
             ViewBag.PatientName = patient.User?.Username ?? patient.User?.Email ?? "Patient";
             ViewBag.Email = patient.User?.Email;
@@ -47,7 +42,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             ViewBag.Section = section;
 
-            // 🔔 Notification count for sidebar bell badge
             ViewBag.UnreadNotificationCount = _context.Notifications
                 .Count(n => n.UserId == userId && n.NotificationStatus == "Unread");
 
@@ -75,27 +69,22 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 {
                     ViewBag.ActiveQueueEntry = activeQueueEntry;
                     
-                    // Make sure queue for this doctor is updated/sequenced
                     QueueManager.EnsureQueueGenerated(_context, activeQueueEntry.Appointment.DoctorId, today);
                     
-                    // Fetch queue stats
                     var doctorQueue = _context.QueueEntries
                         .Where(q => q.Appointment.DoctorId == activeQueueEntry.Appointment.DoctorId 
                                  && q.Appointment.AppointmentDate.Date == today)
                         .OrderBy(q => q.SequenceNumber)
                         .ToList();
 
-                    // Currently serving
                     var servingEntry = doctorQueue.FirstOrDefault(q => q.Status == "InConsultation" || q.Status == "Calling");
                     ViewBag.ServingToken = servingEntry?.TokenNumber ?? 0;
 
-                    // Position ahead of current patient
                     int patientsAhead = doctorQueue
                         .Count(q => q.SequenceNumber < activeQueueEntry.SequenceNumber 
                                  && q.Status == "Waiting");
                     ViewBag.PatientsAhead = patientsAhead;
 
-                    // Doctor schedule & status
                     var schedule = _context.DoctorSchedules
                         .FirstOrDefault(ds => ds.DoctorId == activeQueueEntry.Appointment.DoctorId 
                                            && ds.AvailableDate.Date == today);
@@ -122,8 +111,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View(appointments);
         }
 
-        // ================= EDIT PROFILE PAGE =================
-
         public IActionResult EditProfile()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -135,8 +122,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View(patient);
         }
 
-        // ================= UPDATE PROFILE =================
-
         [HttpPost]
         public IActionResult EditProfile(Patient model)
         {
@@ -146,7 +131,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             if (patient != null)
             {
-                // 🔷 Update Patient Info
                 patient.DateOfBirth = model.DateOfBirth;
                 patient.Gender = model.Gender;
                 patient.BloodGroup = model.BloodGroup;
@@ -155,7 +139,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 patient.MedicalHistory = model.MedicalHistory;
                 patient.Allergies = model.Allergies;
 
-                // 🔷 Update User Info
                 patient.User.Username = model.User.Username;
                 patient.User.Email = model.User.Email;
                 patient.User.PhoneNumber = model.User.PhoneNumber;
@@ -165,8 +148,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Dashboard", new { section = "profile" });
         }
-
-        // ================= PRESCRIPTIONS =================
 
         public IActionResult Prescriptions()
         {
@@ -182,8 +163,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View(prescriptions);
         }
-
-        // ================= MARK NOTIFICATION READ =================
 
         [HttpPost]
         public IActionResult MarkNotificationRead(int id)

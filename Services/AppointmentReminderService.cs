@@ -3,10 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DoctorAppointmentManagementSystem.Services
 {
-    /// <summary>
-    /// Background service that runs every hour and sends appointment reminders
-    /// for appointments scheduled for tomorrow.
-    /// </summary>
     public class AppointmentReminderService : IHostedService, IDisposable
     {
         private readonly IServiceProvider _serviceProvider;
@@ -25,7 +21,6 @@ namespace DoctorAppointmentManagementSystem.Services
         {
             _logger.LogInformation("🔔 AppointmentReminderService started — checking every hour for tomorrow's appointments.");
 
-            // Run every 60 minutes, first run after 1 minute
             _timer = new Timer(DoWork, null, TimeSpan.FromMinutes(1), TimeSpan.FromHours(1));
             return Task.CompletedTask;
         }
@@ -42,8 +37,6 @@ namespace DoctorAppointmentManagementSystem.Services
 
                 var tomorrow = DateTime.Today.AddDays(1);
 
-                // Find confirmed appointments for tomorrow that haven't been reminded
-                // We check if a "Reminder" notification already exists for the patient/appointment
                 var appointmentsTomorrow = await context.Appointments
                     .Include(a => a.Patient).ThenInclude(p => p.User)
                     .Include(a => a.Doctor).ThenInclude(d => d.User)
@@ -60,7 +53,6 @@ namespace DoctorAppointmentManagementSystem.Services
                 int sent = 0;
                 foreach (var appt in appointmentsTomorrow)
                 {
-                    // Check if we already sent a reminder for this appointment
                     bool alreadyReminded = await context.Notifications
                         .AnyAsync(n => n.UserId == appt.Patient.UserId
                                     && n.NotificationType == "Reminder"

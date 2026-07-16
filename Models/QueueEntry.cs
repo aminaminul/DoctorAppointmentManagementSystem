@@ -12,10 +12,8 @@ namespace DoctorAppointmentManagementSystem.Models
 
         public int TokenNumber { get; set; }
 
-        // SequenceNumber determines the actual current ordering in the live queue
         public int SequenceNumber { get; set; }
 
-        // Status: Waiting, Calling, InConsultation, Completed, Skipped
         [Required]
         public string Status { get; set; } = "Waiting";
 

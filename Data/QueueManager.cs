@@ -10,17 +10,14 @@ namespace DoctorAppointmentManagementSystem.Data
     {
         public static void EnsureQueueGenerated(ApplicationDbContext context, int doctorId, DateTime date)
         {
-            // 1. Fetch the doctor schedule for that date to check vacation status
             var schedule = context.DoctorSchedules
                 .FirstOrDefault(ds => ds.DoctorId == doctorId && ds.AvailableDate.Date == date.Date);
 
-            // If vacation, no queue is active
             if (schedule != null && schedule.IsVacation)
             {
                 return;
             }
 
-            // 2. Fetch all confirmed appointments for this doctor + date
             var appointments = context.Appointments
                 .Where(a => a.DoctorId == doctorId 
                          && a.AppointmentDate.Date == date.Date 
@@ -29,14 +26,12 @@ namespace DoctorAppointmentManagementSystem.Data
 
             if (!appointments.Any()) return;
 
-            // 3. Fetch existing queue entries for this doctor + date
             var existingEntries = context.QueueEntries
                 .Include(q => q.Appointment)
                 .Where(q => q.Appointment.DoctorId == doctorId 
                          && q.Appointment.AppointmentDate.Date == date.Date)
                 .ToList();
 
-            // Sort appointments: Emergency first, then chronological time slot
             var sortedAppointments = appointments
                 .OrderBy(a => a.IsEmergency ? 0 : 1)
                 .ThenBy(a => ParseTimeSlot(a.AppointmentTime))
@@ -45,7 +40,6 @@ namespace DoctorAppointmentManagementSystem.Data
             int tokenSeq = 1;
             int activeSeq = 1;
 
-            // Find the maximum sequence number among already called/completed/skipped entries
             var nonWaiting = existingEntries
                 .Where(q => q.Status != "Waiting")
                 .ToList();
@@ -60,7 +54,6 @@ namespace DoctorAppointmentManagementSystem.Data
                 var existing = existingEntries.FirstOrDefault(q => q.AppointmentId == appt.Id);
                 if (existing == null)
                 {
-                    // Find next available token number for the day
                     int tokenNumber = tokenSeq++;
                     while (existingEntries.Any(q => q.TokenNumber == tokenNumber))
                     {
@@ -81,7 +74,6 @@ namespace DoctorAppointmentManagementSystem.Data
                 }
                 else
                 {
-                    // Update tokenSeq tracker
                     if (existing.TokenNumber >= tokenSeq)
                     {
                         tokenSeq = existing.TokenNumber + 1;
@@ -91,7 +83,6 @@ namespace DoctorAppointmentManagementSystem.Data
 
             context.SaveChanges();
 
-            // Re-sequence to ensure priority sorting holds
             ReSequenceQueue(context, doctorId, date);
         }
 
@@ -105,13 +96,11 @@ namespace DoctorAppointmentManagementSystem.Data
 
             if (!entries.Any()) return;
 
-            // Keep entries that are NOT waiting (Calling, InConsultation, Completed, Skipped) in their current order
             var activeOrDone = entries
                 .Where(q => q.Status != "Waiting")
                 .OrderBy(q => q.SequenceNumber)
                 .ToList();
 
-            // Sort the waiting entries: Emergency first, then chronological time slot, then when it was registered
             var waiting = entries
                 .Where(q => q.Status == "Waiting")
                 .OrderBy(q => q.Appointment.IsEmergency ? 0 : 1)
@@ -137,7 +126,6 @@ namespace DoctorAppointmentManagementSystem.Data
         {
             if (string.IsNullOrWhiteSpace(timeSlot)) return TimeSpan.Zero;
 
-            // Handle range "09:00 AM - 09:30 AM" or single "09:00 AM"
             var firstPart = timeSlot.Split('-')[0].Trim();
             if (DateTime.TryParse(firstPart, out DateTime parsedTime))
             {
@@ -154,7 +142,6 @@ namespace DoctorAppointmentManagementSystem.Data
             if (schedule == null) return "Offline";
             if (schedule.IsVacation) return "On Vacation";
 
-            // Check if current time falls inside break times
             if (!string.IsNullOrEmpty(schedule.BreakStartTime) && !string.IsNullOrEmpty(schedule.BreakEndTime))
             {
                 var now = DateTime.Now.TimeOfDay;
@@ -167,7 +154,6 @@ namespace DoctorAppointmentManagementSystem.Data
                 }
             }
 
-            // Check if any queue entries are currently active for this doctor today
             var hasActiveEntries = context.QueueEntries
                 .Include(q => q.Appointment)
                 .Any(q => q.Appointment.DoctorId == doctorId 

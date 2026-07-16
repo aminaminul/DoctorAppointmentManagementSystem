@@ -25,7 +25,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 CompletedAppointments = _db.Appointments.Count(a => a.AppointmentStatus == "Completed")
             };
 
-            // Build last 7 days series for a small SVG chart
             var labels = new List<string>();
             var values = new List<int>();
             for (int i = 6; i >= 0; i--)

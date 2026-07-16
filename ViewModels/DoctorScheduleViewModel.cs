@@ -5,9 +5,8 @@ namespace DoctorAppointmentManagementSystem.ViewModels
 {
     public class DoctorScheduleViewModel
     {
-        public int Id { get; set; }   // 0 = new, >0 = edit
+        public int Id { get; set; }
 
-        // ── Core ────────────────────────────────────────────────────────────────
         [Required(ErrorMessage = "Please select a date.")]
         [DataType(DataType.Date)]
         public DateTime AvailableDate { get; set; } = DateTime.Today;
@@ -18,17 +17,14 @@ namespace DoctorAppointmentManagementSystem.ViewModels
         [Required(ErrorMessage = "End time is required.")]
         public string EndTime { get; set; } = "05:00 PM";
 
-        // ── Break ───────────────────────────────────────────────────────────────
         public string? BreakStartTime { get; set; }
         public string? BreakEndTime { get; set; }
 
-        // ── Vacation ────────────────────────────────────────────────────────────
         public bool IsVacation { get; set; } = false;
 
         [MaxLength(300)]
         public string? Notes { get; set; }
 
-        // ── Bulk vacation range ─────────────────────────────────────────────────
         [DataType(DataType.Date)]
         public DateTime? VacationFrom { get; set; }
 

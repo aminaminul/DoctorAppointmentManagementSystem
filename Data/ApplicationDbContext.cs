@@ -10,7 +10,6 @@ namespace DoctorAppointmentManagementSystem.Data
         {
         }
 
-        // Tables
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Patient> Patients { get; set; }
@@ -30,7 +29,6 @@ namespace DoctorAppointmentManagementSystem.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure decimal precision
             modelBuilder.Entity<Doctor>()
                 .Property(d => d.ConsultationFee)
                 .HasPrecision(18, 2);
@@ -39,14 +37,12 @@ namespace DoctorAppointmentManagementSystem.Data
                 .Property(p => p.Amount)
                 .HasPrecision(18, 2);
 
-            // Seed Roles
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = 1, RoleName = "Admin", Description = "Administrator role" },
                 new Role { Id = 2, RoleName = "Doctor", Description = "Doctor role" },
                 new Role { Id = 3, RoleName = "Patient", Description = "Patient role" }
             );
 
-            // Seed Users
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
@@ -83,7 +79,6 @@ namespace DoctorAppointmentManagementSystem.Data
                 }
             );
 
-            // Seed Patients
             modelBuilder.Entity<Patient>().HasData(
                 new Patient
                 {
@@ -100,7 +95,6 @@ namespace DoctorAppointmentManagementSystem.Data
                 }
             );
 
-            // Seed Doctors
             modelBuilder.Entity<Doctor>().HasData(
                 new Doctor
                 {
@@ -116,135 +110,114 @@ namespace DoctorAppointmentManagementSystem.Data
                 }
             );
 
-            // Define Foreign Keys and disable cascading deletes to prevent cycles
-
-            // User → Role
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
                 .WithMany()
                 .HasForeignKey(u => u.RoleId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Doctor → User
             modelBuilder.Entity<Doctor>()
                 .HasOne(d => d.User)
                 .WithMany()
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Patient → User
             modelBuilder.Entity<Patient>()
                 .HasOne(p => p.User)
                 .WithMany()
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Appointment → Doctor
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Doctor)
                 .WithMany()
                 .HasForeignKey(a => a.DoctorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Appointment → Patient
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Patient)
                 .WithMany()
                 .HasForeignKey(a => a.PatientId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Prescription → Appointment
             modelBuilder.Entity<Prescription>()
                 .HasOne(p => p.Appointment)
                 .WithMany()
                 .HasForeignKey(p => p.AppointmentId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Prescription → Doctor
             modelBuilder.Entity<Prescription>()
                 .HasOne(p => p.Doctor)
                 .WithMany()
                 .HasForeignKey(p => p.DoctorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Prescription → Patient
             modelBuilder.Entity<Prescription>()
                 .HasOne(p => p.Patient)
                 .WithMany()
                 .HasForeignKey(p => p.PatientId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // DoctorSchedule → Doctor
             modelBuilder.Entity<DoctorSchedule>()
                 .HasOne(ds => ds.Doctor)
                 .WithMany()
                 .HasForeignKey(ds => ds.DoctorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // MedicalRecord → Patient
             modelBuilder.Entity<MedicalRecord>()
                 .HasOne(mr => mr.Patient)
                 .WithMany()
                 .HasForeignKey(mr => mr.PatientId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // MedicalRecord → Doctor
             modelBuilder.Entity<MedicalRecord>()
                 .HasOne(mr => mr.Doctor)
                 .WithMany()
                 .HasForeignKey(mr => mr.DoctorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // MedicalRecord → Appointment
             modelBuilder.Entity<MedicalRecord>()
                 .HasOne(mr => mr.Appointment)
                 .WithMany()
                 .HasForeignKey(mr => mr.AppointmentId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Payment → Appointment
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Appointment)
                 .WithMany()
                 .HasForeignKey(p => p.AppointmentId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Payment → Patient
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Patient)
                 .WithMany()
                 .HasForeignKey(p => p.PatientId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Notification → User
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.User)
                 .WithMany()
                 .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Feedback → Patient
             modelBuilder.Entity<Feedback>()
                 .HasOne(f => f.Patient)
                 .WithMany()
                 .HasForeignKey(f => f.PatientId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Feedback → Doctor
             modelBuilder.Entity<Feedback>()
                 .HasOne(f => f.Doctor)
                 .WithMany()
                 .HasForeignKey(f => f.DoctorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // AdminLog → User (Admin)
             modelBuilder.Entity<AdminLog>()
                 .HasOne(al => al.Admin)
                 .WithMany()
                 .HasForeignKey(al => al.AdminId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // QueueEntry → Appointment
             modelBuilder.Entity<QueueEntry>()
                 .HasOne(q => q.Appointment)
                 .WithMany()

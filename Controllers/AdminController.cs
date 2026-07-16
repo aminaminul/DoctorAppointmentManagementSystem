@@ -16,7 +16,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context = context;
         }
 
-        // GET: /Admin/EditPrivacy
         public IActionResult EditPrivacy()
         {
             var policy = _context.PrivacyPolicies.OrderByDescending(p => p.UpdatedAt).FirstOrDefault();
@@ -106,8 +105,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View();
         }
 
-        // ================= ADD DOCTOR =================
-
         public IActionResult AddDoctor()
         {
             return View();
@@ -116,7 +113,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
         [HttpPost]
         public IActionResult AddDoctor(DoctorCreateViewModel model)
         {
-            // 🔥 EMAIL VALIDATION (EIKHANE)
             var exists = _context.Users.Any(u => u.Email == model.Email);
 
             if (exists)
@@ -124,7 +120,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 ViewBag.Error = "Email already exists!";
                 return View(model);
             }
-            // 1️⃣ Create User
             User user = new User()
             {
                 Username = model.Name,
@@ -136,7 +131,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            // 2️⃣ Create Doctor
             Doctor doctor = new Doctor()
             {
                 UserId = user.Id,
@@ -149,8 +143,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Dashboard");
         }
-
-        // ================= EDIT DOCTOR =================
 
         public IActionResult EditDoctor(int id)
         {
@@ -167,8 +159,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard");
         }
 
-        // ================= DELETE DOCTOR =================
-
         public IActionResult DeleteDoctor(int id)
         {
             var doctor = _context.Doctors.Find(id);
@@ -181,7 +171,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Dashboard");
         }
-        // ================= ADD PATIENT =================
 
         public IActionResult AddPatient()
         {
@@ -191,7 +180,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
         [HttpPost]
         public IActionResult AddPatient(PatientCreateViewModel model)
         {
-            // 🔥 Email validation
             var exists = _context.Users.Any(u => u.Email == model.Email);
 
             if (exists)
@@ -200,7 +188,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return View(model);
             }
 
-            // 1️⃣ Create User
             User user = new User()
             {
                 Username = model.Name,
@@ -212,7 +199,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            // 2️⃣ Create Patient
             Patient patient = new Patient()
             {
                 UserId = user.Id,
@@ -226,8 +212,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard");
         }
 
-
-        // ================= EDIT PATIENT =================
 
         public IActionResult EditPatient(int id)
         {
@@ -267,8 +251,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", new { section = "patients" });
         }
 
-
-        // ================= DELETE PATIENT =================
 
         public IActionResult DeletePatient(int id)
         {

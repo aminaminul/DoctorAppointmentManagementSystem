@@ -19,7 +19,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         public IActionResult Index()
         {
-            // If user is logged in, redirect to role-based dashboard
             var userRole = HttpContext.Session.GetString("UserRole");
             if (!string.IsNullOrEmpty(userRole))
             {
@@ -40,7 +39,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View();
         }
 
-        // Print-friendly view: opens in new tab and triggers browser print
         [HttpGet]
         public IActionResult PrintPrivacy()
         {
