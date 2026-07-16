@@ -2,145 +2,225 @@
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Register";
+    ViewData["HideSidebar"] = true;
 }
 
-@{ ViewData["HideSidebar"] = true; }
+<div class="register-wrapper">
+    <!-- Vector background bubbles -->
+    <div class="bubble bubble-1"><i class="bi bi-heart-pulse-fill"></i></div>
+    <div class="bubble bubble-2"><i class="bi bi-activity"></i></div>
+    <div class="bubble bubble-3"><i class="bi bi-shield-plus"></i></div>
 
-<section class="position-relative" style="min-height:74vh;">
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background-image: linear-gradient(rgba(31,31,31,0.45), rgba(31,31,31,0.45)), url('@Url.Content("~/Images/doctor.jpg")'); background-size:cover; background-position:center;">
+    <!-- Heartbeat wave line overlay -->
+    <div class="heartbeat-line">
+        <svg viewBox="0 0 1440 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,100 L500,100 L520,70 L540,140 L560,30 L585,170 L600,100 L610,120 L620,100 L1440,100" stroke="rgba(255,255,255,0.18)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
     </div>
 
-    <div class="container h-100 d-flex align-items-center justify-content-center position-relative" style="z-index:2;">
-        <div class="card shadow-sm rounded-3 w-100" style="max-width:900px; background: rgba(255,255,255,0.95);">
+    <div class="container d-flex align-items-center justify-content-center min-vh-100 position-relative py-5" style="z-index: 10;">
+        <div class="glass-register-card shadow-lg">
             <div class="row g-0">
-            <div class="col-md-6 p-4 d-flex flex-column justify-content-center" style="background:#f8fbfd;">
-                <div>
-                    <h3 class="fw-bold" style="color:#1F1F1F;">Create account</h3>
-                    <p class="text-muted small">Sign up as Doctor or Patient to continue.</p>
+                <!-- Left panel: Branding and Info -->
+                <div class="col-lg-5 d-flex flex-column justify-content-between brand-panel p-5">
+                    <div>
+                        <div class="logo-wrapper mb-4">
+                            <i class="bi bi-heart-pulse-fill logo-icon"></i>
+                        </div>
+                        <h2 class="brand-title">Join DAMS Healthcare</h2>
+                        <p class="brand-subtitle">Create an account to manage your medical visits, schedule slots, and view prescription reports securely.</p>
+                    </div>
+
+                    <div class="illustration-wrapper my-4 text-center">
+                        <i class="bi bi-hospital illustration-icon text-white-50"></i>
+                    </div>
+
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill feature-icon"></i>
+                            <span>Secure & verified profiles</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill feature-icon"></i>
+                            <span>Direct role-based scheduling</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill feature-icon"></i>
+                            <span>Access prescription reports</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mt-3">
-                    <ul class="list-unstyled small text-muted">
-                        <li><i class="bi bi-check2-circle text-primary me-2" style="color:#4DA8DA;"></i> Secure and fast</li>
-                        <li><i class="bi bi-check2-circle text-primary me-2" style="color:#4DA8DA;"></i> Role-specific registration</li>
-                        <li><i class="bi bi-check2-circle text-primary me-2" style="color:#4DA8DA;"></i> Easy scheduling</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-md-6 p-4">
-                <form asp-action="Register" method="post" novalidate>
-                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-
-                    <div class="mb-3">
-                        <label class="form-label small">Username</label>
-                        <input asp-for="Username" class="form-control form-control-lg rounded-3" />
-                        <span asp-validation-for="Username" class="text-danger small mt-1 d-block"></span>
+                <!-- Right panel: Interactive form -->
+                <div class="col-lg-7 form-panel p-5">
+                    <div class="mb-4">
+                        <h3 class="form-title">Create Account</h3>
+                        <p class="form-subtitle">Choose your user profile role to continue registration</p>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label small">Email</label>
-                        <input asp-for="Email" class="form-control form-control-lg rounded-3" />
-                        <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
-                    </div>
+                    <form asp-action="Register" method="post" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
-                    <div class="mb-3">
-                        <label class="form-label small">Password</label>
-                        <input asp-for="Password" type="password" class="form-control form-control-lg rounded-3" />
-                        <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
-                    </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="input-label" asp-for="Username">Username</label>
+                                <div class="input-container">
+                                    <i class="bi bi-person input-icon"></i>
+                                    <input asp-for="Username" class="form-input" placeholder="e.g. JohnDoe" />
+                                </div>
+                                <span asp-validation-for="Username" class="text-danger small mt-1 d-block"></span>
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label small">Phone (optional)</label>
-                        <input asp-for="PhoneNumber" class="form-control form-control-lg rounded-3" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
-                    </div>
-
-                    <div class="row g-2 mb-3">
-                        <div class="col">
-                            <label class="form-label small">Role</label>
-                            <select asp-for="RoleId" class="form-select form-select-lg rounded-3">
-                                <option value="">Select Role</option>
-                                @* ViewBag.Roles expected from controller *@
-                                @if (ViewBag.Roles != null)
-                                {
-                                    foreach (var r in (IEnumerable<dynamic>)ViewBag.Roles)
-                                    {
-                                        <option value="@r.Id">@r.Name</option>
-                                    }
-                                }
-                            </select>
-                            <span asp-validation-for="RoleId" class="text-danger small mt-1 d-block"></span>
+                            <div class="col-md-6">
+                                <label class="input-label" asp-for="Email">Email Address</label>
+                                <div class="input-container">
+                                    <i class="bi bi-envelope input-icon"></i>
+                                    <input asp-for="Email" class="form-input" placeholder="name@gmail.com" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                            </div>
                         </div>
 
-                        <div class="col">
-                            <label class="form-label small">Gender</label>
-                            <select asp-for="Gender" class="form-select form-select-lg rounded-3">
-                                <option value="">Select Gender</option>
-                                <option>Male</option>
-                                <option>Female</option>
-                                <option>Other</option>
-                            </select>
-                            <span asp-validation-for="Gender" class="text-danger small mt-1 d-block"></span>
-                        </div>
-                    </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="input-label" asp-for="Password">Password</label>
+                                <div class="input-container">
+                                    <i class="bi bi-lock input-icon"></i>
+                                    <input asp-for="Password" type="password" class="form-input" placeholder="••••••••" id="regPass" />
+                                    <button type="button" class="btn-toggle-pass" onclick="togglePassVisibility('regPass')">
+                                        <i class="bi bi-eye" id="regPassEye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                            </div>
 
-                    @* Patient fields *@
-                    <div id="patientFields" style="display:none;">
-                        <div class="mb-3">
-                            <label class="form-label small">Date of Birth</label>
-                            <input asp-for="DateOfBirth" type="date" id="DateOfBirth" class="form-control form-control-lg rounded-3" />
-                            <span asp-validation-for="DateOfBirth" class="text-danger small mt-1 d-block"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small">Age</label>
-                            <input asp-for="Age" type="number" id="Age" class="form-control form-control-lg rounded-3" />
-                            <span asp-validation-for="Age" class="text-danger small mt-1 d-block"></span>
-                        </div>
-                    </div>
-
-                    @* Doctor fields *@
-                    <div id="doctorFields" style="display:none;">
-                        <div class="mb-3">
-                            <label class="form-label small">Department</label>
-                            <select asp-for="Department" class="form-select form-select-lg rounded-3">
-                                <option value="">Select Department</option>
-                                @foreach (var d in Enum.GetValues(typeof(DoctorAppointmentManagementSystem.Models.Department)))
-                                {
-                                    <option value="@((int)d)">@d</option>
-                                }
-                            </select>
-                            <span asp-validation-for="Department" class="text-danger small mt-1 d-block"></span>
+                            <div class="col-md-6">
+                                <label class="input-label" asp-for="PhoneNumber">Phone Number (optional)</label>
+                                <div class="input-container">
+                                    <i class="bi bi-telephone input-icon"></i>
+                                    <input asp-for="PhoneNumber" class="form-input" placeholder="01700-000000" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label small">Specialization</label>
-                            <input asp-for="Specialization" class="form-control form-control-lg rounded-3" />
-                            <span asp-validation-for="Specialization" class="text-danger small mt-1 d-block"></span>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="input-label" asp-for="RoleId">Registration Role</label>
+                                <div class="input-container">
+                                    <i class="bi bi-person-badge input-icon"></i>
+                                    <select asp-for="RoleId" class="form-select-custom">
+                                        <option value="">Select Role</option>
+                                        @if (ViewBag.Roles != null)
+                                        {
+                                            foreach (var r in (IEnumerable<dynamic>)ViewBag.Roles)
+                                            {
+                                                <option value="@r.Id">@r.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <span asp-validation-for="RoleId" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="input-label" asp-for="Gender">Gender</label>
+                                <div class="input-container">
+                                    <i class="bi bi-gender-ambiguous input-icon"></i>
+                                    <select asp-for="Gender" class="form-select-custom">
+                                        <option value="">Select Gender</option>
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Gender" class="text-danger small mt-1 d-block"></span>
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label small">Availability</label>
-                            <input asp-for="Availability" class="form-control form-control-lg rounded-3" placeholder="e.g. 10AM - 4PM" />
-                            <span asp-validation-for="Availability" class="text-danger small mt-1 d-block"></span>
-                        </div>
-                    </div>
+                        <!-- Patient Specific fields container -->
+                        <div id="patientFields" class="role-fields-container mb-4" style="display:none;">
+                            <h5 class="role-section-title"><i class="bi bi-heart-pulse-fill me-2"></i> Patient Information</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="input-label" asp-for="DateOfBirth">Date of Birth</label>
+                                    <div class="input-container">
+                                        <i class="bi bi-calendar input-icon"></i>
+                                        <input asp-for="DateOfBirth" type="date" id="DateOfBirth" class="form-input" />
+                                    </div>
+                                    <span asp-validation-for="DateOfBirth" class="text-danger small mt-1 d-block"></span>
+                                </div>
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-lg text-white" style="background-color:#4DA8DA;">
-                            <i class="bi bi-person-plus-fill me-2"></i> Create account
+                                <div class="col-md-6">
+                                    <label class="input-label" asp-for="Age">Calculated Age</label>
+                                    <div class="input-container">
+                                        <i class="bi bi-patch-question input-icon"></i>
+                                        <input asp-for="Age" type="number" id="Age" class="form-input" placeholder="Age" />
+                                    </div>
+                                    <span asp-validation-for="Age" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Doctor Specific fields container -->
+                        <div id="doctorFields" class="role-fields-container mb-4" style="display:none;">
+                            <h5 class="role-section-title"><i class="bi bi-person-fill-check me-2"></i> Medical Practitioner Fields</h5>
+                            <div class="mb-3">
+                                <label class="input-label" asp-for="Department">Clinical Department</label>
+                                <div class="input-container">
+                                    <i class="bi bi-hospital input-icon"></i>
+                                    <select asp-for="Department" class="form-select-custom">
+                                        <option value="">Select Department</option>
+                                        @foreach (var d in Enum.GetValues(typeof(DoctorAppointmentManagementSystem.Models.Department)))
+                                        {
+                                            <option value="@((int)d)">@d</option>
+                                        }
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Department" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="input-label" asp-for="Specialization">Area of Specialization</label>
+                                    <div class="input-container">
+                                        <i class="bi bi-award input-icon"></i>
+                                        <input asp-for="Specialization" class="form-input" placeholder="e.g. Cardiologist" />
+                                    </div>
+                                    <span asp-validation-for="Specialization" class="text-danger small mt-1 d-block"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="input-label" asp-for="Availability">Daily Availability</label>
+                                    <div class="input-container">
+                                        <i class="bi bi-clock input-icon"></i>
+                                        <input asp-for="Availability" class="form-input" placeholder="e.g. 10AM - 4PM" />
+                                    </div>
+                                    <span asp-validation-for="Availability" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit w-100 mb-4">
+                            CREATE ACCOUNT
                         </button>
-                    </div>
-                </form>
+
+                        <div class="text-center">
+                            <p class="login-redirect-text">
+                                Already have an account? 
+                                <a asp-action="Login" class="login-redirect-link">Sign In</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        // Minimal inline JS to toggle role-specific fields and compute age from DOB.
         (function () {
             var roleSelect = document.querySelector('[name="RoleId"]');
             var patientFields = document.getElementById('patientFields');
@@ -179,5 +259,364 @@
             }
             if (dobInput) dobInput.addEventListener('change', calcAgeFromDob);
         })();
+
+        function togglePassVisibility(id) {
+            var input = document.getElementById(id);
+            var eye = document.getElementById(id + 'Eye');
+            if (input.type === 'password') {
+                input.type = 'text';
+                eye.classList.remove('bi-eye');
+                eye.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                eye.classList.remove('bi-eye-slash');
+                eye.classList.add('bi-eye');
+            }
+        }
     </script>
 }
+
+<style>
+    /* ─── Layout overrides for full bleed background ─── */
+    body.bg-white {
+        background-color: #0b1727 !important;
+    }
+    main {
+        padding: 0 !important;
+        min-height: auto !important;
+    }
+    main .container-fluid {
+        padding: 0 !important;
+    }
+    body > .container-fluid {
+        padding: 0 !important;
+    }
+    body > .container-fluid > .row {
+        margin: 0 !important;
+    }
+    body > .container-fluid > .row > main {
+        padding: 0 !important;
+    }
+
+    /* ─── Registration Page background ─── */
+    .register-wrapper {
+        min-height: calc(100vh - 76px);
+        width: 100%;
+        background: radial-gradient(circle at 10% 20%, rgba(26,107,154,1) 0%, rgba(30,136,156,1) 90.1%);
+        position: relative;
+        overflow: hidden;
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    /* ─── Heartbeat Line Overlay ─── */
+    .heartbeat-line {
+        position: absolute;
+        bottom: 5%;
+        left: 0;
+        width: 100%;
+        opacity: 0.85;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    /* ─── Vector Bubbles ─── */
+    .bubble {
+        position: absolute;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(8px);
+        pointer-events: none;
+        z-index: 2;
+        animation: floatBubble 6s ease-in-out infinite alternate;
+    }
+
+    .bubble-1 {
+        width: 120px; height: 120px;
+        top: 8%; left: 6%;
+        font-size: 2.3rem;
+        background: rgba(255, 255, 255, 0.05);
+        animation-delay: 0s;
+    }
+
+    .bubble-2 {
+        width: 140px; height: 140px;
+        bottom: 12%; right: 5%;
+        font-size: 2.6rem;
+        background: rgba(255, 255, 255, 0.04);
+        animation-delay: 1.8s;
+    }
+
+    .bubble-3 {
+        width: 90px; height: 90px;
+        top: 5%; right: 18%;
+        font-size: 1.8rem;
+        background: rgba(255, 255, 255, 0.03);
+        animation-delay: 3.5s;
+    }
+
+    /* ─── Wide Glassmorphism Card ─── */
+    .glass-register-card {
+        background: rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        border-radius: 28px;
+        width: 100%;
+        max-width: 960px;
+        z-index: 5;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.18);
+        overflow: hidden;
+    }
+
+    /* ─── Left Branding Panel ─── */
+    .brand-panel {
+        background: linear-gradient(135deg, rgba(26,107,154,0.92) 0%, rgba(30,136,156,0.92) 100%);
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+    }
+
+    .logo-wrapper {
+        width: 58px; height: 58px;
+        background-color: #ffffff;
+        color: #1a6b9a;
+        border-radius: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .logo-icon {
+        font-size: 1.8rem;
+    }
+
+    .brand-title {
+        font-weight: 800;
+        font-size: 1.9rem;
+        letter-spacing: -0.5px;
+        margin-bottom: 0.8rem;
+    }
+
+    .brand-subtitle {
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .illustration-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1;
+    }
+
+    .illustration-icon {
+        font-size: 6rem;
+    }
+
+    .features-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.88rem;
+        font-weight: 600;
+    }
+
+    .feature-icon {
+        color: #4DA8DA;
+    }
+
+    /* ─── Right Form Panel ─── */
+    .form-panel {
+        background: transparent;
+    }
+
+    .form-title {
+        font-weight: 800;
+        font-size: 1.65rem;
+        color: #0b1727;
+        letter-spacing: -0.5px;
+    }
+
+    .form-subtitle {
+        font-size: 0.85rem;
+        color: #5c6b73;
+        font-weight: 500;
+        margin-bottom: 0;
+    }
+
+    /* ─── Form Inputs ─── */
+    .input-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #1a6b9a;
+        margin-bottom: 5px;
+        display: block;
+        letter-spacing: 0.3px;
+    }
+
+    .input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 0;
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        pointer-events: none;
+        transition: color 0.25s;
+    }
+
+    .form-input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        padding: 8px 30px 6px 24px;
+        font-size: 0.92rem;
+        color: #2c3e50;
+        font-weight: 600;
+        transition: border-color 0.25s;
+        border-radius: 0;
+    }
+
+    .form-input::placeholder {
+        color: #95a5a6;
+        font-weight: 500;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #1a6b9a;
+    }
+
+    .form-input:focus ~ .input-icon {
+        color: #1a6b9a;
+    }
+
+    .form-select-custom {
+        width: 100%;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        padding: 8px 30px 6px 24px;
+        font-size: 0.92rem;
+        color: #2c3e50;
+        font-weight: 600;
+        transition: border-color 0.25s;
+        border-radius: 0;
+        cursor: pointer;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237f8c8d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right center;
+        background-size: 14px;
+    }
+
+    .form-select-custom:focus {
+        border-color: #1a6b9a;
+        color: #1a6b9a;
+    }
+
+    .form-select-custom:focus ~ .input-icon {
+        color: #1a6b9a;
+    }
+
+    .btn-toggle-pass {
+        position: absolute;
+        right: 0;
+        background: transparent;
+        border: none;
+        color: #7f8c8d;
+        cursor: pointer;
+        padding: 5px;
+        font-size: 1.05rem;
+    }
+    .btn-toggle-pass:hover {
+        color: #1a6b9a;
+    }
+
+    /* ─── Role Fields Section ─── */
+    .role-fields-container {
+        background-color: rgba(26, 107, 154, 0.04);
+        border: 1.5px dashed rgba(26, 107, 154, 0.25);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        animation: fadeIn 0.35s ease;
+    }
+
+    .role-section-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #1a6b9a;
+        margin-bottom: 1.2rem;
+        display: flex;
+        align-items: center;
+    }
+
+    /* ─── Submit Button ─── */
+    .btn-submit {
+        background: linear-gradient(135deg, #1a6b9a 0%, #1e8cb0 100%);
+        border: none;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding: 14px;
+        border-radius: 14px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 15px rgba(26, 107, 154, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(26, 107, 154, 0.45);
+        background: linear-gradient(135deg, #1e7ba2 0%, #209ec7 100%);
+    }
+
+    .login-redirect-text {
+        font-size: 0.88rem;
+        color: #5c6b73;
+        font-weight: 600;
+    }
+
+    .login-redirect-link {
+        color: #1a6b9a;
+        text-decoration: none;
+        font-weight: 700;
+        transition: color 0.2s;
+    }
+    .login-redirect-link:hover {
+        color: #4DA8DA;
+    }
+
+    /* ─── Keyframe Animations ─── */
+    @@keyframes floatBubble {
+        0% { transform: translateY(0) rotate(0deg); }
+        100% { transform: translateY(-15px) rotate(10deg); }
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
