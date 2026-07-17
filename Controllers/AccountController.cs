@@ -14,13 +14,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             _context = context;
         }
-
+// Register Action
         public IActionResult Register()
         {
             ViewBag.Roles = _context.Roles.Where(r => r.Name != "Admin").ToList();
             return View();
         }
         [HttpPost]
+// Register Action
         public IActionResult Register(RegisterViewModel model)
         {
             ViewBag.Roles = _context.Roles.Where(r => r.Name != "Admin").ToList();
@@ -134,13 +135,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Dashboard", "Patient");
         }
-
+// Login Action
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
+// Login Action
         public IActionResult Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -180,7 +182,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Dashboard", "Patient");
         }
-
+// Logout Action
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -189,3 +191,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
     }
 }
+

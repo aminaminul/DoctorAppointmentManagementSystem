@@ -17,7 +17,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _logger = logger;
             _db = db;
         }
-
+// Index Action
         public IActionResult Index()
         {
 
@@ -31,7 +31,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View();
         }
-
+// Privacy Action
         public IActionResult Privacy()
         {
             var policy = _db.PrivacyPolicies.OrderByDescending(p => p.UpdatedAt).FirstOrDefault();
@@ -40,6 +40,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpGet]
+// PrintPrivacy Action
         public IActionResult PrintPrivacy()
         {
             var policy = _db.PrivacyPolicies.OrderByDescending(p => p.UpdatedAt).FirstOrDefault();
@@ -48,9 +49,11 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+// Error Action
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
+

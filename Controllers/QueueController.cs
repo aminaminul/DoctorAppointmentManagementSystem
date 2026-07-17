@@ -17,6 +17,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// CallNext Action
         public IActionResult CallNext(int doctorId)
         {
             var today = DateTime.Today;
@@ -59,6 +60,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// StartConsultation Action
         public IActionResult StartConsultation(int id)
         {
             var entry = _context.QueueEntries
@@ -76,6 +78,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// CompleteConsultation Action
         public IActionResult CompleteConsultation(int id)
         {
             var entry = _context.QueueEntries
@@ -99,6 +102,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// SkipPatient Action
         public IActionResult SkipPatient(int id)
         {
             var entry = _context.QueueEntries
@@ -116,6 +120,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// BumpEmergency Action
         public IActionResult BumpEmergency(int id, string redirectSection = "queue")
         {
             var entry = _context.QueueEntries
@@ -175,3 +180,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

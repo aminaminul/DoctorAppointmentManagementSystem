@@ -13,7 +13,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             _db = db;
         }
-
+// Index Action
         public IActionResult Index()
         {
             var today = DateTime.Today;
@@ -113,3 +113,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

@@ -13,13 +13,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             _context = context;
         }
-
+// Tests Action
         public IActionResult Tests()
         {
             var tests = _context.LabTests.ToList();
             return View(tests);
         }
-
+// CreateTest Action
         public IActionResult CreateTest()
         {
             return View();
@@ -27,6 +27,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+// CreateTest Action
         public IActionResult CreateTest(LabTest test)
         {
             if (ModelState.IsValid)
@@ -37,7 +38,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return View(test);
         }
-
+// Reports Action
         public IActionResult Reports()
         {
             var reports = _context.LabReports
@@ -46,7 +47,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .ToList();
             return View(reports);
         }
-
+// CreateReport Action
         public IActionResult CreateReport()
         {
             ViewBag.Patients = _context.Patients.Include(p => p.User).ToList();
@@ -56,13 +57,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+// CreateReport Action
         public IActionResult CreateReport(LabReport report)
         {
             _context.LabReports.Add(report);
             _context.SaveChanges();
             return RedirectToAction(nameof(Reports));
         }
-
+// EditTest Action
         public IActionResult EditTest(int id)
         {
             var test = _context.LabTests.Find(id);
@@ -72,6 +74,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+// EditTest Action
         public IActionResult EditTest(LabTest test)
         {
             if (ModelState.IsValid)
@@ -82,7 +85,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return View(test);
         }
-
+// DeleteTest Action
         public IActionResult DeleteTest(int id)
         {
             var test = _context.LabTests.Find(id);
@@ -93,7 +96,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction(nameof(Tests));
         }
-
+// EditReport Action
         public IActionResult EditReport(int id)
         {
             var report = _context.LabReports.Find(id);
@@ -105,13 +108,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+// EditReport Action
         public IActionResult EditReport(LabReport report)
         {
             _context.LabReports.Update(report);
             _context.SaveChanges();
             return RedirectToAction(nameof(Reports));
         }
-
+// DeleteReport Action
         public IActionResult DeleteReport(int id)
         {
             var report = _context.LabReports.Find(id);
@@ -122,14 +126,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction(nameof(Reports));
         }
-
+// TestDetails Action
         public IActionResult TestDetails(int id)
         {
             var test = _context.LabTests.Find(id);
             if (test == null) return NotFound();
             return View(test);
         }
-
+// ReportDetails Action
         public IActionResult ReportDetails(int id)
         {
             var report = _context.LabReports
@@ -141,3 +145,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

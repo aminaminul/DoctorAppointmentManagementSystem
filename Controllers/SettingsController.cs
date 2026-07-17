@@ -12,7 +12,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             _context = context;
         }
-
+// System Action
         public IActionResult System()
         {
             var settings = _context.SystemSettings.ToList();
@@ -20,6 +20,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// SaveSetting Action
         public IActionResult SaveSetting(string key, string value)
         {
             var setting = _context.SystemSettings.FirstOrDefault(s => s.Key == key);
@@ -35,7 +36,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context.SaveChanges();
             return RedirectToAction(nameof(System));
         }
-
+// DeleteSetting Action
         public IActionResult DeleteSetting(int id)
         {
             var setting = _context.SystemSettings.Find(id);
@@ -46,20 +47,21 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction(nameof(System));
         }
-
+// Holidays Action
         public IActionResult Holidays()
         {
             return View(_context.Holidays.ToList());
         }
 
         [HttpPost]
+// AddHoliday Action
         public IActionResult AddHoliday(Holiday holiday)
         {
             _context.Holidays.Add(holiday);
             _context.SaveChanges();
             return RedirectToAction(nameof(Holidays));
         }
-
+// EditHoliday Action
         public IActionResult EditHoliday(int id)
         {
             var holiday = _context.Holidays.Find(id);
@@ -68,13 +70,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// EditHoliday Action
         public IActionResult EditHoliday(Holiday holiday)
         {
             _context.Holidays.Update(holiday);
             _context.SaveChanges();
             return RedirectToAction(nameof(Holidays));
         }
-
+// DeleteHoliday Action
         public IActionResult DeleteHoliday(int id)
         {
             var holiday = _context.Holidays.Find(id);
@@ -85,20 +88,21 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction(nameof(Holidays));
         }
-
+// Branches Action
         public IActionResult Branches()
         {
             return View(_context.Branches.ToList());
         }
 
         [HttpPost]
+// AddBranch Action
         public IActionResult AddBranch(Branch branch)
         {
             _context.Branches.Add(branch);
             _context.SaveChanges();
             return RedirectToAction(nameof(Branches));
         }
-
+// EditBranch Action
         public IActionResult EditBranch(int id)
         {
             var branch = _context.Branches.Find(id);
@@ -107,13 +111,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// EditBranch Action
         public IActionResult EditBranch(Branch branch)
         {
             _context.Branches.Update(branch);
             _context.SaveChanges();
             return RedirectToAction(nameof(Branches));
         }
-
+// DeleteBranch Action
         public IActionResult DeleteBranch(int id)
         {
             var branch = _context.Branches.Find(id);
@@ -124,20 +129,21 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction(nameof(Branches));
         }
-
+// Specializations Action
         public IActionResult Specializations()
         {
             return View(_context.Specializations.ToList());
         }
 
         [HttpPost]
+// AddSpecialization Action
         public IActionResult AddSpecialization(Specialization spec)
         {
             _context.Specializations.Add(spec);
             _context.SaveChanges();
             return RedirectToAction(nameof(Specializations));
         }
-
+// EditSpecialization Action
         public IActionResult EditSpecialization(int id)
         {
             var spec = _context.Specializations.Find(id);
@@ -146,13 +152,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// EditSpecialization Action
         public IActionResult EditSpecialization(Specialization spec)
         {
             _context.Specializations.Update(spec);
             _context.SaveChanges();
             return RedirectToAction(nameof(Specializations));
         }
-
+// DeleteSpecialization Action
         public IActionResult DeleteSpecialization(int id)
         {
             var spec = _context.Specializations.Find(id);
@@ -165,3 +172,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

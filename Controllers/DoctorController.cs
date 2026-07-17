@@ -26,7 +26,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                            .Include(d => d.User)
                            .FirstOrDefault(d => d.UserId == userId);
         }
-
+// Dashboard Action
         public IActionResult Dashboard(string? section)
         {
             var doctor = GetCurrentDoctor();
@@ -95,7 +95,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View(appointments);
         }
-
+// Approve Async Action
         public async Task<IActionResult> Approve(int id)
         {
             var appt = _context.Appointments.FirstOrDefault(a => a.Id == id);
@@ -107,7 +107,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
-
+// Reject Async Action
         public async Task<IActionResult> Reject(int id)
         {
             var appt = _context.Appointments.FirstOrDefault(a => a.Id == id);
@@ -119,14 +119,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
-
+// Complete Action
         public IActionResult Complete(int id)
         {
             var appt = _context.Appointments.FirstOrDefault(a => a.Id == id);
             if (appt != null) { appt.AppointmentStatus = "Completed"; _context.SaveChanges(); }
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
-
+// Delay Async Action
         public async Task<IActionResult> Delay(int id)
         {
             var appt = _context.Appointments.FirstOrDefault(a => a.Id == id);
@@ -138,7 +138,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
-
+// AddPrescription Action
         public IActionResult AddPrescription(int appointmentId)
         {
             ViewBag.AppointmentId = appointmentId;
@@ -146,6 +146,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// AddPrescription Async Action
         public async Task<IActionResult> AddPrescription(Prescription model)
         {
             var appointment = _context.Appointments.FirstOrDefault(a => a.Id == model.AppointmentId);
@@ -168,7 +169,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
-
+// Schedule Action
         public IActionResult Schedule(int? month, int? year)
         {
             var doctor = GetCurrentDoctor();
@@ -205,7 +206,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View(schedules);
         }
-
+// AddSchedule Action
         public IActionResult AddSchedule()
         {
             var doctor = GetCurrentDoctor();
@@ -214,6 +215,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// AddSchedule Action
         public IActionResult AddSchedule(DoctorScheduleViewModel vm)
         {
             var doctor = GetCurrentDoctor();
@@ -259,7 +261,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Schedule");
         }
-
+// EditSchedule Action
         public IActionResult EditSchedule(int id)
         {
             var doctor = GetCurrentDoctor();
@@ -284,6 +286,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// EditSchedule Action
         public IActionResult EditSchedule(DoctorScheduleViewModel vm)
         {
             var doctor = GetCurrentDoctor();
@@ -311,6 +314,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// DeleteSchedule Action
         public IActionResult DeleteSchedule(int id)
         {
             var doctor = GetCurrentDoctor();
@@ -328,6 +332,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// SetVacationRange Action
         public IActionResult SetVacationRange(DateTime from, DateTime to, string? notes)
         {
             var doctor = GetCurrentDoctor();
@@ -392,6 +397,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// MarkNotificationRead Action
         public IActionResult MarkNotificationRead(int id)
         {
             var notification = _context.Notifications.FirstOrDefault(n => n.Id == id);
@@ -404,6 +410,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// MarkAllNotificationsRead Action
         public IActionResult MarkAllNotificationsRead()
         {
             var doctor = GetCurrentDoctor();
@@ -419,3 +426,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

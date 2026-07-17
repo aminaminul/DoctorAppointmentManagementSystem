@@ -17,12 +17,14 @@
 
 <div class="row g-0 dams-admin-layout">
     
+    <!-- Sidebar Navigation Panel -->
     <div class="col-12 col-md-3 col-lg-2 sidebar-wrapper">
         @await Component.InvokeAsync("Sidebar")
     </div>
 
     <div class="col-12 col-md-9 col-lg-10 dashboard-main-content">
         
+        <!-- Header Greeting Bar -->
         <div class="top-greeting-bar d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h4 class="fw-bold text-dark m-0">@greeting, Super Admin!</h4>
@@ -67,6 +69,7 @@
             </div>
         </div>
 
+        <!-- Dashboard Statistics Cards -->
         <div class="row g-3 mb-4">
             <div class="col-md-6 col-lg-3">
                 <div class="stats-card card h-100" onclick="location.href='@Url.Action("Appointment", "Report")'" style="cursor: pointer;">
@@ -130,6 +133,7 @@
             </div>
         </div>
 
+        <!-- Charts & Recent Appointments Section -->
         <div class="row g-4 mb-4">
             
             <div class="col-lg-8">
@@ -534,3 +538,4 @@
         border-bottom: 1px solid rgba(0,0,0,0.04);
     }
 </style>
+

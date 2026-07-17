@@ -15,7 +15,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             _context = context;
         }
-
+// Index Action
         public IActionResult Index(string? searchQuery)
         {
             int? roleId = HttpContext.Session.GetInt32("RoleId");
@@ -42,7 +42,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View(patients);
         }
-
+// PatientTimeline Action
         public IActionResult PatientTimeline(int patientId)
         {
             int? roleId = HttpContext.Session.GetInt32("RoleId");
@@ -97,7 +97,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View();
         }
-
+// Create Action
         public IActionResult Create(int patientId, int? appointmentId)
         {
             int? roleId = HttpContext.Session.GetInt32("RoleId");
@@ -121,6 +121,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// Create Action
         public IActionResult Create(MedicalRecord model)
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -149,7 +150,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             TempData["Success"] = "Medical record added successfully!";
             return RedirectToAction("PatientTimeline", new { patientId = model.PatientId });
         }
-
+// Edit Action
         public IActionResult Edit(int id)
         {
             int? roleId = HttpContext.Session.GetInt32("RoleId");
@@ -182,6 +183,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// Edit Action
         public IActionResult Edit(MedicalRecord model)
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -211,6 +213,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// Delete Action
         public IActionResult Delete(int id)
         {
             int? roleId = HttpContext.Session.GetInt32("RoleId");
@@ -247,3 +250,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

@@ -13,19 +13,19 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             _context = context;
         }
-
+// Index Action
         public IActionResult Index()
         {
             return View();
         }
-
+// Revenue Action
         public IActionResult Revenue()
         {
             var payments = _context.Payments.Include(p => p.Appointment).ThenInclude(a => a.Patient).ThenInclude(p => p.User).ToList();
             ViewBag.TotalRevenue = payments.Sum(p => p.Amount);
             return View(payments);
         }
-
+// Appointment Action
         public IActionResult Appointment()
         {
             var appointments = _context.Appointments
@@ -34,13 +34,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .ToList();
             return View(appointments);
         }
-
+// Patient Action
         public IActionResult Patient()
         {
             var patients = _context.Patients.Include(p => p.User).ToList();
             return View(patients);
         }
-
+// Doctor Action
         public IActionResult Doctor()
         {
             var doctors = _context.Doctors.Include(d => d.User).ToList();
@@ -48,3 +48,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

@@ -13,13 +13,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             _context = context;
         }
-
+// Index Action
         public IActionResult Index()
         {
             var medicines = _context.Medicines.ToList();
             return View(medicines);
         }
-
+// Create Action
         public IActionResult Create()
         {
             return View();
@@ -27,6 +27,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+// Create Action
         public IActionResult Create(Medicine medicine)
         {
             if (ModelState.IsValid)
@@ -38,7 +39,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return View(medicine);
         }
-
+// Edit Action
         public IActionResult Edit(int id)
         {
             var medicine = _context.Medicines.Find(id);
@@ -48,6 +49,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+// Edit Action
         public IActionResult Edit(Medicine medicine)
         {
             if (ModelState.IsValid)
@@ -59,14 +61,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return View(medicine);
         }
-
+// Details Action
         public IActionResult Details(int id)
         {
             var medicine = _context.Medicines.Find(id);
             if (medicine == null) return NotFound();
             return View(medicine);
         }
-
+// Delete Action
         public IActionResult Delete(int id)
         {
             var medicine = _context.Medicines.Find(id);
@@ -80,3 +82,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

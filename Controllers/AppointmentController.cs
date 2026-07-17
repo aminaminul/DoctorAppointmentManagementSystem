@@ -17,7 +17,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context = context;
             _notificationService = notificationService;
         }
-
+// Book Action
         public IActionResult Book()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -98,7 +98,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return Json(slots);
         }
-
+// SelectTime Action
         public IActionResult SelectTime(int doctorId, DateTime date)
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -162,6 +162,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// Confirm Action
         public IActionResult Confirm(int DoctorId, string Date, string TimeSlot,
                                      string ReasonForVisit, bool IsEmergency,
                                      string PaymentMethod, string CardType)
@@ -192,14 +193,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("FinalConfirm");
         }
-
+// BkashPayment Action
         public IActionResult BkashPayment()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login", "Account");
             return View();
         }
-
+// CardPayment Action
         public IActionResult CardPayment()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -208,6 +209,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// FinalConfirm Async Action
         public async Task<IActionResult> FinalConfirm(string? PaymentNumber)
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -286,7 +288,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Confirmation");
         }
-
+// Confirmation Action
         public IActionResult Confirmation()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -312,3 +314,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

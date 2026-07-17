@@ -22,6 +22,7 @@ namespace DoctorAppointmentManagementSystem.Data
             SeedPrivacyPolicies(context);
         }
 
+        // Seed Roles Section
         private static void SeedRoles(ApplicationDbContext context)
         {
             if (context.Roles.Any()) return;
@@ -35,6 +36,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Users Section
         private static void SeedUsers(ApplicationDbContext context)
         {
             if (context.Users.Any()) return;
@@ -71,6 +73,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Patients Section
         private static void SeedPatients(ApplicationDbContext context)
         {
             if (context.Patients.Any()) return;
@@ -90,6 +93,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Doctors Section
         private static void SeedDoctors(ApplicationDbContext context)
         {
             if (context.Doctors.Any()) return;
@@ -109,6 +113,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Appointments Section
         private static void SeedAppointments(ApplicationDbContext context)
         {
             if (context.Appointments.Any()) return;
@@ -133,6 +138,8 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Doctors Section
+        // Seed Doctor Schedules Section
         private static void SeedDoctorSchedules(ApplicationDbContext context)
         {
             if (context.DoctorSchedules.Any()) return;
@@ -152,6 +159,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Prescriptions Section
         private static void SeedPrescriptions(ApplicationDbContext context)
         {
             if (context.Prescriptions.Any()) return;
@@ -202,6 +210,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Medical Records Section
         private static void SeedMedicalRecords(ApplicationDbContext context)
         {
             if (context.MedicalRecords.Any()) return;
@@ -217,6 +226,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Payments Section
         private static void SeedPayments(ApplicationDbContext context)
         {
             if (context.Payments.Any()) return;
@@ -232,6 +242,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Feedbacks Section
         private static void SeedFeedbacks(ApplicationDbContext context)
         {
             if (context.Feedbacks.Any()) return;
@@ -247,6 +258,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Notifications Section
         private static void SeedNotifications(ApplicationDbContext context)
         {
             if (context.Notifications.Any()) return;
@@ -266,6 +278,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Admin Logs Section
         private static void SeedAdminLogs(ApplicationDbContext context)
         {
             if (context.AdminLogs.Any()) return;
@@ -281,6 +294,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Queue Entries Section
         private static void SeedQueueEntries(ApplicationDbContext context)
         {
             if (context.QueueEntries.Any()) return;
@@ -296,6 +310,7 @@ namespace DoctorAppointmentManagementSystem.Data
             context.SaveChanges();
         }
 
+        // Seed Privacy Policies Section
         private static void SeedPrivacyPolicies(ApplicationDbContext context)
         {
             if (context.PrivacyPolicies.Any()) return;
@@ -311,4 +326,5 @@ namespace DoctorAppointmentManagementSystem.Data
         }
     }
 }
+
 

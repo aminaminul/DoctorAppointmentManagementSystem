@@ -13,7 +13,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             _context = context;
         }
-
+// Dashboard Action
         public IActionResult Dashboard(string section)
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -110,7 +110,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View(appointments);
         }
-
+// EditProfile Action
         public IActionResult EditProfile()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -123,6 +123,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// EditProfile Action
         public IActionResult EditProfile(Patient model)
         {
             var patient = _context.Patients
@@ -148,7 +149,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Dashboard", new { section = "profile" });
         }
-
+// Prescriptions Action
         public IActionResult Prescriptions()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -165,6 +166,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// MarkNotificationRead Action
         public IActionResult MarkNotificationRead(int id)
         {
             var notification = _context.Notifications.FirstOrDefault(n => n.Id == id);
@@ -177,6 +179,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// MarkAllNotificationsRead Action
         public IActionResult MarkAllNotificationsRead()
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -189,3 +192,4 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+

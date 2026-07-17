@@ -16,6 +16,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context = context;
         }
 
+        // Privacy Policy Management
+// EditPrivacy Action
         public IActionResult EditPrivacy()
         {
             var policy = _context.PrivacyPolicies.OrderByDescending(p => p.UpdatedAt).FirstOrDefault();
@@ -24,6 +26,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // Privacy Policy Management
+// EditPrivacy Action
         public IActionResult EditPrivacy(DoctorAppointmentManagementSystem.Models.PrivacyPolicy model)
         {
             if (!ModelState.IsValid)
@@ -46,6 +50,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard");
         }
 
+        // Admin Dashboard Action
+// Dashboard Action
         public IActionResult Dashboard(string section)
         {
             var roles = _context.Roles.ToList();
@@ -123,24 +129,29 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View();
         }
 
+        // Doctors List Action
+// Doctors Action
         public IActionResult Doctors()
         {
             var doctors = _context.Doctors.Include(d => d.User).ToList();
             return View(doctors);
         }
 
+        // Patients List Action
+// Patients Action
         public IActionResult Patients()
         {
             var patients = _context.Patients.Include(p => p.User).ToList();
             return View(patients);
         }
-
+// AddDoctor Action
         public IActionResult AddDoctor()
         {
             return View();
         }
 
         [HttpPost]
+// AddDoctor Action
         public IActionResult AddDoctor(DoctorCreateViewModel model)
         {
             var exists = _context.Users.Any(u => u.Email == model.Email);
@@ -181,7 +192,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Doctors");
         }
-
+// EditDoctor Action
         public IActionResult EditDoctor(int id)
         {
             var doctor = _context.Doctors
@@ -191,6 +202,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// EditDoctor Action
         public IActionResult EditDoctor(Doctor model)
         {
             var doctor = _context.Doctors
@@ -220,7 +232,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Doctors");
         }
-
+// DeleteDoctor Action
         public IActionResult DeleteDoctor(int id)
         {
             var doctor = _context.Doctors.Find(id);
@@ -233,13 +245,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Doctors");
         }
-
+// AddPatient Action
         public IActionResult AddPatient()
         {
             return View();
         }
 
         [HttpPost]
+// AddPatient Action
         public IActionResult AddPatient(PatientCreateViewModel model)
         {
             var exists = _context.Users.Any(u => u.Email == model.Email);
@@ -277,8 +290,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Patients");
         }
-
-
+// EditPatient Action
         public IActionResult EditPatient(int id)
         {
             var patient = _context.Patients
@@ -288,6 +300,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// EditPatient Action
         public IActionResult EditPatient(Patient model)
         {
             var patient = _context.Patients
@@ -317,7 +330,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Patients");
         }
-
+// DeletePatient Action
         public IActionResult DeletePatient(int id)
         {
             var patient = _context.Patients.Find(id);
@@ -330,7 +343,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return RedirectToAction("Patients");
         }
-
+// PatientDetails Action
         public IActionResult PatientDetails(int id)
         {
             var patient = _context.Patients
@@ -339,7 +352,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View(patient);
         }
-
+// DoctorDetails Action
         public IActionResult DoctorDetails(int id)
         {
             var doctor = _context.Doctors
@@ -354,6 +367,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View(doctor);
         }
 
+        // Leave Requests List Action
+// LeaveRequests Action
         public IActionResult LeaveRequests()
         {
             var requests = _context.LeaveRequests.Include(lr => lr.User).ToList();
@@ -361,6 +376,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// UpdateLeaveStatus Action
         public IActionResult UpdateLeaveStatus(int id, string status)
         {
             var request = _context.LeaveRequests.Find(id);
@@ -371,7 +387,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction(nameof(LeaveRequests));
         }
-
+// DeleteLeaveRequest Action
         public IActionResult DeleteLeaveRequest(int id)
         {
             var request = _context.LeaveRequests.Find(id);
@@ -383,6 +399,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction(nameof(LeaveRequests));
         }
 
+        // Complaints List Action
+// Complaints Action
         public IActionResult Complaints()
         {
             var complaints = _context.Complaints.Include(c => c.User).ToList();
@@ -390,6 +408,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// UpdateComplaintStatus Action
         public IActionResult UpdateComplaintStatus(int id, string status)
         {
             var complaint = _context.Complaints.Find(id);
@@ -400,7 +419,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction(nameof(Complaints));
         }
-
+// DeleteComplaint Action
         public IActionResult DeleteComplaint(int id)
         {
             var complaint = _context.Complaints.Find(id);
@@ -412,12 +431,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction(nameof(Complaints));
         }
 
+        // Invoices List Action
+// Invoices Action
         public IActionResult Invoices()
         {
             var invoices = _context.Invoices.Include(i => i.Patient).ThenInclude(p => p.User).ToList();
             return View(invoices);
         }
-
+// CreateInvoice Action
         public IActionResult CreateInvoice()
         {
             ViewBag.Patients = _context.Patients.Include(p => p.User).ToList();
@@ -425,6 +446,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// CreateInvoice Action
         public IActionResult CreateInvoice(DoctorAppointmentManagementSystem.Models.Invoice invoice)
         {
             invoice.IssueDate = DateTime.Now;
@@ -432,7 +454,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context.SaveChanges();
             return RedirectToAction(nameof(Invoices));
         }
-
+// EditInvoice Action
         public IActionResult EditInvoice(int id)
         {
             var invoice = _context.Invoices.Find(id);
@@ -442,6 +464,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         [HttpPost]
+// EditInvoice Action
         public IActionResult EditInvoice(DoctorAppointmentManagementSystem.Models.Invoice invoice)
         {
             var existing = _context.Invoices.Find(invoice.Id);
@@ -455,7 +478,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             return RedirectToAction(nameof(Invoices));
         }
-
+// DeleteInvoice Action
         public IActionResult DeleteInvoice(int id)
         {
             var invoice = _context.Invoices.Find(id);
@@ -468,3 +491,5 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
     }
 }
+
+
