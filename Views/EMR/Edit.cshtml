@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.Models.MedicalRecord
+﻿@* Razor View: EMR/Edit *@
+<!-- HTML View: EMR/Edit -->
+@model DoctorAppointmentManagementSystem.Models.MedicalRecord
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Edit EMR Entry";
@@ -24,8 +26,8 @@
                 </div>
 
                 <div class="card-body p-4 p-md-5">
-
-                    <form method="post" action="/EMR/Edit">
+<!-- Form Block -->
+        <form method="post" action="/EMR/Edit">
 
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="PatientId" />
@@ -70,3 +72,4 @@
         </div>
     </div>
 </div>
+

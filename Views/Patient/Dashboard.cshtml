@@ -1,4 +1,6 @@
-﻿@model List<Appointment>
+﻿@* Razor View: Patient/Dashboard *@
+<!-- HTML View: Patient/Dashboard -->
+@model List<Appointment>
 
 @{
     Layout = "_Layout";
@@ -117,7 +119,8 @@
                         @if (Model.Any())
                         {
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
+<!-- Data Table Block -->
+        <table class="table table-hover align-middle mb-0">
                                     <thead>
                                         <tr class="table-light">
                                             <th class="ps-3">Doctor</th>
@@ -538,7 +541,8 @@
                         <h5 class="mb-0 fw-bold"><i class="bi bi-bell-fill me-2"></i>My Notifications</h5>
                         @if (notifications.Any(n => n.NotificationStatus == "Unread"))
                         {
-                            <form method="post" action="/Patient/MarkAllNotificationsRead" style="margin: 0;">
+<!-- Form Block -->
+        <form method="post" action="/Patient/MarkAllNotificationsRead" style="margin: 0;">
                                 <button type="submit" class="btn btn-sm btn-light rounded-pill px-3 fw-semibold text-primary">
                                     Mark All as Read
                                 </button>
@@ -578,7 +582,8 @@
                                         </div>
                                         @if (isUnread)
                                         {
-                                            <form method="post" action="/Patient/MarkNotificationRead" class="ms-2">
+<!-- Form Block -->
+        <form method="post" action="/Patient/MarkNotificationRead" class="ms-2">
                                                 <input type="hidden" name="id" value="@n.Id" />
                                                 <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill py-1 px-3" style="font-size: 0.8rem; white-space: nowrap;">
                                                     Mark Read
@@ -703,3 +708,4 @@
 
     </div>
 </div>
+

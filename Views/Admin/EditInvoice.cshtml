@@ -1,12 +1,14 @@
-﻿@model DoctorAppointmentManagementSystem.Models.Invoice
+﻿@* Razor View: Admin/EditInvoice *@
+<!-- HTML View: Admin/EditInvoice -->
+@model DoctorAppointmentManagementSystem.Models.Invoice
 
 @{
     ViewData["Title"] = "Edit Invoice";
 }
 
 <h2>Edit Invoice</h2>
-
-<form asp-action="EditInvoice" class="w-50">
+<!-- Form Block -->
+        <form asp-action="EditInvoice" class="w-50">
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="IssueDate" />
     <div class="mb-3">
@@ -38,3 +40,4 @@
     <button type="submit" class="btn btn-primary">Update</button>
     <a asp-action="Invoices" class="btn btn-secondary">Cancel</a>
 </form>
+

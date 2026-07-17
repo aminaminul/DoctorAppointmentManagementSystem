@@ -1,4 +1,6 @@
-﻿@{
+﻿@* Razor View: Navbar/Default *@
+<!-- HTML View: Navbar/Default -->
+@{
     var controller  = ViewData["controller"]?.ToString() ?? "";
     var action      = ViewData["action"]?.ToString() ?? "";
     var userName    = ViewData["UserName"] as string ?? "";
@@ -16,8 +18,8 @@
         _         => "/"
     };
 }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
     .dams-nav {
         background-color: #0b1727;
         box-shadow: 0 4px 20px rgba(0,0,0,0.2);
@@ -290,3 +292,4 @@
         </div>
     </div>
 </nav>
+

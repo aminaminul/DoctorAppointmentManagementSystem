@@ -1,11 +1,13 @@
-﻿@{
+﻿@* Razor View: Appointment/SelectTime *@
+<!-- HTML View: Appointment/SelectTime -->
+@{
     Layout = "_Layout";
     ViewData["Title"] = "Select Time Slot";
     var slots       = ViewBag.Slots  as List<string> ?? new List<string>();
     var bookedSlots = ViewBag.BookedSlots as List<string> ?? new List<string>();
 }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
     
     .selecttime-hero {
         background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -195,7 +197,7 @@
                 </div>
             </div>
         </div>
-
+<!-- Form Block -->
         <form method="post" action="/Appointment/Confirm" id="confirmForm">
             <input type="hidden" name="DoctorId" value="@ViewBag.DoctorId" />
             <input type="hidden" name="Date" value="@ViewBag.Date" />
@@ -320,7 +322,8 @@
 </div>
 
 @section Scripts {
-<script>
+<!-- JavaScript Block -->
+        <script>
     let selectedSlot    = null;
     let selectedPayment = null;
     let selectedCard    = null;
@@ -389,3 +392,4 @@
     }
 </script>
 }
+

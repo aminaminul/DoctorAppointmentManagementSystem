@@ -1,4 +1,6 @@
-﻿@{
+﻿@* Razor View: Admin/Dashboard *@
+<!-- HTML View: Admin/Dashboard -->
+@{
     Layout = "_Layout";
     ViewData["Title"] = "Admin Dashboard";
     ViewData["HideSidebar"] = true; // Complete layout control to match reference image
@@ -12,8 +14,8 @@
     var recentAppointments = ViewBag.RecentAppointments as List<DoctorAppointmentManagementSystem.Models.Appointment> ?? new List<DoctorAppointmentManagementSystem.Models.Appointment>();
     var recentSchedules = ViewBag.RecentSchedules as List<DoctorAppointmentManagementSystem.Models.DoctorSchedule> ?? new List<DoctorAppointmentManagementSystem.Models.DoctorSchedule>();
 }
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- JavaScript Block -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="row g-0 dams-admin-layout">
     
@@ -207,7 +209,8 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
+<!-- Data Table Block -->
+        <table class="table table-hover align-middle mb-0">
                                 <thead>
                                     <tr class="table-light text-secondary text-xs">
                                         <th class="ps-4">Doctor Name</th>
@@ -257,7 +260,8 @@
 </div>
 
 @section Scripts {
-    <script>
+<!-- JavaScript Block -->
+        <script>
         document.addEventListener("DOMContentLoaded", function () {
             var ctx = document.getElementById('patientsOverviewChart').getContext('2d');
             var chart = new Chart(ctx, {
@@ -329,8 +333,8 @@
         });
     </script>
 }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
     
     body {
         background-color: #f7fafc !important;
@@ -538,4 +542,5 @@
         border-bottom: 1px solid rgba(0,0,0,0.04);
     }
 </style>
+
 

@@ -1,12 +1,14 @@
-﻿@model DoctorAppointmentManagementSystem.Models.LabReport
+﻿@* Razor View: Laboratory/CreateReport *@
+<!-- HTML View: Laboratory/CreateReport -->
+@model DoctorAppointmentManagementSystem.Models.LabReport
 
 @{
     ViewData["Title"] = "Create Lab Report";
 }
 
 <h2>Create Lab Report</h2>
-
-<form asp-action="CreateReport" class="w-50">
+<!-- Form Block -->
+        <form asp-action="CreateReport" class="w-50">
     <div class="mb-3">
         <label class="form-label">Patient</label>
         <select asp-for="PatientId" class="form-select" required>
@@ -42,3 +44,4 @@
     <button type="submit" class="btn btn-success">Save</button>
     <a asp-action="Reports" class="btn btn-secondary">Cancel</a>
 </form>
+

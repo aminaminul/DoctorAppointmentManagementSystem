@@ -1,12 +1,14 @@
-﻿@model DoctorAppointmentManagementSystem.Models.Specialization
+﻿@* Razor View: Settings/EditSpecialization *@
+<!-- HTML View: Settings/EditSpecialization -->
+@model DoctorAppointmentManagementSystem.Models.Specialization
 
 @{
     ViewData["Title"] = "Edit Specialization";
 }
 
 <h2>Edit Specialization</h2>
-
-<form asp-action="EditSpecialization" class="w-50">
+<!-- Form Block -->
+        <form asp-action="EditSpecialization" class="w-50">
     <input type="hidden" asp-for="Id" />
     <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
@@ -19,3 +21,4 @@
     <button type="submit" class="btn btn-primary">Update</button>
     <a asp-action="Specializations" class="btn btn-secondary">Cancel</a>
 </form>
+

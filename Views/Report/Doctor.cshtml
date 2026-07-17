@@ -1,4 +1,6 @@
-﻿@model IEnumerable<DoctorAppointmentManagementSystem.Models.Doctor>
+﻿@* Razor View: Report/Doctor *@
+<!-- HTML View: Report/Doctor -->
+@model IEnumerable<DoctorAppointmentManagementSystem.Models.Doctor>
 
 @{
     ViewData["Title"] = "Doctor Report";
@@ -7,8 +9,8 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Doctor Report</h2>
 </div>
-
-<table class="table table-striped table-hover">
+<!-- Data Table Block -->
+        <table class="table table-striped table-hover">
     <thead class="table-dark">
         <tr>
             <th>Name</th>
@@ -37,3 +39,4 @@
         }
     </tbody>
 </table>
+

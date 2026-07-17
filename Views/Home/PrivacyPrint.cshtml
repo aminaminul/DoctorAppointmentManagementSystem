@@ -1,11 +1,13 @@
-﻿@{
+﻿@* Razor View: Home/PrivacyPrint *@
+<!-- HTML View: Home/PrivacyPrint -->
+@{
     Layout = "_Layout";
     ViewData["Title"] = "Privacy Policy (Print)";
 }
 
 @{ ViewData["HideSidebar"] = true; ViewData["NavbarTheme"] = "white"; }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
     
     @@media print {
         body { background: #fff; color: #000; }
@@ -68,8 +70,8 @@
         </div>
     </div>
 </div>
-
-<script>
+<!-- JavaScript Block -->
+        <script>
     document.getElementById('printBtn')?.addEventListener('click', function () {
         window.print();
     });
@@ -78,3 +80,4 @@
         window.onload = function () { window.print(); };
     }
 </script>
+

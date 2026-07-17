@@ -1,4 +1,6 @@
-﻿@model IEnumerable<DoctorAppointmentManagementSystem.Models.SystemSetting>
+﻿@* Razor View: Settings/System *@
+<!-- HTML View: Settings/System -->
+@model IEnumerable<DoctorAppointmentManagementSystem.Models.SystemSetting>
 
 @{
     ViewData["Title"] = "System Settings";
@@ -20,7 +22,8 @@
                 <h5 class="mb-0">Add / Update Setting</h5>
             </div>
             <div class="card-body">
-                <form asp-action="SaveSetting" method="post">
+<!-- Form Block -->
+        <form asp-action="SaveSetting" method="post">
                     <div class="mb-3">
                         <label class="form-label">Key</label>
                         <input name="key" class="form-control" placeholder="e.g. HospitalName" required />
@@ -36,6 +39,7 @@
     </div>
 
     <div class="col-md-7">
+<!-- Data Table Block -->
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
@@ -59,3 +63,4 @@
         </table>
     </div>
 </div>
+

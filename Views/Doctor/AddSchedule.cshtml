@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.ViewModels.DoctorScheduleViewModel
+﻿@* Razor View: Doctor/AddSchedule *@
+<!-- HTML View: Doctor/AddSchedule -->
+@model DoctorAppointmentManagementSystem.ViewModels.DoctorScheduleViewModel
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Add Schedule";
@@ -13,8 +15,8 @@
         }
     }
 }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
 .form-wrapper { display:flex; min-height:calc(100vh - 72px); background:#f8fafc; }
 
 .dash-sidebar { width:260px; flex-shrink:0; background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%); padding:1.75rem 0; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
@@ -132,8 +134,8 @@ input:checked + .toggle-knob::before { transform:translateX(20px); }
                     @Html.ValidationSummary(true)
                 </div>
             }
-
-            <form method="post" asp-action="AddSchedule" id="scheduleForm">
+<!-- Form Block -->
+        <form method="post" asp-action="AddSchedule" id="scheduleForm">
                 @Html.AntiForgeryToken()
 
                 <div class="section-label"><i class="bi bi-calendar3"></i>Date</div>
@@ -233,7 +235,8 @@ input:checked + .toggle-knob::before { transform:translateX(20px); }
 </div>
 
 @section Scripts {
-<script>
+<!-- JavaScript Block -->
+        <script>
     const toggle     = document.getElementById('vacationToggle');
     const toggleWrap = document.getElementById('vacationToggleWrap');
     const workSection= document.getElementById('workingHoursSection');
@@ -251,3 +254,4 @@ input:checked + .toggle-knob::before { transform:translateX(20px); }
     applyToggle(); // run on load
 </script>
 }
+

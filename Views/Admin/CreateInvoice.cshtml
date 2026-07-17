@@ -1,12 +1,14 @@
-﻿@model DoctorAppointmentManagementSystem.Models.Invoice
+﻿@* Razor View: Admin/CreateInvoice *@
+<!-- HTML View: Admin/CreateInvoice -->
+@model DoctorAppointmentManagementSystem.Models.Invoice
 
 @{
     ViewData["Title"] = "Create Invoice";
 }
 
 <h2>Create Invoice</h2>
-
-<form asp-action="CreateInvoice" class="w-50">
+<!-- Form Block -->
+        <form asp-action="CreateInvoice" class="w-50">
     <div class="mb-3">
         <label class="form-label">Patient</label>
         <select asp-for="PatientId" class="form-select" required>
@@ -36,3 +38,4 @@
     <button type="submit" class="btn btn-success">Save</button>
     <a asp-action="Invoices" class="btn btn-secondary">Cancel</a>
 </form>
+

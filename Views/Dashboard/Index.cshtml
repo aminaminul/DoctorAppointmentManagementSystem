@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.ViewModels.DashboardViewModel
+﻿@* Razor View: Dashboard/Index *@
+<!-- HTML View: Dashboard/Index -->
+@model DoctorAppointmentManagementSystem.ViewModels.DashboardViewModel
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Overview";
@@ -31,8 +33,8 @@
     var monthlyRev    = System.Text.Json.JsonSerializer.Serialize(Model.MonthlyRevenueData);
     var statusCounts  = System.Text.Json.JsonSerializer.Serialize(Model.StatusCounts);
 }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
     
     :root {
         --bg-dark:   #0b1727;
@@ -292,8 +294,8 @@
         .stats-grid    { grid-template-columns: repeat(2, 1fr); }
     }
 </style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- JavaScript Block -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <div class="overview-wrap">
     
@@ -456,7 +458,8 @@
                     }
                 </div>
                 <div style="overflow-x:auto;">
-                    <table class="dams-table">
+<!-- Data Table Block -->
+        <table class="dams-table">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -569,7 +572,8 @@
 </div>
 
 @section Scripts {
-<script>
+<!-- JavaScript Block -->
+        <script>
     Chart.defaults.color = 'rgba(255,255,255,0.5)';
     Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
 
@@ -656,3 +660,4 @@
     });
 </script>
 }
+

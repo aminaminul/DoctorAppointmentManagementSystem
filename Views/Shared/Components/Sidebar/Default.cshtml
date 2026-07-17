@@ -1,11 +1,13 @@
-﻿@{
+﻿@* Razor View: Sidebar/Default *@
+<!-- HTML View: Sidebar/Default -->
+@{
     var userRole = ViewData["UserRole"] as string ?? "";
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
     Func<string, bool> active = route => string.Equals((ViewContext.RouteData.Values["controller"] ?? "").ToString(), route, StringComparison.OrdinalIgnoreCase);
     Func<string, string, bool> activeAction = (route, action) => active(route) && string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
 }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
     .triangle-bg {
         background-color: #4DA8DA;
         color: #fff;
@@ -122,3 +124,4 @@
 
     </ul>
 </nav>
+

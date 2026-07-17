@@ -1,4 +1,6 @@
-﻿@model Patient
+﻿@* Razor View: Patient/EditProfile *@
+<!-- HTML View: Patient/EditProfile -->
+@model Patient
 
 @{
     Layout = "_Layout";
@@ -21,7 +23,8 @@
                 </div>
 
                 <div class="card-body p-4 p-md-5">
-                    <form method="post">
+<!-- Form Block -->
+        <form method="post">
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="UserId" />
 
@@ -168,3 +171,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

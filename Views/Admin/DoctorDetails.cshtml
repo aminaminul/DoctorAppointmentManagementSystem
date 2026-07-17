@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.Models.Doctor
+﻿@* Razor View: Admin/DoctorDetails *@
+<!-- HTML View: Admin/DoctorDetails -->
+@model DoctorAppointmentManagementSystem.Models.Doctor
 
 @{
     ViewData["Title"] = "Doctor Details";
@@ -16,7 +18,8 @@
                 <h5 class="mb-0">Account & Professional Profile</h5>
             </div>
             <div class="card-body">
-                <table class="table table-hover">
+<!-- Data Table Block -->
+        <table class="table table-hover">
                     <tr>
                         <th style="width: 40%">Username / Name</th>
                         <td>Dr. @Model.User?.Username</td>
@@ -69,7 +72,8 @@
                 <h5 class="mb-0">Chamber & Availability Info</h5>
             </div>
             <div class="card-body">
-                <table class="table table-hover">
+<!-- Data Table Block -->
+        <table class="table table-hover">
                     <tr>
                         <th style="width: 40%">Available Days</th>
                         <td>@(Model.AvailableDays ?? "N/A")</td>
@@ -88,3 +92,4 @@
         </div>
     </div>
 </div>
+

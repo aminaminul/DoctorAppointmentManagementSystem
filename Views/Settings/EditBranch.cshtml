@@ -1,12 +1,14 @@
-﻿@model DoctorAppointmentManagementSystem.Models.Branch
+﻿@* Razor View: Settings/EditBranch *@
+<!-- HTML View: Settings/EditBranch -->
+@model DoctorAppointmentManagementSystem.Models.Branch
 
 @{
     ViewData["Title"] = "Edit Branch";
 }
 
 <h2>Edit Branch</h2>
-
-<form asp-action="EditBranch" class="w-50">
+<!-- Form Block -->
+        <form asp-action="EditBranch" class="w-50">
     <input type="hidden" asp-for="Id" />
     <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
@@ -27,3 +29,4 @@
     <button type="submit" class="btn btn-primary">Update</button>
     <a asp-action="Branches" class="btn btn-secondary">Cancel</a>
 </form>
+

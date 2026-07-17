@@ -1,4 +1,6 @@
-﻿@model IEnumerable<DoctorAppointmentManagementSystem.Models.Payment>
+﻿@* Razor View: Report/Revenue *@
+<!-- HTML View: Report/Revenue -->
+@model IEnumerable<DoctorAppointmentManagementSystem.Models.Payment>
 
 @{
     ViewData["Title"] = "Revenue Report";
@@ -11,8 +13,8 @@
 <div class="alert alert-info">
     <strong>Total Revenue: à§³@ViewBag.TotalRevenue.ToString("N2")</strong>
 </div>
-
-<table class="table table-striped table-hover">
+<!-- Data Table Block -->
+        <table class="table table-striped table-hover">
     <thead class="table-dark">
         <tr>
             <th>Date</th>
@@ -39,3 +41,4 @@
         }
     </tbody>
 </table>
+

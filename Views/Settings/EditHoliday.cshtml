@@ -1,12 +1,14 @@
-﻿@model DoctorAppointmentManagementSystem.Models.Holiday
+﻿@* Razor View: Settings/EditHoliday *@
+<!-- HTML View: Settings/EditHoliday -->
+@model DoctorAppointmentManagementSystem.Models.Holiday
 
 @{
     ViewData["Title"] = "Edit Holiday";
 }
 
 <h2>Edit Holiday</h2>
-
-<form asp-action="EditHoliday" class="w-50">
+<!-- Form Block -->
+        <form asp-action="EditHoliday" class="w-50">
     <input type="hidden" asp-for="Id" />
     <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
@@ -19,3 +21,4 @@
     <button type="submit" class="btn btn-primary">Update</button>
     <a asp-action="Holidays" class="btn btn-secondary">Cancel</a>
 </form>
+

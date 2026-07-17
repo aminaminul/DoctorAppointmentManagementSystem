@@ -5,18 +5,15 @@ namespace DoctorAppointmentManagementSystem.Models
 {
     public class Invoice
     {
-        // Primary Key
         [Key]
         public int Id { get; set; }
 
         [Required]
-        // Patient Association
         public int PatientId { get; set; }
 
         [ForeignKey("PatientId")]
         public Patient Patient { get; set; }
 
-        // Appointment Association
         public int? AppointmentId { get; set; }
 
         [ForeignKey("AppointmentId")]
@@ -24,14 +21,13 @@ namespace DoctorAppointmentManagementSystem.Models
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        // Invoice Details
         public decimal TotalAmount { get; set; }
 
         [Required]
         public DateTime IssueDate { get; set; }
 
         [Required]
-        public string Status { get; set; } = "Unpaid"; // Unpaid, Paid, Cancelled
+        public string Status { get; set; } = "Unpaid";
 
         public string Particulars { get; set; }
     }

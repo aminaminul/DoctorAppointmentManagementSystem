@@ -1,11 +1,13 @@
-﻿@using DoctorAppointmentManagementSystem.Models
+﻿@* Razor View: Home/Index *@
+<!-- HTML View: Home/Index -->
+@using DoctorAppointmentManagementSystem.Models
 @{
     Layout = "_Layout";
     ViewData["HideSidebar"] = true;
     var doctors = ViewBag.Doctors as List<Doctor> ?? new List<Doctor>();
 }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
     
     .home-container {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -797,8 +799,8 @@
                         <p class="text-muted mb-4">
                             Select a department and instantly schedule a slot. Or get in touch with our front desk team to receive manual guidance regarding a particular specialization.
                         </p>
-                        
-                        <form class="consult-form row g-3" asp-controller="Account" asp-action="Login" method="get">
+<!-- Form Block -->
+        <form class="consult-form row g-3" asp-controller="Account" asp-action="Login" method="get">
                             <div class="col-12">
                                 <select class="form-select" name="department" aria-label="Select Speciality">
                                     <option value="" selected>Choose Medical Speciality...</option>
@@ -828,4 +830,5 @@
         </div>
     </section>
 </div>
+
 

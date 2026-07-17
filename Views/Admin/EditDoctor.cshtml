@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.Models.Doctor
+﻿@* Razor View: Admin/EditDoctor *@
+<!-- HTML View: Admin/EditDoctor -->
+@model DoctorAppointmentManagementSystem.Models.Doctor
 
 @{
     ViewData["Title"] = "Edit Doctor";
@@ -8,6 +10,7 @@
 
 <div class="row">
     <div class="col-md-6">
+<!-- Form Block -->
         <form asp-action="EditDoctor">
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="UserId" />
@@ -70,3 +73,4 @@
         </form>
     </div>
 </div>
+

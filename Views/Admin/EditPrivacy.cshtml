@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.Models.PrivacyPolicy
+﻿@* Razor View: Admin/EditPrivacy *@
+<!-- HTML View: Admin/EditPrivacy -->
+@model DoctorAppointmentManagementSystem.Models.PrivacyPolicy
 
 @{
     Layout = "_Layout";
@@ -16,8 +18,8 @@
             {
                 <div class="alert alert-success">@TempData["Success"]</div>
             }
-
-            <form method="post" asp-action="EditPrivacy">
+<!-- Form Block -->
+        <form method="post" asp-action="EditPrivacy">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Content (HTML)</label>
                     <textarea name="Content" class="form-control" rows="12">@Model.Content</textarea>
@@ -28,3 +30,4 @@
         </div>
     </div>
 </div>
+

@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.ViewModels.RegisterViewModel
+﻿@* Razor View: Account/Register *@
+<!-- HTML View: Account/Register -->
+@model DoctorAppointmentManagementSystem.ViewModels.RegisterViewModel
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Register";
@@ -55,8 +57,8 @@
                         <h3 class="form-title">Create Account</h3>
                         <p class="form-subtitle">Choose your user profile role to continue registration</p>
                     </div>
-
-                    <form asp-action="Register" method="post" novalidate>
+<!-- Form Block -->
+        <form asp-action="Register" method="post" novalidate>
                         <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
                         <div class="row g-3 mb-3">
@@ -216,7 +218,8 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
+<!-- JavaScript Block -->
+        <script>
         (function () {
             var roleSelect = document.querySelector('[name="RoleId"]');
             var patientFields = document.getElementById('patientFields');
@@ -271,8 +274,8 @@
         }
     </script>
 }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
     
     body.bg-white {
         background-color: #0b1727 !important;
@@ -606,3 +609,4 @@
         to { opacity: 1; transform: translateY(0); }
     }
 </style>
+

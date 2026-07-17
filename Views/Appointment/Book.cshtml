@@ -1,9 +1,11 @@
-﻿@{
+﻿@* Razor View: Appointment/Book *@
+<!-- HTML View: Appointment/Book -->
+@{
     Layout = "_Layout";
     ViewData["Title"] = "Book Appointment";
 }
-
-<style>
+<!-- CSS Style Block -->
+        <style>
     
     .booking-hero {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -192,7 +194,7 @@
                 <span class="step-label">Time Slot</span>
             </div>
         </div>
-
+<!-- Form Block -->
         <form method="get" action="/Appointment/SelectTime" id="bookingForm">
 
             <div class="section-title">
@@ -309,7 +311,8 @@
 </div>
 
 @section Scripts {
-<script>
+<!-- JavaScript Block -->
+        <script>
     const departmentSel = document.getElementById('department');
     const doctorSel     = document.getElementById('doctor');
     const dateInput     = document.getElementById('dateInput');
@@ -393,3 +396,4 @@
     });
 </script>
 }
+

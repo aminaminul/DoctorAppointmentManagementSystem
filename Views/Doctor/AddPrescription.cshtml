@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.Models.Prescription
+﻿@* Razor View: Doctor/AddPrescription *@
+<!-- HTML View: Doctor/AddPrescription -->
+@model DoctorAppointmentManagementSystem.Models.Prescription
 
 @{
     Layout = "_Layout";
@@ -9,7 +11,7 @@
     <div style="background:white; padding:30px; width:500px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1);">
 
         <h2 style="text-align:center; margin-bottom:20px;">Add Prescription</h2>
-
+<!-- Form Block -->
         <form method="post">
 
             <input type="hidden" asp-for="AppointmentId" value="@ViewBag.AppointmentId" />
@@ -32,3 +34,4 @@
 
     </div>
 </div>
+

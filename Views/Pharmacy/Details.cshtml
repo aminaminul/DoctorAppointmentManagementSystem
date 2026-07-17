@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.Models.Medicine
+﻿@* Razor View: Pharmacy/Details *@
+<!-- HTML View: Pharmacy/Details -->
+@model DoctorAppointmentManagementSystem.Models.Medicine
 
 @{
     ViewData["Title"] = "Medicine Details";
@@ -16,7 +18,8 @@
                 <h5 class="mb-0">Medicine Information</h5>
             </div>
             <div class="card-body">
-                <table class="table table-hover">
+<!-- Data Table Block -->
+        <table class="table table-hover">
                     <tr>
                         <th style="width: 40%">Name</th>
                         <td>@Model.Name</td>
@@ -64,3 +67,4 @@
         </div>
     </div>
 </div>
+

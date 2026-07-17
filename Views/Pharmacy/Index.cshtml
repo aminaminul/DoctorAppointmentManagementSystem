@@ -1,4 +1,6 @@
-﻿@model IEnumerable<DoctorAppointmentManagementSystem.Models.Medicine>
+﻿@* Razor View: Pharmacy/Index *@
+<!-- HTML View: Pharmacy/Index -->
+@model IEnumerable<DoctorAppointmentManagementSystem.Models.Medicine>
 
 @{
     ViewData["Title"] = "Pharmacy Management";
@@ -13,8 +15,8 @@
 {
     <div class="alert alert-success">@TempData["Success"]</div>
 }
-
-<table class="table table-striped table-hover">
+<!-- Data Table Block -->
+        <table class="table table-striped table-hover">
     <thead class="table-dark">
         <tr>
             <th>Name</th>
@@ -58,3 +60,4 @@
         }
     </tbody>
 </table>
+

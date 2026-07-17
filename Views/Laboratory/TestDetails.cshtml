@@ -1,4 +1,6 @@
-﻿@model DoctorAppointmentManagementSystem.Models.LabTest
+﻿@* Razor View: Laboratory/TestDetails *@
+<!-- HTML View: Laboratory/TestDetails -->
+@model DoctorAppointmentManagementSystem.Models.LabTest
 
 @{
     ViewData["Title"] = "Lab Test Details";
@@ -16,7 +18,8 @@
                 <h5 class="mb-0">Test Information</h5>
             </div>
             <div class="card-body">
-                <table class="table table-hover">
+<!-- Data Table Block -->
+        <table class="table table-hover">
                     <tr>
                         <th style="width: 35%">Test Name</th>
                         <td>@Model.TestName</td>
@@ -39,3 +42,4 @@
         </div>
     </div>
 </div>
+

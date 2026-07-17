@@ -1,12 +1,14 @@
-﻿@model DoctorAppointmentManagementSystem.Models.LabTest
+﻿@* Razor View: Laboratory/CreateTest *@
+<!-- HTML View: Laboratory/CreateTest -->
+@model DoctorAppointmentManagementSystem.Models.LabTest
 
 @{
     ViewData["Title"] = "Add Lab Test";
 }
 
 <h2>Add New Lab Test</h2>
-
-<form asp-action="CreateTest" class="w-50">
+<!-- Form Block -->
+        <form asp-action="CreateTest" class="w-50">
     <div class="mb-3">
         <label asp-for="TestName" class="form-label"></label>
         <input asp-for="TestName" class="form-control" required />
@@ -22,3 +24,4 @@
     <button type="submit" class="btn btn-success">Save</button>
     <a asp-action="Tests" class="btn btn-secondary">Cancel</a>
 </form>
+

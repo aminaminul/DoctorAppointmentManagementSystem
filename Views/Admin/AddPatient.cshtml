@@ -1,4 +1,6 @@
-﻿@using DoctorAppointmentManagementSystem.ViewModels
+﻿@* Razor View: Admin/AddPatient *@
+<!-- HTML View: Admin/AddPatient -->
+@using DoctorAppointmentManagementSystem.ViewModels
 @model PatientCreateViewModel
 
 @{
@@ -14,6 +16,7 @@
 
 <div class="row">
     <div class="col-md-6">
+<!-- Form Block -->
         <form asp-action="AddPatient">
             <div class="mb-3">
                 <label asp-for="Name" class="form-label"></label>
@@ -44,3 +47,4 @@
         </form>
     </div>
 </div>
+
