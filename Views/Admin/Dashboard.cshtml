@@ -1,141 +1,544 @@
 @{
     Layout = "_Layout";
+    ViewData["Title"] = "Admin Dashboard";
+    ViewData["HideSidebar"] = true; // Complete layout control to match reference image
+
+    var greeting = "Welcome back";
+    var hour = DateTime.Now.Hour;
+    if (hour < 12) greeting = "Good morning";
+    else if (hour < 18) greeting = "Good afternoon";
+    else greeting = "Good evening";
+
+    var recentAppointments = ViewBag.RecentAppointments as List<DoctorAppointmentManagementSystem.Models.Appointment> ?? new List<DoctorAppointmentManagementSystem.Models.Appointment>();
+    var recentSchedules = ViewBag.RecentSchedules as List<DoctorAppointmentManagementSystem.Models.DoctorSchedule> ?? new List<DoctorAppointmentManagementSystem.Models.DoctorSchedule>();
 }
 
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-md-3">
-            @await Component.InvokeAsync("Sidebar")
+<!-- Load Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="row g-0 dams-admin-layout">
+    <!-- Left Navigation Panel (Matches reference styling) -->
+    <div class="col-12 col-md-3 col-lg-2 sidebar-wrapper">
+        @await Component.InvokeAsync("Sidebar")
+    </div>
+
+    <!-- Right Main Dashboard Panel -->
+    <div class="col-12 col-md-9 col-lg-10 dashboard-main-content">
+        <!-- Top bar section -->
+        <div class="top-greeting-bar d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold text-dark m-0">@greeting, Super Admin!</h4>
+                <p class="text-muted small m-0">There are @ViewBag.TotalAppointmentsCount appointments scheduled in DAMS database.</p>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn-top-action rounded-circle" title="Notifications">
+                    <i class="bi bi-bell-fill"></i>
+                </button>
+                <div class="avatar-badge">SA</div>
+            </div>
         </div>
-        <div class="col-md-9">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h3 class="mb-0">Admin Dashboard</h3>
-                    <p class="text-muted small">Simple overview</p>
+
+        <!-- Dashboard Breadcrumb and Export controls -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-0">Dashboard</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none">DAMS</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex gap-2">
+                <select class="form-select-custom-pill">
+                    <option>Today</option>
+                    <option>Week</option>
+                    <option>Month</option>
+                </select>
+                <button class="btn-export-pill" onclick="window.print()">
+                    <i class="bi bi-download me-1"></i> Export Data
+                </button>
+            </div>
+        </div>
+
+        <!-- 4 Stats Cards Grid -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="stats-card card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="stats-card-title">Appointments</span>
+                            <i class="bi bi-calendar-check text-primary"></i>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-2 mt-3">
+                            <h2 class="stats-number">@ViewBag.TotalAppointmentsCount</h2>
+                            <span class="badge bg-success-subtle text-success stats-badge">+12%</span>
+                        </div>
+                        <span class="stats-subtext">Scheduled appointments</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="stats-card card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="stats-card-title">Active Doctors</span>
+                            <i class="bi bi-person-badge text-info"></i>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-2 mt-3">
+                            <h2 class="stats-number">@ViewBag.TotalDoctorsCount</h2>
+                            <span class="badge bg-info-subtle text-info stats-badge">Active</span>
+                        </div>
+                        <span class="stats-subtext">Verified specialists</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="stats-card card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="stats-card-title">Patients</span>
+                            <i class="bi bi-people text-teal"></i>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-2 mt-3">
+                            <h2 class="stats-number">@ViewBag.TotalPatientsCount</h2>
+                            <span class="badge bg-success-subtle text-success stats-badge">+24%</span>
+                        </div>
+                        <span class="stats-subtext">Registered clinic profiles</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="stats-card card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="stats-card-title">Active Schedules</span>
+                            <i class="bi bi-clock-history text-warning"></i>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-2 mt-3">
+                            <h2 class="stats-number">@ViewBag.TotalSchedulesCount</h2>
+                            <span class="badge bg-warning-subtle text-warning stats-badge">Available</span>
+                        </div>
+                        <span class="stats-subtext">Active doctor time-slots</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle chart and recent appointments section -->
+        <div class="row g-4 mb-4">
+            <!-- Patient Overview Chart -->
+            <div class="col-lg-8">
+                <div class="dashboard-chart-card card h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold text-dark m-0">Patients Overview</h5>
+                            <div class="btn-group btn-group-sm filter-pill-group">
+                                <button type="button" class="btn active">Week</button>
+                                <button type="button" class="btn">Month</button>
+                                <button type="button" class="btn">Year</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="patientsOverviewChart" style="height: 250px;"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card p-3">
-                        <h6>Total Doctors</h6>
-                        <div class="display-6">@ViewBag.TotalDoctorsCount</div>
+            <!-- Recent Appointments List -->
+            <div class="col-lg-4">
+                <div class="dashboard-list-card card h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold text-dark m-0">Recent Appointments</h5>
+                        <a href="/Admin/Dashboard?section=appointments" class="small-text-link">See all</a>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3">
-                        <h6>Total Patients</h6>
-                        <div class="display-6">@ViewBag.TotalPatientsCount</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card p-3">
-                        <h6>Total Appointments</h6>
-                        <div class="display-6">@ViewBag.TotalAppointmentsCount</div>
+                    <div class="card-body px-4 pb-4 pt-2">
+                        <div class="appointments-vertical-list">
+                            @if (recentAppointments.Any())
+                            {
+                                foreach (var appt in recentAppointments)
+                                {
+                                    <div class="appointment-item d-flex justify-content-between align-items-center py-2.5 border-bottom">
+                                        <div class="d-flex align-items-center gap-2.5">
+                                            <div class="patient-avatar-mini">
+                                                @(appt.Patient?.User?.Username?.Substring(0,1).ToUpper() ?? "P")
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark small">@appt.Patient?.User?.Username</div>
+                                                <div class="text-muted text-xs">Dr. @appt.Doctor?.User?.Username (@appt.Doctor?.Specialization)</div>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="text-dark fw-semibold text-xs">@appt.AppointmentTime</div>
+                                            <span class="badge text-xxs @(appt.AppointmentStatus == "Completed" ? "bg-success-subtle text-success" : (appt.AppointmentStatus == "Pending" ? "bg-warning-subtle text-warning" : "bg-primary-subtle text-primary"))">@appt.AppointmentStatus</span>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center py-5 text-muted">
+                                    <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
+                                    <span class="small">No appointments scheduled.</span>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            @if (ViewBag.Section == "queue")
-            {
-                <div class="card mt-3">
-                    <div class="card-header bg-dark text-white d-flex align-items-center">
-                        <h5 class="mb-0">Queue Control</h5>
+        <!-- Doctor's Schedule Grid Section -->
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white border-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold text-dark m-0"><i class="bi bi-clock-fill me-2 text-primary"></i>Doctor Schedules & Chamber Slots</h5>
+                        <div class="d-flex gap-2">
+                            <a href="/Admin/Dashboard?section=doctors" class="btn btn-sm btn-outline-primary rounded-pill px-3">Manage Doctors</a>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form method="get" action="/Admin/Dashboard" class="row g-2 align-items-center">
-                            <input type="hidden" name="section" value="queue" />
-                            <div class="col-auto">
-                                <label class="col-form-label fw-bold text-secondary">Select Doctor:</label>
-                            </div>
-                            <div class="col-md-4">
-                                <select name="doctorId" class="form-select" onchange="this.form.submit()">
-                                    @foreach (var doc in ViewBag.Doctors)
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr class="table-light text-secondary text-xs">
+                                        <th class="ps-4">Doctor Name</th>
+                                        <th>Specialty</th>
+                                        <th>Chamber Date</th>
+                                        <th>Time Slot</th>
+                                        <th>Fee</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (recentSchedules.Any())
                                     {
-                                        <option value="@doc.Id" selected="@(doc.Id == ViewBag.SelectedDoctorId ? "selected" : null)">Dr. @doc.User.FullName (@doc.Specialization)</option>
+                                        foreach (var schedule in recentSchedules)
+                                        {
+                                            <tr>
+                                                <td class="ps-4">
+                                                    <div class="fw-bold text-dark small">Dr. @schedule.Doctor?.User?.Username</div>
+                                                    <div class="text-muted text-xs">@schedule.Doctor?.Qualification</div>
+                                                </td>
+                                                <td><span class="badge bg-secondary-subtle text-secondary text-xs">@schedule.Doctor?.Specialization</span></td>
+                                                <td class="text-dark small">@schedule.AvailableDate.ToString("dd MMM yyyy")</td>
+                                                <td class="text-dark small">@schedule.StartTime – @schedule.EndTime</td>
+                                                <td class="fw-bold text-dark small">@schedule.Doctor?.ConsultationFee BDT</td>
+                                                <td>
+                                                    <span class="badge rounded-pill text-xs @(schedule.IsVacation ? "bg-danger bg-opacity-10 text-danger" : "bg-success bg-opacity-10 text-success")">
+                                                        @(schedule.IsVacation ? "Vacation" : schedule.SlotStatus)
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        }
                                     }
-                                </select>
-                            </div>
-                            <div class="col-auto">
-                                <button type="submit" class="btn btn-dark">Load Queue</button>
-                            </div>
-                            <div class="col-auto ms-auto">
-                                <span class="text-secondary small fw-bold">Doctor Status:</span>
-                                @if (ViewBag.DoctorStatus == "Serving Patients")
-                                {
-                                    <span class="badge bg-success"><i class="bi bi-activity me-1"></i> Serving Patients</span>
-                                }
-                                else if (ViewBag.DoctorStatus == "On Break")
-                                {
-                                    <span class="badge bg-warning text-dark"><i class="bi bi-cup-hot me-1"></i> Lunch Break</span>
-                                }
-                                else if (ViewBag.DoctorStatus == "On Vacation")
-                                {
-                                    <span class="badge bg-danger"><i class="bi bi-airplane me-1"></i> Vacation</span>
-                                }
-                                else if (ViewBag.DoctorStatus == "Available")
-                                {
-                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Active</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary"><i class="bi bi-moon me-1"></i> Offline</span>
-                                }
-                            </div>
-                        </form>
-
-                        @if (ViewBag.QueueEntries != null)
-                        {
-                            var queue = ViewBag.QueueEntries as List<QueueEntry>;
-                            <div class="table-responsive mt-3">
-                                <table class="table align-middle mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Seq</th>
-                                            <th>Token</th>
-                                            <th>Patient Name</th>
-                                            <th>Scheduled Time</th>
-                                            <th>Priority</th>
-                                            <th class="text-end">Override</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach (var item in queue)
+                                    else
                                     {
                                         <tr>
-                                            <td class="fw-bold">@item.SequenceNumber</td>
-                                            <td><span class="badge bg-primary rounded-pill">#@item.TokenNumber</span></td>
-                                            <td>@item.Appointment.Patient.User.Username</td>
-                                            <td>@item.Appointment.AppointmentTime</td>
-                                            <td>
-                                                @if (item.Appointment.IsEmergency)
-                                                {
-                                                    <span class="badge bg-danger">EMERGENCY</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-secondary">Normal</span>
-                                                }
-                                            </td>
-                                            <td class="text-end">
-                                                @if (!item.Appointment.IsEmergency && item.Status == "Waiting")
-                                                {
-                                                    <form method="post" action="/Queue/BumpEmergency" style="display:inline;">
-                                                        <input type="hidden" name="Id" value="@item.Id" />
-                                                        <input type="hidden" name="redirectSection" value="admin" />
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm">Bump to Emergency</button>
-                                                    </form>
-                                                }
-                                            </td>
+                                            <td colspan="6" class="text-center py-4 text-muted small">No active doctor schedules found in database.</td>
                                         </tr>
                                     }
-                                    </tbody>
-                                </table>
-                            </div>
-                        }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            }
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById('patientsOverviewChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+                    datasets: [
+                        {
+                            label: 'Patient enters',
+                            backgroundColor: '#1a6b9a',
+                            data: [350, 592, 420, 310, 680, 560, 240],
+                            borderRadius: 6,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.6
+                        },
+                        {
+                            label: 'Patient is out',
+                            backgroundColor: '#4DA8DA',
+                            data: [290, 452, 380, 280, 590, 490, 190],
+                            borderRadius: 6,
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: {
+                                    size: 11,
+                                    family: 'Segoe UI'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+<!-- REDESIGN CODE / CUSTOM CSS RULES AT THE BOTTOM -->
+<style>
+    /* Reset & full height layout overrides */
+    body {
+        background-color: #f7fafc !important;
+    }
+    main.py-4 {
+        padding: 0 !important;
+    }
+    main .container-fluid {
+        padding: 0 !important;
+    }
+    footer.mt-5 {
+        margin-top: 0 !important;
+    }
+
+    .dams-admin-layout {
+        min-height: 100vh;
+        margin: 0;
+        align-items: stretch;
+    }
+
+    /* Left Sidebar container styling */
+    .sidebar-wrapper {
+        background-color: #0b1727;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* Right content area styling */
+    .dashboard-main-content {
+        padding: 2.5rem 3rem;
+        background-color: #f8fafc;
+    }
+
+    /* Top Greeting Bar */
+    .top-greeting-bar {
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        padding-bottom: 1.5rem;
+    }
+    .btn-top-action {
+        width: 42px;
+        height: 42px;
+        background-color: #ffffff;
+        border: 1px solid rgba(0,0,0,0.08);
+        color: #5c6b73;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    .btn-top-action:hover {
+        background-color: #f1f5f9;
+        color: #1a6b9a;
+    }
+    .avatar-badge {
+        width: 42px;
+        height: 42px;
+        background-color: #1a6b9a;
+        color: #ffffff;
+        font-weight: 700;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Breadcrumbs & Filters styling */
+    .form-select-custom-pill {
+        border: 1px solid rgba(0,0,0,0.08);
+        padding: 8px 18px;
+        border-radius: 20px;
+        background-color: #ffffff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #5c6b73;
+        outline: none;
+        cursor: pointer;
+    }
+    .btn-export-pill {
+        background-color: #1a6b9a;
+        color: #ffffff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 10px rgba(26, 107, 154, 0.25);
+    }
+    .btn-export-pill:hover {
+        background-color: #165b82;
+        transform: translateY(-1px);
+    }
+
+    /* Premium card aesthetics */
+    .stats-card {
+        border: none;
+        border-radius: 16px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.015);
+        border: 1px solid rgba(0,0,0,0.04);
+        transition: all 0.25s ease;
+    }
+    .stats-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(26, 107, 154, 0.05);
+    }
+    .stats-card-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #5c6b73;
+        letter-spacing: 0.3px;
+    }
+    .stats-card i {
+        font-size: 1.4rem;
+    }
+    .stats-number {
+        font-size: 2.1rem;
+        font-weight: 800;
+        color: #0b1727;
+        margin: 0;
+    }
+    .stats-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 12px;
+    }
+    .stats-subtext {
+        font-size: 0.78rem;
+        color: #95a5a6;
+        font-weight: 500;
+        margin-top: 6px;
+        display: block;
+    }
+
+    /* Color variations for icons */
+    .text-teal {
+        color: #0d9488 !important;
+    }
+
+    /* Chart & list cards */
+    .dashboard-chart-card, .dashboard-list-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        border: 1px solid rgba(0,0,0,0.04);
+    }
+    .filter-pill-group .btn {
+        border: 1px solid rgba(0,0,0,0.08);
+        padding: 5px 12px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #5c6b73;
+        background-color: #ffffff;
+    }
+    .filter-pill-group .btn.active {
+        background-color: #f1f5f9;
+        color: #0b1727;
+        font-weight: 700;
+    }
+    .small-text-link {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #1a6b9a;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .small-text-link:hover {
+        color: #4DA8DA;
+    }
+
+    /* Patient avatars and items */
+    .patient-avatar-mini {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #e2f2fc;
+        color: #1a6b9a;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1.5px solid #ffffff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    }
+    .appointment-item {
+        transition: background-color 0.2s;
+    }
+    .appointment-item:hover {
+        background-color: #fafbfc;
+    }
+    .text-xs {
+        font-size: 0.78rem;
+    }
+    .text-xxs {
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 2.5px 6px;
+        border-radius: 8px;
+    }
+
+    /* Tables custom styling */
+    .table th {
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        border-bottom: 1.5px solid rgba(0,0,0,0.06) !important;
+    }
+    .table td {
+        padding-top: 14px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+</style>

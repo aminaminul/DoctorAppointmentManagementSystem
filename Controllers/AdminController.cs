@@ -54,6 +54,22 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.TotalDoctorsCount = _context.Doctors.Count();
             ViewBag.TotalPatientsCount = _context.Patients.Count();
             ViewBag.TotalAppointmentsCount = _context.Appointments.Count();
+            ViewBag.TotalSchedulesCount = _context.DoctorSchedules.Count();
+
+            // Load recent 5 appointments for the overview panel
+            ViewBag.RecentAppointments = _context.Appointments
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .Include(a => a.Doctor).ThenInclude(d => d.User)
+                .OrderByDescending(a => a.BookingDateTime)
+                .Take(5)
+                .ToList();
+
+            // Load some active doctor schedules for the bottom list/grid
+            ViewBag.RecentSchedules = _context.DoctorSchedules
+                .Include(ds => ds.Doctor).ThenInclude(d => d.User)
+                .OrderByDescending(ds => ds.AvailableDate)
+                .Take(6)
+                .ToList();
 
             if (section == "doctors")
                 ViewBag.Doctors = _context.Doctors
