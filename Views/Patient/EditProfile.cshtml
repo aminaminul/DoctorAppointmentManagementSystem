@@ -1,4 +1,4 @@
-@model Patient
+﻿@model Patient
 
 @{
     Layout = "_Layout";
@@ -9,7 +9,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                <!-- Header -->
+                
                 <div class="card-header bg-dark text-white p-4 d-flex align-items-center justify-content-between">
                     <div>
                         <h3 class="fw-bold mb-0"><i class="bi bi-pencil-square me-2 text-warning"></i>Edit Profile</h3>
@@ -25,13 +25,12 @@
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="UserId" />
 
-                        <!-- 🔷 Section 1: Account & Personal Info -->
                         <h4 class="fw-bold text-primary mb-4 border-bottom pb-2">
                             <i class="bi bi-person-circle me-2"></i>Personal details & Account info
                         </h4>
                         
                         <div class="row g-3 mb-4">
-                            <!-- Full Name -->
+                            
                             <div class="col-md-6">
                                 <label asp-for="User.Username" class="form-label fw-semibold text-secondary small">Full Name</label>
                                 <div class="input-group">
@@ -41,7 +40,6 @@
                                 <span asp-validation-for="User.Username" class="text-danger small"></span>
                             </div>
 
-                            <!-- Email -->
                             <div class="col-md-6">
                                 <label asp-for="User.Email" class="form-label fw-semibold text-secondary small">Email Address</label>
                                 <div class="input-group">
@@ -51,7 +49,6 @@
                                 <span asp-validation-for="User.Email" class="text-danger small"></span>
                             </div>
 
-                            <!-- Date of Birth -->
                             <div class="col-md-4">
                                 <label asp-for="DateOfBirth" class="form-label fw-semibold text-secondary small">Date of Birth</label>
                                 <div class="input-group">
@@ -61,7 +58,6 @@
                                 <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
                             </div>
 
-                            <!-- Gender -->
                             <div class="col-md-4">
                                 <label asp-for="Gender" class="form-label fw-semibold text-secondary small">Gender</label>
                                 <div class="input-group">
@@ -75,7 +71,6 @@
                                 <span asp-validation-for="Gender" class="text-danger small"></span>
                             </div>
 
-                            <!-- Blood Group -->
                             <div class="col-md-4">
                                 <label asp-for="BloodGroup" class="form-label fw-semibold text-secondary small">Blood Group</label>
                                 <div class="input-group">
@@ -96,13 +91,12 @@
                             </div>
                         </div>
 
-                        <!-- 🔷 Section 2: Contact Info -->
                         <h4 class="fw-bold text-primary mb-4 border-bottom pb-2 mt-5">
                             <i class="bi bi-telephone-inbound-fill me-2"></i>Contact Information
                         </h4>
 
                         <div class="row g-3 mb-4">
-                            <!-- Phone Number -->
+                            
                             <div class="col-md-6">
                                 <label asp-for="User.PhoneNumber" class="form-label fw-semibold text-secondary small">Phone Number</label>
                                 <div class="input-group">
@@ -112,7 +106,6 @@
                                 <span asp-validation-for="User.PhoneNumber" class="text-danger small"></span>
                             </div>
 
-                            <!-- Emergency Contact -->
                             <div class="col-md-6">
                                 <label asp-for="EmergencyContact" class="form-label fw-semibold text-secondary small">Emergency Contact (Phone)</label>
                                 <div class="input-group">
@@ -122,7 +115,6 @@
                                 <span asp-validation-for="EmergencyContact" class="text-danger small"></span>
                             </div>
 
-                            <!-- Address -->
                             <div class="col-12">
                                 <label asp-for="Address" class="form-label fw-semibold text-secondary small">Home Address</label>
                                 <div class="input-group">
@@ -133,13 +125,12 @@
                             </div>
                         </div>
 
-                        <!-- 🔷 Section 3: Medical Info -->
                         <h4 class="fw-bold text-primary mb-4 border-bottom pb-2 mt-5">
                             <i class="bi bi-heart-pulse-fill me-2"></i>Medical Profile
                         </h4>
 
                         <div class="row g-3 mb-4">
-                            <!-- Allergies -->
+                            
                             <div class="col-md-6">
                                 <label asp-for="Allergies" class="form-label fw-semibold text-danger small">Allergies</label>
                                 <div class="input-group">
@@ -149,7 +140,6 @@
                                 <span asp-validation-for="Allergies" class="text-danger small"></span>
                             </div>
 
-                            <!-- Medical History -->
                             <div class="col-md-6">
                                 <label asp-for="MedicalHistory" class="form-label fw-semibold text-secondary small">Medical History</label>
                                 <div class="input-group">
@@ -160,7 +150,6 @@
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
                         <div class="d-flex justify-content-end gap-3 mt-5 pt-3 border-top">
                             <a href="/Patient/Dashboard?section=profile" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
                                 Cancel

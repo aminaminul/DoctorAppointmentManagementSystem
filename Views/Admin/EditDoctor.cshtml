@@ -1,15 +1,72 @@
-﻿@model Doctor
+﻿@model DoctorAppointmentManagementSystem.Models.Doctor
+
+@{
+    ViewData["Title"] = "Edit Doctor";
+}
 
 <h2>Edit Doctor</h2>
 
-<form method="post">
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditDoctor">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserId" />
 
-    <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="mb-3">
+                <label asp-for="User.Username" class="form-label">Doctor Name</label>
+                <input asp-for="User.Username" class="form-control" required />
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="User.Email" class="form-label">Email Address</label>
+                <input asp-for="User.Email" type="email" class="form-control" readonly />
+            </div>
 
-    <input type="text" name="Specialization" value="@Model.Specialization" class="form-control" /><br />
+            <div class="mb-3">
+                <label asp-for="User.PhoneNumber" class="form-label">Phone Number</label>
+                <input asp-for="User.PhoneNumber" class="form-control" />
+            </div>
 
-    <input type="text" name="Availability" value="@Model.Availability" class="form-control" /><br />
+            <div class="mb-3">
+                <label asp-for="Specialization" class="form-label">Specialization</label>
+                <input asp-for="Specialization" class="form-control" required />
+            </div>
 
-    <button type="submit" class="btn btn-primary">Update</button>
+            <div class="mb-3">
+                <label asp-for="Qualification" class="form-label">Qualification</label>
+                <input asp-for="Qualification" class="form-control" />
+            </div>
 
-</form>
+            <div class="mb-3">
+                <label asp-for="Experience" class="form-label">Experience (Years)</label>
+                <input asp-for="Experience" type="number" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ConsultationFee" class="form-label">Consultation Fee (BDT)</label>
+                <input asp-for="ConsultationFee" type="number" step="0.01" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="AvailableDays" class="form-label">Availability Days</label>
+                <input asp-for="AvailableDays" class="form-control" placeholder="e.g. Mon-Fri" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Availability" class="form-label">Availability Time</label>
+                <input asp-for="Availability" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ActiveStatus" class="form-label">Account Status</label>
+                <select asp-for="ActiveStatus" class="form-control">
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Doctor</button>
+            <a asp-action="Doctors" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

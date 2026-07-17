@@ -1,4 +1,4 @@
-@{
+﻿@{
     Layout = "_Layout";
     ViewData["Title"] = "Admin Dashboard";
     ViewData["HideSidebar"] = true; // Complete layout control to match reference image
@@ -13,38 +13,44 @@
     var recentSchedules = ViewBag.RecentSchedules as List<DoctorAppointmentManagementSystem.Models.DoctorSchedule> ?? new List<DoctorAppointmentManagementSystem.Models.DoctorSchedule>();
 }
 
-<!-- Load Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="row g-0 dams-admin-layout">
-    <!-- Left Navigation Panel (Matches reference styling) -->
+    
     <div class="col-12 col-md-3 col-lg-2 sidebar-wrapper">
         @await Component.InvokeAsync("Sidebar")
     </div>
 
-    <!-- Right Main Dashboard Panel -->
     <div class="col-12 col-md-9 col-lg-10 dashboard-main-content">
-        <!-- Top bar section -->
+        
         <div class="top-greeting-bar d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h4 class="fw-bold text-dark m-0">@greeting, Super Admin!</h4>
-                <p class="text-muted small m-0">There are @ViewBag.TotalAppointmentsCount appointments scheduled in DAMS database.</p>
+                <p class="text-muted small m-0">There are <a asp-controller="Report" asp-action="Appointment" class="text-primary fw-semibold text-decoration-none">@ViewBag.TotalAppointmentsCount appointments</a> scheduled in DAMS database.</p>
             </div>
             <div class="d-flex align-items-center gap-3">
-                <button class="btn-top-action rounded-circle" title="Notifications">
+                <button class="btn-top-action rounded-circle" title="View Complaints" onclick="location.href='@Url.Action("Complaints", "Admin")'">
                     <i class="bi bi-bell-fill"></i>
                 </button>
-                <div class="avatar-badge">SA</div>
+                <div class="dropdown">
+                    <div class="avatar-badge" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                        SA
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="adminDropdown">
+                        <li><h6 class="dropdown-header">Super Admin</h6></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/Account/Logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <!-- Dashboard Breadcrumb and Export controls -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold text-dark mb-0">Dashboard</h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none">DAMS</a></li>
+                        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard" class="text-decoration-none">DAMS</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                     </ol>
                 </nav>
@@ -61,13 +67,12 @@
             </div>
         </div>
 
-        <!-- 4 Stats Cards Grid -->
         <div class="row g-3 mb-4">
             <div class="col-md-6 col-lg-3">
-                <div class="stats-card card h-100">
+                <div class="stats-card card h-100" onclick="location.href='@Url.Action("Appointment", "Report")'" style="cursor: pointer;">
                     <div class="card-body d-flex flex-column justify-content-between p-4">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="stats-card-title">Appointments</span>
+                            <span class="stats-card-title text-primary">Appointments</span>
                             <i class="bi bi-calendar-check text-primary"></i>
                         </div>
                         <div class="d-flex align-items-baseline gap-2 mt-3">
@@ -79,10 +84,10 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="stats-card card h-100">
+                <div class="stats-card card h-100" onclick="location.href='@Url.Action("Doctors", "Admin")'" style="cursor: pointer;">
                     <div class="card-body d-flex flex-column justify-content-between p-4">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="stats-card-title">Active Doctors</span>
+                            <span class="stats-card-title text-info">Active Doctors</span>
                             <i class="bi bi-person-badge text-info"></i>
                         </div>
                         <div class="d-flex align-items-baseline gap-2 mt-3">
@@ -94,10 +99,10 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="stats-card card h-100">
+                <div class="stats-card card h-100" onclick="location.href='@Url.Action("Patients", "Admin")'" style="cursor: pointer;">
                     <div class="card-body d-flex flex-column justify-content-between p-4">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="stats-card-title">Patients</span>
+                            <span class="stats-card-title text-teal">Patients</span>
                             <i class="bi bi-people text-teal"></i>
                         </div>
                         <div class="d-flex align-items-baseline gap-2 mt-3">
@@ -109,10 +114,10 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="stats-card card h-100">
+                <div class="stats-card card h-100" onclick="document.getElementById('doctor-schedules').scrollIntoView({ behavior: 'smooth' })" style="cursor: pointer;">
                     <div class="card-body d-flex flex-column justify-content-between p-4">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="stats-card-title">Active Schedules</span>
+                            <span class="stats-card-title text-warning">Active Schedules</span>
                             <i class="bi bi-clock-history text-warning"></i>
                         </div>
                         <div class="d-flex align-items-baseline gap-2 mt-3">
@@ -125,9 +130,8 @@
             </div>
         </div>
 
-        <!-- Middle chart and recent appointments section -->
         <div class="row g-4 mb-4">
-            <!-- Patient Overview Chart -->
+            
             <div class="col-lg-8">
                 <div class="dashboard-chart-card card h-100">
                     <div class="card-body p-4">
@@ -146,12 +150,11 @@
                 </div>
             </div>
 
-            <!-- Recent Appointments List -->
             <div class="col-lg-4">
                 <div class="dashboard-list-card card h-100">
                     <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                         <h5 class="fw-bold text-dark m-0">Recent Appointments</h5>
-                        <a href="/Admin/Dashboard?section=appointments" class="small-text-link">See all</a>
+                        <a asp-controller="Report" asp-action="Appointment" class="small-text-link">See all</a>
                     </div>
                     <div class="card-body px-4 pb-4 pt-2">
                         <div class="appointments-vertical-list">
@@ -159,14 +162,14 @@
                             {
                                 foreach (var appt in recentAppointments)
                                 {
-                                    <div class="appointment-item d-flex justify-content-between align-items-center py-2.5 border-bottom">
+                                    <div class="appointment-item d-flex justify-content-between align-items-center py-2.5 border-bottom" onclick="location.href='@Url.Action("PatientDetails", "Admin", new { id = appt.PatientId })'" style="cursor: pointer;">
                                         <div class="d-flex align-items-center gap-2.5">
                                             <div class="patient-avatar-mini">
                                                 @(appt.Patient?.User?.Username?.Substring(0,1).ToUpper() ?? "P")
                                             </div>
                                             <div>
-                                                <div class="fw-bold text-dark small">@appt.Patient?.User?.Username</div>
-                                                <div class="text-muted text-xs">Dr. @appt.Doctor?.User?.Username (@appt.Doctor?.Specialization)</div>
+                                                <div class="fw-bold text-dark small"><a asp-controller="Admin" asp-action="PatientDetails" asp-route-id="@appt.PatientId" class="text-decoration-none text-dark">@appt.Patient?.User?.Username</a></div>
+                                                <div class="text-muted text-xs"><a asp-controller="Admin" asp-action="DoctorDetails" asp-route-id="@appt.DoctorId" class="text-decoration-none text-muted">Dr. @appt.Doctor?.User?.Username (@appt.Doctor?.Specialization)</a></div>
                                             </div>
                                         </div>
                                         <div class="text-end">
@@ -189,14 +192,13 @@
             </div>
         </div>
 
-        <!-- Doctor's Schedule Grid Section -->
-        <div class="row g-4 mb-4">
+        <div class="row g-4 mb-4" id="doctor-schedules">
             <div class="col-12">
                 <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                     <div class="card-header bg-white border-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-center">
                         <h5 class="fw-bold text-dark m-0"><i class="bi bi-clock-fill me-2 text-primary"></i>Doctor Schedules & Chamber Slots</h5>
                         <div class="d-flex gap-2">
-                            <a href="/Admin/Dashboard?section=doctors" class="btn btn-sm btn-outline-primary rounded-pill px-3">Manage Doctors</a>
+                            <a asp-controller="Admin" asp-action="Doctors" class="btn btn-sm btn-outline-primary rounded-pill px-3">Manage Doctors</a>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -217,14 +219,14 @@
                                     {
                                         foreach (var schedule in recentSchedules)
                                         {
-                                            <tr>
+                                            <tr onclick="location.href='@Url.Action("DoctorDetails", "Admin", new { id = schedule.DoctorId })'" style="cursor: pointer;">
                                                 <td class="ps-4">
-                                                    <div class="fw-bold text-dark small">Dr. @schedule.Doctor?.User?.Username</div>
+                                                    <div class="fw-bold text-dark small"><a asp-controller="Admin" asp-action="DoctorDetails" asp-route-id="@schedule.DoctorId" class="text-decoration-none text-dark">Dr. @schedule.Doctor?.User?.Username</a></div>
                                                     <div class="text-muted text-xs">@schedule.Doctor?.Qualification</div>
                                                 </td>
                                                 <td><span class="badge bg-secondary-subtle text-secondary text-xs">@schedule.Doctor?.Specialization</span></td>
                                                 <td class="text-dark small">@schedule.AvailableDate.ToString("dd MMM yyyy")</td>
-                                                <td class="text-dark small">@schedule.StartTime – @schedule.EndTime</td>
+                                                <td class="text-dark small">@schedule.StartTime â€“ @schedule.EndTime</td>
                                                 <td class="fw-bold text-dark small">@schedule.Doctor?.ConsultationFee BDT</td>
                                                 <td>
                                                     <span class="badge rounded-pill text-xs @(schedule.IsVacation ? "bg-danger bg-opacity-10 text-danger" : "bg-success bg-opacity-10 text-success")">
@@ -324,9 +326,8 @@
     </script>
 }
 
-<!-- REDESIGN CODE / CUSTOM CSS RULES AT THE BOTTOM -->
 <style>
-    /* Reset & full height layout overrides */
+    
     body {
         background-color: #f7fafc !important;
     }
@@ -346,7 +347,6 @@
         align-items: stretch;
     }
 
-    /* Left Sidebar container styling */
     .sidebar-wrapper {
         background-color: #0b1727;
         border-right: 1px solid rgba(255, 255, 255, 0.05);
@@ -355,13 +355,11 @@
         align-items: stretch;
     }
 
-    /* Right content area styling */
     .dashboard-main-content {
         padding: 2.5rem 3rem;
         background-color: #f8fafc;
     }
 
-    /* Top Greeting Bar */
     .top-greeting-bar {
         border-bottom: 1px solid rgba(0,0,0,0.05);
         padding-bottom: 1.5rem;
@@ -393,7 +391,6 @@
         justify-content: center;
     }
 
-    /* Breadcrumbs & Filters styling */
     .form-select-custom-pill {
         border: 1px solid rgba(0,0,0,0.08);
         padding: 8px 18px;
@@ -421,7 +418,6 @@
         transform: translateY(-1px);
     }
 
-    /* Premium card aesthetics */
     .stats-card {
         border: none;
         border-radius: 16px;
@@ -463,12 +459,10 @@
         display: block;
     }
 
-    /* Color variations for icons */
     .text-teal {
         color: #0d9488 !important;
     }
 
-    /* Chart & list cards */
     .dashboard-chart-card, .dashboard-list-card {
         border: none;
         border-radius: 20px;
@@ -499,7 +493,6 @@
         color: #4DA8DA;
     }
 
-    /* Patient avatars and items */
     .patient-avatar-mini {
         width: 32px;
         height: 32px;
@@ -530,7 +523,6 @@
         border-radius: 8px;
     }
 
-    /* Tables custom styling */
     .table th {
         font-weight: 700;
         letter-spacing: 0.3px;

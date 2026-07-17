@@ -1,4 +1,4 @@
-@{
+﻿@{
     Layout = "_Layout";
     ViewData["Title"] = "Select Time Slot";
     var slots       = ViewBag.Slots  as List<string> ?? new List<string>();
@@ -6,7 +6,7 @@
 }
 
 <style>
-    /* ===== SELECT TIME PAGE ===== */
+    
     .selecttime-hero {
         background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         padding: 2.5rem 0 5rem;
@@ -23,7 +23,6 @@
         position: relative; z-index: 10;
     }
 
-    /* Doctor Summary */
     .doc-summary {
         display: flex; align-items: center; gap: 1.25rem;
         background: linear-gradient(135deg,#f0f7ff,#e8f4ff);
@@ -51,14 +50,12 @@
         font-size: .75rem; font-weight: 600;
     }
 
-    /* Section title */
     .section-title {
         font-weight: 700; color: #1e293b; font-size: 1rem;
         margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem;
     }
     .section-title i { color: #4facfe; }
 
-    /* Time slot grid */
     .slot-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
@@ -99,14 +96,12 @@
     }
     .slot-btn .slot-icon { display: block; font-size: 1rem; margin-bottom: .2rem; }
 
-    /* No slots message */
     .no-slots {
         text-align: center; padding: 2rem;
         color: #94a3b8;
     }
     .no-slots i { font-size: 3rem; display: block; margin-bottom: .75rem; }
 
-    /* Payment section */
     .payment-section { margin-top: 1.5rem; }
     .payment-option {
         border: 2px solid #e2e8f0; border-radius: 14px;
@@ -129,7 +124,6 @@
     .payment-label  { font-weight: 600; font-size: .9rem; color: #1e293b; }
     .payment-sublabel { font-size: .78rem; color: #64748b; }
 
-    /* Card type sub-options */
     .card-types {
         display: none; padding: .75rem 1rem 0;
         gap: .75rem;
@@ -143,7 +137,6 @@
     }
     .card-type-btn.selected { border-color: #3949ab; background: #e8eaf6; color: #3949ab; }
 
-    /* Summary bar */
     .summary-bar {
         background: linear-gradient(135deg,#f8faff,#f0f7ff);
         border: 2px solid #e2e8f0; border-radius: 14px;
@@ -156,7 +149,6 @@
     .summary-row .value { font-weight: 600; color: #1e293b; }
     .summary-total { font-size: 1rem; border-top: 1px solid #e2e8f0; margin-top: .5rem; padding-top: .5rem; }
 
-    /* Confirm button */
     .btn-confirm {
         background: linear-gradient(135deg,#4facfe,#00f2fe);
         color: white; border: none; border-radius: 12px;
@@ -179,7 +171,6 @@
     }
 </style>
 
-<!-- Hero -->
 <div class="selecttime-hero">
     <div class="container">
         <h1><i class="bi bi-clock-history me-2"></i>Choose Your Time Slot</h1>
@@ -190,7 +181,6 @@
 <div class="container" style="max-width: 680px;">
     <div class="main-card">
 
-        <!-- Doctor Summary -->
         <div class="doc-summary">
             <div class="doc-avatar-sm" id="docAvatarSm">
                 <i class="bi bi-person-circle"></i>
@@ -200,7 +190,7 @@
                 <div class="badges">
                     <span class="badge-info">@ViewBag.Specialization</span>
                     <span class="badge-info">@ViewBag.Experience yrs exp.</span>
-                    <span class="badge-info">৳ @ViewBag.Fee fee</span>
+                    <span class="badge-info">à§³ @ViewBag.Fee fee</span>
                     <span class="badge-date"><i class="bi bi-calendar3 me-1"></i>@ViewBag.DateDisplay</span>
                 </div>
             </div>
@@ -215,7 +205,6 @@
             <input type="hidden" name="PaymentMethod" id="paymentMethodInput" />
             <input type="hidden" name="CardType" id="cardTypeInput" />
 
-            <!-- ===== TIME SLOTS ===== -->
             <div class="section-title">
                 <i class="bi bi-clock"></i>Available Time Slots
                 <span style="font-size:.8rem;color:#94a3b8;font-weight:400;margin-left:.5rem;">
@@ -255,23 +244,20 @@
 
                 <div class="divider"></div>
 
-                <!-- ===== PAYMENT METHOD ===== -->
                 <div class="section-title">
                     <i class="bi bi-credit-card-2-front"></i>Payment Method
                 </div>
                 <div class="payment-section">
 
-                    <!-- bKash -->
                     <label class="payment-option" id="payOpt_Bkash" onclick="selectPayment('Bkash', this)">
                         <input type="radio" name="_payMethod" value="Bkash" />
-                        <div class="payment-icon bkash">৳</div>
+                        <div class="payment-icon bkash">à§³</div>
                         <div>
                             <div class="payment-label">bKash</div>
                             <div class="payment-sublabel">Pay via bKash mobile banking</div>
                         </div>
                     </label>
 
-                    <!-- Card -->
                     <label class="payment-option" id="payOpt_Card" onclick="selectPayment('Card', this)">
                         <input type="radio" name="_payMethod" value="Card" />
                         <div class="payment-icon card"><i class="bi bi-credit-card"></i></div>
@@ -289,7 +275,6 @@
                         </div>
                     </div>
 
-                    <!-- Cash -->
                     <label class="payment-option" id="payOpt_Cash" onclick="selectPayment('Cash', this)">
                         <input type="radio" name="_payMethod" value="Cash" />
                         <div class="payment-icon cash"><i class="bi bi-cash-coin"></i></div>
@@ -300,7 +285,6 @@
                     </label>
                 </div>
 
-                <!-- Summary Bar -->
                 <div class="summary-bar" id="summaryBar">
                     <div class="summary-row">
                         <span class="label">Doctor</span>
@@ -308,19 +292,18 @@
                     </div>
                     <div class="summary-row">
                         <span class="label">Date &amp; Time</span>
-                        <span class="value">@ViewBag.DateDisplay — <span id="summarySlot">—</span></span>
+                        <span class="value">@ViewBag.DateDisplay â€” <span id="summarySlot">â€”</span></span>
                     </div>
                     <div class="summary-row">
                         <span class="label">Payment</span>
-                        <span class="value" id="summaryPayment">—</span>
+                        <span class="value" id="summaryPayment">â€”</span>
                     </div>
                     <div class="summary-row summary-total">
                         <span class="label" style="font-weight:700;">Total Fee</span>
-                        <span class="value" style="color:#4facfe;font-size:1.1rem;">৳ @ViewBag.Fee</span>
+                        <span class="value" style="color:#4facfe;font-size:1.1rem;">à§³ @ViewBag.Fee</span>
                     </div>
                 </div>
 
-                <!-- Confirm Button -->
                 <button type="submit" class="btn-confirm" id="confirmBtn" disabled>
                     <i class="bi bi-check-circle-fill"></i>
                     Confirm Appointment
@@ -358,7 +341,6 @@
         selectedPayment = method;
         document.getElementById('paymentMethodInput').value = method;
 
-        // Card types
         const cardTypes = document.getElementById('cardTypes');
         if (method === 'Card') {
             cardTypes.classList.add('show');
@@ -395,7 +377,6 @@
         document.getElementById('confirmBtn').disabled = !(slotOk && payOk && cardOk);
     }
 
-    // Doctor avatar (passed from server)
     @{
         var profileImg = ViewBag.ProfileImage as string;
         if (!string.IsNullOrEmpty(profileImg) && profileImg != "doctor_default.png")

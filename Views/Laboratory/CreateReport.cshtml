@@ -1,0 +1,44 @@
+﻿@model DoctorAppointmentManagementSystem.Models.LabReport
+
+@{
+    ViewData["Title"] = "Create Lab Report";
+}
+
+<h2>Create Lab Report</h2>
+
+<form asp-action="CreateReport" class="w-50">
+    <div class="mb-3">
+        <label class="form-label">Patient</label>
+        <select asp-for="PatientId" class="form-select" required>
+            <option value="">Select Patient...</option>
+            @foreach(var p in ViewBag.Patients)
+            {
+                <option value="@p.Id">@p.User.Username</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Lab Test</label>
+        <select asp-for="LabTestId" class="form-select" required>
+            <option value="">Select Test...</option>
+            @foreach(var t in ViewBag.LabTests)
+            {
+                <option value="@t.Id">@t.TestName</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReportDate" class="form-label"></label>
+        <input asp-for="ReportDate" type="date" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Result" class="form-label"></label>
+        <input asp-for="Result" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Reports" class="btn btn-secondary">Cancel</a>
+</form>

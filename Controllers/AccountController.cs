@@ -1,4 +1,4 @@
-using DoctorAppointmentManagementSystem.Models;
+﻿using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +44,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return View(model);
             }
 
-            // Determine role name dynamically
             var selectedRole = _context.Roles.FirstOrDefault(r => r.Id == model.RoleId);
             string selectedRoleName = selectedRole?.Name ?? "Patient";
 

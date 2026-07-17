@@ -1,25 +1,46 @@
 ﻿@using DoctorAppointmentManagementSystem.ViewModels
 @model PatientCreateViewModel
 
-<h2>Add Patient</h2>
+@{
+    ViewData["Title"] = "Add Patient";
+}
+
+<h2>Add New Patient</h2>
 
 @if (ViewBag.Error != null)
 {
-    <p style="color:red">@ViewBag.Error</p>
+    <div class="alert alert-danger">@ViewBag.Error</div>
 }
 
-<form method="post">
-
-    <input type="text" name="Name" placeholder="Name" class="form-control" /><br />
-
-    <input type="email" name="Email" placeholder="Email" class="form-control" /><br />
-
-    <input type="password" name="Password" placeholder="Password" class="form-control" /><br />
-
-    <input type="number" name="Age" placeholder="Age" class="form-control" /><br />
-
-    <input type="text" name="Gender" placeholder="Gender" class="form-control" /><br />
-
-    <button type="submit" class="btn btn-success">Add Patient</button>
-
-</form>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="AddPatient">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" type="email" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" type="password" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Age" class="form-label"></label>
+                <input asp-for="Age" type="number" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Gender" class="form-label"></label>
+                <select asp-for="Gender" class="form-control" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Save Patient</button>
+            <a asp-action="Patients" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

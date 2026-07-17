@@ -1,4 +1,4 @@
-@using DoctorAppointmentManagementSystem.Models
+﻿@using DoctorAppointmentManagementSystem.Models
 @{
     Layout = "_Layout";
     ViewData["Title"] = "EMR Patient Timeline";
@@ -17,7 +17,6 @@
 
 <div class="container py-4">
 
-    <!-- Header Navigation -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         @if (roleId == 3)
         {
@@ -40,7 +39,6 @@
         }
     </div>
 
-    <!-- Patient Profile Summary Card -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
         <div class="card-header text-white p-3" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -50,7 +48,7 @@
         </div>
         <div class="card-body p-4 bg-light">
             <div class="row g-4">
-                <!-- Primary Stats -->
+                
                 <div class="col-md-3 border-end">
                     <div class="text-center py-2">
                         <div class="bg-white rounded-circle p-3 d-inline-flex align-items-center justify-content-center mb-3 shadow-sm text-primary" style="width: 70px; height: 70px;">
@@ -61,7 +59,6 @@
                     </div>
                 </div>
 
-                <!-- Personal details -->
                 <div class="col-md-4 border-end">
                     <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-clipboard-pulse me-2"></i>Personal Details</h6>
                     <div class="d-flex justify-content-between border-bottom pb-1.5 mb-2 small">
@@ -78,7 +75,6 @@
                     </div>
                 </div>
 
-                <!-- Medical history & allergies -->
                 <div class="col-md-5">
                     <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-shield-exclamation me-2"></i>Medical Summary</h6>
                     <div class="mb-3">
@@ -101,14 +97,12 @@
         </div>
     </div>
 
-    <!-- Timeline Title -->
     <h3 class="fw-bold mb-4 text-center text-primary"><i class="bi bi-clock-history me-2"></i>Patient Timeline & Case File</h3>
 
-    <!-- Timeline Render -->
     @if (timeline.Any())
     {
         <div class="position-relative px-md-5">
-            <!-- Timeline vertical connector line -->
+            
             <div class="position-absolute h-100 bg-secondary bg-opacity-25 d-none d-md-block" style="width: 4px; left: 50%; transform: translateX(-50%); top: 0; z-index: 0;"></div>
 
             <div class="row g-4">
@@ -117,10 +111,8 @@
                     var item = timeline[i];
                     var isEven = i % 2 == 0;
 
-                    <!-- Left/Right columns structure for desktop timeline alignment -->
                     <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-center position-relative mb-4" style="z-index: 1;">
-                        
-                        <!-- Timeline circle node -->
+
                         <div class="position-absolute bg-white rounded-circle border border-4 d-none d-md-flex align-items-center justify-content-center shadow" 
                              style="width: 50px; height: 50px; left: 50%; top: 20px; transform: translateX(-50%); z-index: 2; @(item.Type == "Prescription" ? "border-color: #3b82f6;" : "border-color: #10b981;")">
                             @if (item.Type == "Prescription")
@@ -133,7 +125,6 @@
                             }
                         </div>
 
-                        <!-- Card Column -->
                         <div class="w-100 @(isEven ? "pe-md-5 text-md-end" : "ps-md-5 order-md-2")" style="max-width: 46%;">
                             
                             @if (item.Type == "Prescription")
@@ -199,7 +190,6 @@
                                             </div>
                                         }
 
-                                        <!-- Edit/Delete Buttons (For creating Doctor and Admins) -->
                                         @if (roleId == 1 || (roleId == 2 && record.DoctorId == currentDoctorId))
                                         {
                                             <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
@@ -223,7 +213,6 @@
 
                         </div>
 
-                        <!-- Empty Column for desktop timeline alignment -->
                         <div class="w-100 d-none d-md-block @(isEven ? "order-md-2" : "")" style="max-width: 46%;"></div>
 
                     </div>

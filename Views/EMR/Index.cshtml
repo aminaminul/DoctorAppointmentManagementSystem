@@ -1,4 +1,4 @@
-@model List<DoctorAppointmentManagementSystem.Models.Patient>
+﻿@model List<DoctorAppointmentManagementSystem.Models.Patient>
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Patient EMR Search";
@@ -12,7 +12,6 @@
         <p class="text-muted">Search and manage electronic health profiles, diagnostic files, and case histories.</p>
     </div>
 
-    <!-- Search Form Card -->
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-4 bg-light rounded-4">
             <form method="get" action="/EMR/Index" class="row g-3 align-items-center">
@@ -29,7 +28,6 @@
         </div>
     </div>
 
-    <!-- Patients List Table Card -->
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-header text-white p-3 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
             <h5 class="mb-0 fw-bold"><i class="bi bi-people-fill me-2 text-warning"></i>Patient Registry</h5>

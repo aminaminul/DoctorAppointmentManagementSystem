@@ -1,4 +1,4 @@
-namespace DoctorAppointmentManagementSystem.Services
+﻿namespace DoctorAppointmentManagementSystem.Services
 {
     public class SmsService : ISmsService
     {
@@ -13,11 +13,11 @@ namespace DoctorAppointmentManagementSystem.Services
         {
             if (string.IsNullOrWhiteSpace(phoneNumber))
             {
-                _logger.LogWarning("SMS skipped — recipient has no phone number on record.");
+                _logger.LogWarning("SMS skipped â€” recipient has no phone number on record.");
                 return Task.CompletedTask;
             }
 
-            _logger.LogInformation("📱 [SMS-STUB] To: {Phone} | Message: {Msg}", phoneNumber, message);
+            _logger.LogInformation("ðŸ“± [SMS-STUB] To: {Phone} | Message: {Msg}", phoneNumber, message);
             return Task.CompletedTask;
         }
     }

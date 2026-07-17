@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Mail;
 
 namespace DoctorAppointmentManagementSystem.Services
@@ -27,7 +27,7 @@ namespace DoctorAppointmentManagementSystem.Services
                 string.IsNullOrWhiteSpace(senderPass))
             {
                 _logger.LogWarning(
-                    "Email NOT sent to {Email} — SMTP credentials not configured in appsettings.json. " +
+                    "Email NOT sent to {Email} â€” SMTP credentials not configured in appsettings.json. " +
                     "Fill in EmailSettings section to enable real email delivery.", toEmail);
                 return;
             }
@@ -53,11 +53,11 @@ namespace DoctorAppointmentManagementSystem.Services
                 mail.To.Add(new MailAddress(toEmail, toName));
 
                 await smtp.SendMailAsync(mail);
-                _logger.LogInformation("✉ Email sent to {Email} — Subject: {Subject}", toEmail, subject);
+                _logger.LogInformation("âœ‰ Email sent to {Email} â€” Subject: {Subject}", toEmail, subject);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send email to {Email} — Subject: {Subject}", toEmail, subject);
+                _logger.LogError(ex, "Failed to send email to {Email} â€” Subject: {Subject}", toEmail, subject);
             }
         }
     }

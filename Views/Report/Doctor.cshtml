@@ -1,0 +1,39 @@
+﻿@model IEnumerable<DoctorAppointmentManagementSystem.Models.Doctor>
+
+@{
+    ViewData["Title"] = "Doctor Report";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Doctor Report</h2>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Specialization</th>
+            <th>Qualification</th>
+            <th>Experience</th>
+            <th>Fee (BDT)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>Dr. @item.User?.Username</td>
+                <td>@item.Specialization</td>
+                <td>@(string.IsNullOrEmpty(item.Qualification) ? "N/A" : item.Qualification)</td>
+                <td>@item.Experience Years</td>
+                <td>à§³@item.ConsultationFee</td>
+                <td>
+                    <span class="badge @(item.ActiveStatus ? "bg-success" : "bg-danger")">
+                        @(item.ActiveStatus ? "Active" : "Inactive")
+                    </span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

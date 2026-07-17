@@ -1,0 +1,21 @@
+﻿@model DoctorAppointmentManagementSystem.Models.Specialization
+
+@{
+    ViewData["Title"] = "Edit Specialization";
+}
+
+<h2>Edit Specialization</h2>
+
+<form asp-action="EditSpecialization" class="w-50">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a asp-action="Specializations" class="btn btn-secondary">Cancel</a>
+</form>

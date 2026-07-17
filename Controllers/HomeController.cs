@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using DoctorAppointmentManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,16 +20,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         public IActionResult Index()
         {
-            var userRole = HttpContext.Session.GetString("UserRole");
-            if (!string.IsNullOrEmpty(userRole))
-            {
-                if (userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
-                    return RedirectToAction("Dashboard", "Admin");
-                if (userRole.Equals("Doctor", StringComparison.OrdinalIgnoreCase))
-                    return RedirectToAction("Dashboard", "Doctor");
-                if (userRole.Equals("Patient", StringComparison.OrdinalIgnoreCase))
-                    return RedirectToAction("Dashboard", "Patient");
-            }
 
             var doctors = _db.Doctors
                 .Include(d => d.User)

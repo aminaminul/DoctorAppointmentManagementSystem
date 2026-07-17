@@ -1,21 +1,42 @@
 ﻿@using DoctorAppointmentManagementSystem.ViewModels
 @model DoctorCreateViewModel
- 
 
-<h2>Add Doctor</h2>
+@{
+    ViewData["Title"] = "Add Doctor";
+}
 
-<form method="post">
+<h2>Add New Doctor</h2>
 
-    <input type="text" name="Name" placeholder="Name" class="form-control" /><br />
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
 
-    <input type="email" name="Email" placeholder="Email" class="form-control" /><br />
-
-    <input type="password" name="Password" placeholder="Password" class="form-control" /><br />
-
-    <input type="text" name="Specialization" placeholder="Specialization" class="form-control" /><br />
-
-    <input type="text" name="Availability" placeholder="Availability" class="form-control" /><br />
-
-    <button type="submit" class="btn btn-success">Add Doctor</button>
-
-</form>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="AddDoctor">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" type="email" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" type="password" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Specialization" class="form-label"></label>
+                <input asp-for="Specialization" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Availability" class="form-label">Availability / Hours</label>
+                <input asp-for="Availability" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-success">Save Doctor</button>
+            <a asp-action="Doctors" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

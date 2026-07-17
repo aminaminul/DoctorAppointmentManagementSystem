@@ -1,4 +1,4 @@
-namespace DoctorAppointmentManagementSystem.Models
+﻿namespace DoctorAppointmentManagementSystem.Models
 {
     public enum Department
     {

@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -56,7 +56,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.TotalAppointmentsCount = _context.Appointments.Count();
             ViewBag.TotalSchedulesCount = _context.DoctorSchedules.Count();
 
-            // Load recent 5 appointments for the overview panel
             ViewBag.RecentAppointments = _context.Appointments
                 .Include(a => a.Patient).ThenInclude(p => p.User)
                 .Include(a => a.Doctor).ThenInclude(d => d.User)
@@ -64,7 +63,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .Take(5)
                 .ToList();
 
-            // Load some active doctor schedules for the bottom list/grid
             ViewBag.RecentSchedules = _context.DoctorSchedules
                 .Include(ds => ds.Doctor).ThenInclude(d => d.User)
                 .OrderByDescending(ds => ds.AvailableDate)
@@ -125,6 +123,18 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View();
         }
 
+        public IActionResult Doctors()
+        {
+            var doctors = _context.Doctors.Include(d => d.User).ToList();
+            return View(doctors);
+        }
+
+        public IActionResult Patients()
+        {
+            var patients = _context.Patients.Include(p => p.User).ToList();
+            return View(patients);
+        }
+
         public IActionResult AddDoctor()
         {
             return View();
@@ -158,28 +168,57 @@ namespace DoctorAppointmentManagementSystem.Controllers
             {
                 UserId = user.Id,
                 Specialization = model.Specialization,
-                Availability = model.Availability
+                Availability = model.Availability,
+                Qualification = "",
+                Experience = 0,
+                ConsultationFee = 0,
+                AvailableDays = "Mon-Fri",
+                AvailableTime = model.Availability
             };
 
             _context.Doctors.Add(doctor);
             _context.SaveChanges();
 
-            return RedirectToAction("Dashboard");
+            return RedirectToAction("Doctors");
         }
 
         public IActionResult EditDoctor(int id)
         {
-            var doctor = _context.Doctors.Find(id);
+            var doctor = _context.Doctors
+                .Include(d => d.User)
+                .FirstOrDefault(d => d.Id == id);
             return View(doctor);
         }
 
         [HttpPost]
         public IActionResult EditDoctor(Doctor model)
         {
-            _context.Doctors.Update(model);
-            _context.SaveChanges();
+            var doctor = _context.Doctors
+                .Include(d => d.User)
+                .FirstOrDefault(d => d.Id == model.Id);
 
-            return RedirectToAction("Dashboard");
+            if (doctor != null)
+            {
+                doctor.Specialization = model.Specialization;
+                doctor.Availability = model.Availability;
+                doctor.AvailableTime = model.Availability;
+                doctor.Qualification = model.Qualification;
+                doctor.Experience = model.Experience;
+                doctor.ConsultationFee = model.ConsultationFee;
+                doctor.AvailableDays = model.AvailableDays;
+                doctor.ActiveStatus = model.ActiveStatus;
+
+                if (doctor.User != null && model.User != null)
+                {
+                    doctor.User.Username = model.User.Username;
+                    doctor.User.Email = model.User.Email;
+                    doctor.User.PhoneNumber = model.User.PhoneNumber;
+                }
+
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Doctors");
         }
 
         public IActionResult DeleteDoctor(int id)
@@ -192,7 +231,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 _context.SaveChanges();
             }
 
-            return RedirectToAction("Dashboard");
+            return RedirectToAction("Doctors");
         }
 
         public IActionResult AddPatient()
@@ -229,13 +268,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
             {
                 UserId = user.Id,
                 Age = model.Age,
-                Gender = model.Gender
+                Gender = model.Gender,
+                DateOfBirth = DateTime.Today.AddYears(-model.Age)
             };
 
             _context.Patients.Add(patient);
             _context.SaveChanges();
 
-            return RedirectToAction("Dashboard");
+            return RedirectToAction("Patients");
         }
 
 
@@ -263,6 +303,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 patient.EmergencyContact = model.EmergencyContact;
                 patient.MedicalHistory = model.MedicalHistory;
                 patient.Allergies = model.Allergies;
+                patient.ActiveStatus = model.ActiveStatus;
 
                 if (patient.User != null && model.User != null)
                 {
@@ -274,9 +315,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 _context.SaveChanges();
             }
 
-            return RedirectToAction("Dashboard", new { section = "patients" });
+            return RedirectToAction("Patients");
         }
-
 
         public IActionResult DeletePatient(int id)
         {
@@ -288,7 +328,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 _context.SaveChanges();
             }
 
-            return RedirectToAction("Dashboard");
+            return RedirectToAction("Patients");
         }
 
         public IActionResult PatientDetails(int id)
@@ -298,6 +338,133 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .FirstOrDefault(p => p.Id == id);
 
             return View(patient);
+        }
+
+        public IActionResult DoctorDetails(int id)
+        {
+            var doctor = _context.Doctors
+                .Include(d => d.User)
+                .FirstOrDefault(d => d.Id == id);
+
+            if (doctor == null)
+            {
+                return NotFound();
+            }
+
+            return View(doctor);
+        }
+
+        public IActionResult LeaveRequests()
+        {
+            var requests = _context.LeaveRequests.Include(lr => lr.User).ToList();
+            return View(requests);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateLeaveStatus(int id, string status)
+        {
+            var request = _context.LeaveRequests.Find(id);
+            if (request != null)
+            {
+                request.Status = status;
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(LeaveRequests));
+        }
+
+        public IActionResult DeleteLeaveRequest(int id)
+        {
+            var request = _context.LeaveRequests.Find(id);
+            if (request != null)
+            {
+                _context.LeaveRequests.Remove(request);
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(LeaveRequests));
+        }
+
+        public IActionResult Complaints()
+        {
+            var complaints = _context.Complaints.Include(c => c.User).ToList();
+            return View(complaints);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateComplaintStatus(int id, string status)
+        {
+            var complaint = _context.Complaints.Find(id);
+            if (complaint != null)
+            {
+                complaint.Status = status;
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(Complaints));
+        }
+
+        public IActionResult DeleteComplaint(int id)
+        {
+            var complaint = _context.Complaints.Find(id);
+            if (complaint != null)
+            {
+                _context.Complaints.Remove(complaint);
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(Complaints));
+        }
+
+        public IActionResult Invoices()
+        {
+            var invoices = _context.Invoices.Include(i => i.Patient).ThenInclude(p => p.User).ToList();
+            return View(invoices);
+        }
+
+        public IActionResult CreateInvoice()
+        {
+            ViewBag.Patients = _context.Patients.Include(p => p.User).ToList();
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateInvoice(DoctorAppointmentManagementSystem.Models.Invoice invoice)
+        {
+            invoice.IssueDate = DateTime.Now;
+            _context.Invoices.Add(invoice);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Invoices));
+        }
+
+        public IActionResult EditInvoice(int id)
+        {
+            var invoice = _context.Invoices.Find(id);
+            if (invoice == null) return NotFound();
+            ViewBag.Patients = _context.Patients.Include(p => p.User).ToList();
+            return View(invoice);
+        }
+
+        [HttpPost]
+        public IActionResult EditInvoice(DoctorAppointmentManagementSystem.Models.Invoice invoice)
+        {
+            var existing = _context.Invoices.Find(invoice.Id);
+            if (existing != null)
+            {
+                existing.PatientId = invoice.PatientId;
+                existing.TotalAmount = invoice.TotalAmount;
+                existing.Particulars = invoice.Particulars;
+                existing.Status = invoice.Status;
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(Invoices));
+        }
+
+        public IActionResult DeleteInvoice(int id)
+        {
+            var invoice = _context.Invoices.Find(id);
+            if (invoice != null)
+            {
+                _context.Invoices.Remove(invoice);
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(Invoices));
         }
     }
 }

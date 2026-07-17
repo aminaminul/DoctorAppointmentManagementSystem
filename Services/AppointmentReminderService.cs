@@ -1,4 +1,4 @@
-using DoctorAppointmentManagementSystem.Data;
+﻿using DoctorAppointmentManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace DoctorAppointmentManagementSystem.Services
@@ -19,7 +19,7 @@ namespace DoctorAppointmentManagementSystem.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("🔔 AppointmentReminderService started — checking every hour for tomorrow's appointments.");
+            _logger.LogInformation("ðŸ”” AppointmentReminderService started â€” checking every hour for tomorrow's appointments.");
 
             _timer = new Timer(DoWork, null, TimeSpan.FromMinutes(1), TimeSpan.FromHours(1));
             return Task.CompletedTask;
@@ -27,7 +27,7 @@ namespace DoctorAppointmentManagementSystem.Services
 
         private async void DoWork(object? state)
         {
-            _logger.LogInformation("🔔 Reminder check triggered at {Time}", DateTime.Now);
+            _logger.LogInformation("ðŸ”” Reminder check triggered at {Time}", DateTime.Now);
 
             try
             {
@@ -46,7 +46,7 @@ namespace DoctorAppointmentManagementSystem.Services
 
                 if (!appointmentsTomorrow.Any())
                 {
-                    _logger.LogInformation("🔔 No appointments scheduled for tomorrow ({Date}).", tomorrow.ToString("dd MMM yyyy"));
+                    _logger.LogInformation("ðŸ”” No appointments scheduled for tomorrow ({Date}).", tomorrow.ToString("dd MMM yyyy"));
                     return;
                 }
 
@@ -66,17 +66,17 @@ namespace DoctorAppointmentManagementSystem.Services
                     }
                 }
 
-                _logger.LogInformation("🔔 Sent {Count} reminder(s) for {Date}.", sent, tomorrow.ToString("dd MMM yyyy"));
+                _logger.LogInformation("ðŸ”” Sent {Count} reminder(s) for {Date}.", sent, tomorrow.ToString("dd MMM yyyy"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "🔔 Error in AppointmentReminderService.");
+                _logger.LogError(ex, "ðŸ”” Error in AppointmentReminderService.");
             }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("🔔 AppointmentReminderService stopping.");
+            _logger.LogInformation("ðŸ”” AppointmentReminderService stopping.");
             _timer?.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }

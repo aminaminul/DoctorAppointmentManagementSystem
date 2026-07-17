@@ -1,4 +1,4 @@
-@model DoctorAppointmentManagementSystem.ViewModels.LoginViewModel
+﻿@model DoctorAppointmentManagementSystem.ViewModels.LoginViewModel
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Login";
@@ -6,13 +6,12 @@
 }
 
 <div class="login-wrapper">
-    <!-- Medical Vector Background Blobs -->
+    
     <div class="bubble bubble-1"><i class="bi bi-heart-pulse-fill"></i></div>
     <div class="bubble bubble-2"><i class="bi bi-activity"></i></div>
     <div class="bubble bubble-3"><i class="bi bi-shield-plus"></i></div>
     <div class="bubble bubble-4"><i class="bi bi-droplet-fill"></i></div>
 
-    <!-- Heartbeat wave line overlay -->
     <div class="heartbeat-line">
         <svg viewBox="0 0 1440 200" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0,100 L500,100 L520,70 L540,140 L560,30 L585,170 L600,100 L610,120 L620,100 L1440,100" stroke="rgba(255,255,255,0.18)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -100,7 +99,7 @@
 }
 
 <style>
-    /* ─── Layout overrides for full bleed background ─── */
+    
     body.bg-white {
         background-color: #0b1727 !important;
     }
@@ -121,7 +120,6 @@
         padding: 0 !important;
     }
 
-    /* ─── Login Background Design ─── */
     .login-wrapper {
         min-height: calc(100vh - 76px);
         width: 100%;
@@ -132,7 +130,6 @@
         padding-top: 0;
     }
 
-    /* ─── Heartbeat Line Overlay ─── */
     .heartbeat-line {
         position: absolute;
         bottom: 5%;
@@ -143,7 +140,6 @@
         pointer-events: none;
     }
 
-    /* ─── Vector Bubble Shapes ─── */
     .bubble {
         position: absolute;
         border-radius: 50%;
@@ -190,7 +186,6 @@
         animation-delay: 4.5s;
     }
 
-    /* ─── Glassmorphism Card ─── */
     .glass-card {
         background: rgba(255, 255, 255, 0.76);
         backdrop-filter: blur(18px);
@@ -234,7 +229,6 @@
         font-weight: 500;
     }
 
-    /* ─── Input Fields ─── */
     .input-field-group {
         position: relative;
     }
@@ -316,7 +310,6 @@
         color: #4DA8DA;
     }
 
-    /* ─── Submit Button ─── */
     .btn-submit {
         background: linear-gradient(135deg, #1a6b9a 0%, #1e8cb0 100%);
         border: none;
@@ -353,7 +346,6 @@
         color: #4DA8DA;
     }
 
-    /* ─── Alert Styles ─── */
     .alert-danger-custom {
         background-color: rgba(220, 53, 69, 0.1);
         border: 1px solid rgba(220, 53, 69, 0.2);
@@ -364,7 +356,6 @@
         border-radius: 10px;
     }
 
-    /* ─── Keyframe Animations ─── */
     @@keyframes floatBubble {
         0% { transform: translateY(0) rotate(0deg); }
         100% { transform: translateY(-15px) rotate(10deg); }

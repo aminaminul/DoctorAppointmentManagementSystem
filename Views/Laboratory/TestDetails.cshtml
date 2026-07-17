@@ -1,0 +1,41 @@
+﻿@model DoctorAppointmentManagementSystem.Models.LabTest
+
+@{
+    ViewData["Title"] = "Lab Test Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Lab Test Details - @Model.TestName</h2>
+    <a asp-action="Tests" class="btn btn-secondary">Back to List</a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Test Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <tr>
+                        <th style="width: 35%">Test Name</th>
+                        <td>@Model.TestName</td>
+                    </tr>
+                    <tr>
+                        <th>Price (BDT)</th>
+                        <td>à§³@Model.Price</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>@(string.IsNullOrEmpty(Model.Description) ? "No description available." : Model.Description)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end">
+            <a asp-action="EditTest" asp-route-id="@Model.Id" class="btn btn-warning">Edit Test</a>
+            <a asp-action="DeleteTest" asp-route-id="@Model.Id" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete @Model.TestName?')">Delete Test</a>
+        </div>
+    </div>
+</div>

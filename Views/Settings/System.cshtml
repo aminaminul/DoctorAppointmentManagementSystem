@@ -1,0 +1,61 @@
+﻿@model IEnumerable<DoctorAppointmentManagementSystem.Models.SystemSetting>
+
+@{
+    ViewData["Title"] = "System Settings";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>System Settings</h2>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="row">
+    <div class="col-md-5 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Add / Update Setting</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="SaveSetting" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Key</label>
+                        <input name="key" class="form-control" placeholder="e.g. HospitalName" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Value</label>
+                        <input name="value" class="form-control" placeholder="Value" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Setting</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                    <th style="width: 100px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Key</strong></td>
+                        <td>@item.Value</td>
+                        <td>
+                            <a asp-action="DeleteSetting" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Delete this setting?')">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

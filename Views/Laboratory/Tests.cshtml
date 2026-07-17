@@ -1,0 +1,39 @@
+﻿@model IEnumerable<DoctorAppointmentManagementSystem.Models.LabTest>
+
+@{
+    ViewData["Title"] = "Laboratory Tests";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Laboratory Tests</h2>
+    <a asp-action="CreateTest" class="btn btn-primary">Add Lab Test</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Test Name</th>
+            <th>Price (BDT)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TestName</td>
+                <td>à§³@item.Price</td>
+                <td>
+                    <a asp-action="TestDetails" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Details</a>
+                    <a asp-action="EditTest" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="DeleteTest" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete @item.TestName?')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

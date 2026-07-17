@@ -1,0 +1,50 @@
+﻿using DoctorAppointmentManagementSystem.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+
+namespace DoctorAppointmentManagementSystem.Controllers
+{
+    public class ReportController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+
+        public ReportController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Revenue()
+        {
+            var payments = _context.Payments.Include(p => p.Appointment).ThenInclude(a => a.Patient).ThenInclude(p => p.User).ToList();
+            ViewBag.TotalRevenue = payments.Sum(p => p.Amount);
+            return View(payments);
+        }
+
+        public IActionResult Appointment()
+        {
+            var appointments = _context.Appointments
+                .Include(a => a.Doctor).ThenInclude(d => d.User)
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .ToList();
+            return View(appointments);
+        }
+
+        public IActionResult Patient()
+        {
+            var patients = _context.Patients.Include(p => p.User).ToList();
+            return View(patients);
+        }
+
+        public IActionResult Doctor()
+        {
+            var doctors = _context.Doctors.Include(d => d.User).ToList();
+            return View(doctors);
+        }
+    }
+}

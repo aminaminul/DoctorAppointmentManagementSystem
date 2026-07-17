@@ -1,0 +1,72 @@
+﻿@model IEnumerable<DoctorAppointmentManagementSystem.Models.Branch>
+
+@{
+    ViewData["Title"] = "Branch Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Hospital Branches</h2>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="row">
+    <div class="col-md-5 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Add New Branch</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="AddBranch" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input name="Name" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input name="Address" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contact Number</label>
+                        <input name="ContactNumber" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input name="Email" type="email" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add Branch</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-7">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Contact</th>
+                    <th style="width: 150px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Name</strong></td>
+                        <td>@item.Address</td>
+                        <td>@item.ContactNumber</td>
+                        <td>
+                            <a asp-action="EditBranch" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="DeleteBranch" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Delete branch?')">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

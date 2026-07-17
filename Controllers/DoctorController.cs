@@ -1,4 +1,4 @@
-using DoctorAppointmentManagementSystem.Models;
+﻿using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using DoctorAppointmentManagementSystem.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -241,8 +241,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             {
                 DoctorId       = doctor.Id,
                 AvailableDate  = vm.AvailableDate,
-                StartTime      = vm.IsVacation ? "—" : vm.StartTime,
-                EndTime        = vm.IsVacation ? "—" : vm.EndTime,
+                StartTime      = vm.IsVacation ? "â€”" : vm.StartTime,
+                EndTime        = vm.IsVacation ? "â€”" : vm.EndTime,
                 BreakStartTime = vm.BreakStartTime,
                 BreakEndTime   = vm.BreakEndTime,
                 SlotStatus     = vm.IsVacation ? "Blocked" : "Available",
@@ -255,7 +255,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             TempData["Success"] = vm.IsVacation
                 ? $"Vacation day marked for {vm.AvailableDate:MMMM dd, yyyy}."
-                : $"Schedule added for {vm.AvailableDate:MMMM dd, yyyy} ({vm.StartTime} – {vm.EndTime}).";
+                : $"Schedule added for {vm.AvailableDate:MMMM dd, yyyy} ({vm.StartTime} â€“ {vm.EndTime}).";
 
             return RedirectToAction("Schedule");
         }
@@ -296,8 +296,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             if (entry == null) return NotFound();
 
             entry.AvailableDate  = vm.AvailableDate;
-            entry.StartTime      = vm.IsVacation ? "—" : vm.StartTime;
-            entry.EndTime        = vm.IsVacation ? "—" : vm.EndTime;
+            entry.StartTime      = vm.IsVacation ? "â€”" : vm.StartTime;
+            entry.EndTime        = vm.IsVacation ? "â€”" : vm.EndTime;
             entry.BreakStartTime = vm.BreakStartTime;
             entry.BreakEndTime   = vm.BreakEndTime;
             entry.SlotStatus     = vm.IsVacation ? "Blocked" : "Available";
@@ -350,8 +350,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
                     {
                         DoctorId      = doctor.Id,
                         AvailableDate = d,
-                        StartTime     = "—",
-                        EndTime       = "—",
+                        StartTime     = "â€”",
+                        EndTime       = "â€”",
                         SlotStatus    = "Blocked",
                         IsVacation    = true,
                         Notes         = notes ?? "Vacation"

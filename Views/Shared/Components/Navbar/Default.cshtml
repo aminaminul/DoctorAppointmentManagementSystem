@@ -1,4 +1,4 @@
-@{
+﻿@{
     var controller  = ViewData["controller"]?.ToString() ?? "";
     var action      = ViewData["action"]?.ToString() ?? "";
     var userName    = ViewData["UserName"] as string ?? "";
@@ -73,7 +73,6 @@
         font-weight: 700;
     }
 
-    /* ─── Guest Buttons ─────────────────── */
     .btn-nav-login {
         background: rgba(255,255,255,0.05);
         border: 1.5px solid rgba(255,255,255,0.2);
@@ -109,7 +108,6 @@
         box-shadow: 0 4px 12px rgba(77, 168, 218, 0.35);
     }
 
-    /* ─── User Avatar & Dropdown ───────── */
     .nav-avatar {
         width: 38px; height: 38px;
         background: rgba(255,255,255,0.1);
@@ -189,7 +187,6 @@
     }
     .nav-dropdown-menu .dropdown-divider { margin: 6px 0; border-color: rgba(255,255,255,0.08); }
 
-    /* ─── Toggler ───────────────────────── */
     .dams-toggler {
         border: 1.5px solid rgba(255,255,255,0.25);
         border-radius: 8px;
@@ -203,7 +200,7 @@
 <nav class="dams-nav navbar navbar-expand-lg">
     <div class="container-fluid px-0">
 
-        <a class="dams-brand" href="/">
+        <a class="dams-brand" href="@Url.Action("Index", "Home")">
             <div class="dams-brand-icon">
                 <i class="bi bi-heart-pulse-fill"></i>
             </div>
@@ -220,22 +217,22 @@
 
             <ul class="navbar-nav me-auto align-items-lg-center gap-1">
                 <li class="nav-item">
-                    <a class="dams-nav-link @(isHomePage ? "active-link" : "")" href="/">Home</a>
+                    <a class="dams-nav-link @(isHomePage ? "active-link" : "")" href="@Url.Action("Index", "Home")">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="dams-nav-link" href="/Home/Index#aboutSection">About</a>
+                    <a class="dams-nav-link" href="@Url.Action("Index", "Home")#aboutSection">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="dams-nav-link" href="/Home/Index#servicesSection">Service</a>
+                    <a class="dams-nav-link" href="@Url.Action("Index", "Home")#servicesSection">Service</a>
                 </li>
                 <li class="nav-item">
-                    <a class="dams-nav-link" href="/Home/Index#doctorsSection">Doctor</a>
+                    <a class="dams-nav-link" href="@Url.Action("Index", "Home")#doctorsSection">Doctor</a>
                 </li>
                 <li class="nav-item">
-                    <a class="dams-nav-link" href="/Home/Index#contactSection">Contact</a>
+                    <a class="dams-nav-link" href="@Url.Action("Index", "Home")#contactSection">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="dams-nav-link" href="#">Blog</a>
+                    <a class="dams-nav-link" href="javascript:void(0)" onclick="alert('Blog feature coming soon!')">Blog</a>
                 </li>
                 @if (isLoggedIn)
                 {
@@ -249,8 +246,8 @@
                 @if (isLoggedIn)
                 {
                     <div class="dropdown">
-                        <a class="nav-user-btn dropdown-toggle-split" id="navUserMenu"
-                           data-bs-toggle="dropdown" aria-expanded="false" style="list-style:none;">
+                        <a class="nav-user-btn" id="navUserMenu" href="#" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false" style="list-style:none; text-decoration:none;">
                             <div class="nav-avatar">@avatarInitial</div>
                             <div class="nav-user-info d-none d-md-block">
                                 <div class="nav-user-name">@userName</div>

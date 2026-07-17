@@ -1,4 +1,4 @@
-using DoctorAppointmentManagementSystem.Data;
+﻿using DoctorAppointmentManagementSystem.Data;
 using DoctorAppointmentManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,13 +31,13 @@ namespace DoctorAppointmentManagementSystem.Services
             const string title = "Appointment Booked Successfully";
             var msg = $"Your appointment with Dr. {appt.Doctor.User.Username} " +
                       $"({appt.Doctor.Specialization}) on {appt.AppointmentDate:dd MMM yyyy} at " +
-                      $"{appt.AppointmentTime} has been booked. Status: Pending — awaiting doctor confirmation.";
+                      $"{appt.AppointmentTime} has been booked. Status: Pending â€” awaiting doctor confirmation.";
 
             await SaveInAppAsync(appt.Patient.UserId, "Booking", title, msg);
 
             await _emailService.SendEmailAsync(
                 appt.Patient.User.Email, appt.Patient.User.Username, title,
-                BuildEmailHtml(title, appt.Patient.User.Username, msg, "📅", "#1e3c72",
+                BuildEmailHtml(title, appt.Patient.User.Username, msg, "ðŸ“…", "#1e3c72",
                     "Your appointment request has been received. You will be notified once the doctor confirms it."));
         }
 
@@ -46,7 +46,7 @@ namespace DoctorAppointmentManagementSystem.Services
             var appt = await LoadAppointmentAsync(appointment.Id);
             if (appt == null) return;
 
-            const string title = "Appointment Confirmed ✅";
+            const string title = "Appointment Confirmed âœ…";
             var msg = $"Your appointment with Dr. {appt.Doctor.User.Username} has been CONFIRMED for " +
                       $"{appt.AppointmentDate:dd MMM yyyy} at {appt.AppointmentTime}. " +
                       $"Please arrive 10 minutes early.";
@@ -55,7 +55,7 @@ namespace DoctorAppointmentManagementSystem.Services
 
             await _emailService.SendEmailAsync(
                 appt.Patient.User.Email, appt.Patient.User.Username, title,
-                BuildEmailHtml(title, appt.Patient.User.Username, msg, "✅", "#065f46",
+                BuildEmailHtml(title, appt.Patient.User.Username, msg, "âœ…", "#065f46",
                     "Please make sure to arrive on time. Bring any previous medical records if relevant."));
 
             await _smsService.SendSmsAsync(appt.Patient.User.PhoneNumber,
@@ -68,7 +68,7 @@ namespace DoctorAppointmentManagementSystem.Services
             var appt = await LoadAppointmentAsync(appointment.Id);
             if (appt == null) return;
 
-            const string title = "Appointment Cancelled ❌";
+            const string title = "Appointment Cancelled âŒ";
             var msg = $"Your appointment with Dr. {appt.Doctor.User.Username} scheduled for " +
                       $"{appt.AppointmentDate:dd MMM yyyy} at {appt.AppointmentTime} has been CANCELLED. " +
                       $"Please contact the clinic or book a new appointment.";
@@ -77,7 +77,7 @@ namespace DoctorAppointmentManagementSystem.Services
 
             await _emailService.SendEmailAsync(
                 appt.Patient.User.Email, appt.Patient.User.Username, title,
-                BuildEmailHtml(title, appt.Patient.User.Username, msg, "❌", "#991b1b",
+                BuildEmailHtml(title, appt.Patient.User.Username, msg, "âŒ", "#991b1b",
                     "We apologize for any inconvenience. You can book a new appointment at any time."));
 
             await _smsService.SendSmsAsync(appt.Patient.User.PhoneNumber,
@@ -90,17 +90,17 @@ namespace DoctorAppointmentManagementSystem.Services
             var appt = await LoadAppointmentAsync(appointment.Id);
             if (appt == null) return;
 
-            const string title = "Appointment Delayed ⏱";
+            const string title = "Appointment Delayed â±";
             var msg = $"Your appointment with Dr. {appt.Doctor.User.Username} on " +
                       $"{appt.AppointmentDate:dd MMM yyyy} at {appt.AppointmentTime} has been marked as DELAYED. " +
-                      $"Please wait — the clinic team will update you with a new time shortly.";
+                      $"Please wait â€” the clinic team will update you with a new time shortly.";
 
             await SaveInAppAsync(appt.Patient.UserId, "Delay", title, msg);
 
             await _emailService.SendEmailAsync(
                 appt.Patient.User.Email, appt.Patient.User.Username, title,
-                BuildEmailHtml(title, appt.Patient.User.Username, msg, "⏱", "#713f12",
-                    "Please hold — the clinic will contact you with updated timing information."));
+                BuildEmailHtml(title, appt.Patient.User.Username, msg, "â±", "#713f12",
+                    "Please hold â€” the clinic will contact you with updated timing information."));
 
             await _smsService.SendSmsAsync(appt.Patient.User.PhoneNumber,
                 $"DELAYED: Your appt with Dr. {appt.Doctor.User.Username} on " +
@@ -121,7 +121,7 @@ namespace DoctorAppointmentManagementSystem.Services
             var patient = presc.Appointment.Patient;
             var doctor  = presc.Appointment.Doctor;
 
-            const string title = "Prescription Available 💊";
+            const string title = "Prescription Available ðŸ’Š";
             var msg = $"Dr. {doctor.User.Username} has written a prescription for you. " +
                       $"Diagnosis: {presc.Diagnosis}. Log in to view your full prescription and medicines.";
 
@@ -129,7 +129,7 @@ namespace DoctorAppointmentManagementSystem.Services
 
             await _emailService.SendEmailAsync(
                 patient.User.Email, patient.User.Username, title,
-                BuildEmailHtml(title, patient.User.Username, msg, "💊", "#1e40af",
+                BuildEmailHtml(title, patient.User.Username, msg, "ðŸ’Š", "#1e40af",
                     $"<strong>Diagnosis:</strong> {presc.Diagnosis}<br>" +
                     $"<strong>Medicines:</strong> {presc.Medicines}<br>" +
                     $"<strong>Instructions:</strong> {presc.Instructions ?? "Follow doctor's advice"}"));
@@ -140,16 +140,16 @@ namespace DoctorAppointmentManagementSystem.Services
             var appt = await LoadAppointmentAsync(appointment.Id);
             if (appt == null) return;
 
-            const string title = "🔔 Appointment Reminder — Tomorrow";
+            const string title = "ðŸ”” Appointment Reminder â€” Tomorrow";
             var msg = $"Reminder: You have an appointment with Dr. {appt.Doctor.User.Username} " +
-                      $"({appt.Doctor.Specialization}) TOMORROW — {appt.AppointmentDate:dd MMM yyyy} " +
-                      $"at {appt.AppointmentTime}. Please arrive 10–15 minutes early.";
+                      $"({appt.Doctor.Specialization}) TOMORROW â€” {appt.AppointmentDate:dd MMM yyyy} " +
+                      $"at {appt.AppointmentTime}. Please arrive 10â€“15 minutes early.";
 
             await SaveInAppAsync(appt.Patient.UserId, "Reminder", title, msg);
 
             await _emailService.SendEmailAsync(
                 appt.Patient.User.Email, appt.Patient.User.Username, title,
-                BuildEmailHtml(title, appt.Patient.User.Username, msg, "🔔", "#1e3c72",
+                BuildEmailHtml(title, appt.Patient.User.Username, msg, "ðŸ””", "#1e3c72",
                     "Remember to bring your insurance card, ID, and any previous medical records."));
 
             await _smsService.SendSmsAsync(appt.Patient.User.PhoneNumber,

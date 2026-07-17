@@ -1,4 +1,4 @@
-@model DoctorAppointmentManagementSystem.ViewModels.RegisterViewModel
+﻿@model DoctorAppointmentManagementSystem.ViewModels.RegisterViewModel
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Register";
@@ -6,12 +6,11 @@
 }
 
 <div class="register-wrapper">
-    <!-- Vector background bubbles -->
+    
     <div class="bubble bubble-1"><i class="bi bi-heart-pulse-fill"></i></div>
     <div class="bubble bubble-2"><i class="bi bi-activity"></i></div>
     <div class="bubble bubble-3"><i class="bi bi-shield-plus"></i></div>
 
-    <!-- Heartbeat wave line overlay -->
     <div class="heartbeat-line">
         <svg viewBox="0 0 1440 200" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0,100 L500,100 L520,70 L540,140 L560,30 L585,170 L600,100 L610,120 L620,100 L1440,100" stroke="rgba(255,255,255,0.18)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -21,7 +20,7 @@
     <div class="container d-flex align-items-center justify-content-center min-vh-100 position-relative py-5" style="z-index: 10;">
         <div class="glass-register-card shadow-lg">
             <div class="row g-0">
-                <!-- Left panel: Branding and Info -->
+                
                 <div class="col-lg-5 d-flex flex-column justify-content-between brand-panel p-5">
                     <div>
                         <div class="logo-wrapper mb-4">
@@ -51,7 +50,6 @@
                     </div>
                 </div>
 
-                <!-- Right panel: Interactive form -->
                 <div class="col-lg-7 form-panel p-5">
                     <div class="mb-4">
                         <h3 class="form-title">Create Account</h3>
@@ -86,7 +84,7 @@
                                 <label class="input-label" asp-for="Password">Password</label>
                                 <div class="input-container">
                                     <i class="bi bi-lock input-icon"></i>
-                                    <input asp-for="Password" type="password" class="form-input" placeholder="••••••••" id="regPass" />
+                                    <input asp-for="Password" type="password" class="form-input" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" id="regPass" />
                                     <button type="button" class="btn-toggle-pass" onclick="togglePassVisibility('regPass')">
                                         <i class="bi bi-eye" id="regPassEye"></i>
                                     </button>
@@ -138,7 +136,6 @@
                             </div>
                         </div>
 
-                        <!-- Patient Specific fields container -->
                         <div id="patientFields" class="role-fields-container mb-4" style="display:none;">
                             <h5 class="role-section-title"><i class="bi bi-heart-pulse-fill me-2"></i> Patient Information</h5>
                             <div class="row g-3">
@@ -162,7 +159,6 @@
                             </div>
                         </div>
 
-                        <!-- Doctor Specific fields container -->
                         <div id="doctorFields" class="role-fields-container mb-4" style="display:none;">
                             <h5 class="role-section-title"><i class="bi bi-person-fill-check me-2"></i> Medical Practitioner Fields</h5>
                             <div class="mb-3">
@@ -277,7 +273,7 @@
 }
 
 <style>
-    /* ─── Layout overrides for full bleed background ─── */
+    
     body.bg-white {
         background-color: #0b1727 !important;
     }
@@ -298,7 +294,6 @@
         padding: 0 !important;
     }
 
-    /* ─── Registration Page background ─── */
     .register-wrapper {
         min-height: calc(100vh - 76px);
         width: 100%;
@@ -309,7 +304,6 @@
         padding-top: 0;
     }
 
-    /* ─── Heartbeat Line Overlay ─── */
     .heartbeat-line {
         position: absolute;
         bottom: 5%;
@@ -320,7 +314,6 @@
         pointer-events: none;
     }
 
-    /* ─── Vector Bubbles ─── */
     .bubble {
         position: absolute;
         border-radius: 50%;
@@ -359,7 +352,6 @@
         animation-delay: 3.5s;
     }
 
-    /* ─── Wide Glassmorphism Card ─── */
     .glass-register-card {
         background: rgba(255, 255, 255, 0.78);
         backdrop-filter: blur(18px);
@@ -373,7 +365,6 @@
         overflow: hidden;
     }
 
-    /* ─── Left Branding Panel ─── */
     .brand-panel {
         background: linear-gradient(135deg, rgba(26,107,154,0.92) 0%, rgba(30,136,156,0.92) 100%);
         border-right: 1px solid rgba(255, 255, 255, 0.15);
@@ -437,7 +428,6 @@
         color: #4DA8DA;
     }
 
-    /* ─── Right Form Panel ─── */
     .form-panel {
         background: transparent;
     }
@@ -456,7 +446,6 @@
         margin-bottom: 0;
     }
 
-    /* ─── Form Inputs ─── */
     .input-label {
         font-size: 0.8rem;
         font-weight: 700;
@@ -553,7 +542,6 @@
         color: #1a6b9a;
     }
 
-    /* ─── Role Fields Section ─── */
     .role-fields-container {
         background-color: rgba(26, 107, 154, 0.04);
         border: 1.5px dashed rgba(26, 107, 154, 0.25);
@@ -572,7 +560,6 @@
         align-items: center;
     }
 
-    /* ─── Submit Button ─── */
     .btn-submit {
         background: linear-gradient(135deg, #1a6b9a 0%, #1e8cb0 100%);
         border: none;
@@ -609,7 +596,6 @@
         color: #4DA8DA;
     }
 
-    /* ─── Keyframe Animations ─── */
     @@keyframes floatBubble {
         0% { transform: translateY(0) rotate(0deg); }
         100% { transform: translateY(-15px) rotate(10deg); }

@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using DoctorAppointmentManagementSystem.Models;
 
 namespace DoctorAppointmentManagementSystem.Data
@@ -24,7 +24,16 @@ namespace DoctorAppointmentManagementSystem.Data
         public DbSet<AdminLog> AdminLogs { get; set; }
         public DbSet<QueueEntry> QueueEntries { get; set; }
         public DbSet<PrivacyPolicy> PrivacyPolicies { get; set; }
-
+        public DbSet<Specialization> Specializations { get; set; }
+        public DbSet<LeaveRequest> LeaveRequests { get; set; }
+        public DbSet<LabTest> LabTests { get; set; }
+        public DbSet<LabReport> LabReports { get; set; }
+        public DbSet<Medicine> Medicines { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<Complaint> Complaints { get; set; }
+        public DbSet<SystemSetting> SystemSettings { get; set; }
+        public DbSet<Holiday> Holidays { get; set; }
+        public DbSet<Branch> Branches { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -149,6 +158,42 @@ namespace DoctorAppointmentManagementSystem.Data
                 .HasOne(q => q.Appointment)
                 .WithMany()
                 .HasForeignKey(q => q.AppointmentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<LeaveRequest>()
+                .HasOne(lr => lr.User)
+                .WithMany()
+                .HasForeignKey(lr => lr.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<LabReport>()
+                .HasOne(lr => lr.Patient)
+                .WithMany()
+                .HasForeignKey(lr => lr.PatientId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<LabReport>()
+                .HasOne(lr => lr.LabTest)
+                .WithMany()
+                .HasForeignKey(lr => lr.LabTestId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Invoice>()
+                .HasOne(i => i.Patient)
+                .WithMany()
+                .HasForeignKey(i => i.PatientId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Invoice>()
+                .HasOne(i => i.Appointment)
+                .WithMany()
+                .HasForeignKey(i => i.AppointmentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Complaint>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }
