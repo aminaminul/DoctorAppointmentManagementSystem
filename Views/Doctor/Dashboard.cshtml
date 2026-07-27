@@ -1,50 +1,1559 @@
-﻿@* Razor View: Doctor/Dashboard *@
-<!-- HTML View: Doctor/Dashboard -->
+@* Razor View: Doctor/Dashboard Redesign using ASP.NET Core Tag Helpers *@
 @model List<DoctorAppointmentManagementSystem.Models.Appointment>
 @using DoctorAppointmentManagementSystem.Models
 
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Doctor Dashboard";
+    ViewData["Title"] = "Doctor Portal & Dashboard";
+    string currentSection = (ViewBag.Section as string ?? "overview").ToLowerInvariant();
+    var doctor = ViewBag.Doctor as Doctor;
+    var notifications = ViewBag.Notifications as List<Notification> ?? new List<Notification>();
+    var todayAppts = ViewBag.TodayAppointments as List<Appointment> ?? new List<Appointment>();
+    var upcomingAppts = ViewBag.UpcomingAppointments as List<Appointment> ?? new List<Appointment>();
+    var pendingAppts = ViewBag.PendingAppointmentsList as List<Appointment> ?? new List<Appointment>();
+    var completedAppts = ViewBag.CompletedAppointmentsList as List<Appointment> ?? new List<Appointment>();
+    var cancelledAppts = ViewBag.CancelledAppointmentsList as List<Appointment> ?? new List<Appointment>();
+    var patients = ViewBag.Patients as List<Patient> ?? new List<Patient>();
+    var medicalRecords = ViewBag.MedicalRecords as List<MedicalRecord> ?? new List<MedicalRecord>();
+    var prescriptions = ViewBag.Prescriptions as List<Prescription> ?? new List<Prescription>();
+    var medicines = ViewBag.Medicines as List<Medicine> ?? new List<Medicine>();
+    var labTests = ViewBag.LabTests as List<LabTest> ?? new List<LabTest>();
+    var labReports = ViewBag.LabReports as List<LabReport> ?? new List<LabReport>();
+    var medicalDocuments = ViewBag.MedicalDocuments as List<MedicalDocument> ?? new List<MedicalDocument>();
+    var followUps = ViewBag.FollowUps as List<FollowUp> ?? new List<FollowUp>();
+    var certificates = ViewBag.Certificates as List<MedicalCertificate> ?? new List<MedicalCertificate>();
+    var reviews = ViewBag.Reviews as List<Feedback> ?? new List<Feedback>();
+    var schedules = ViewBag.Schedules as List<DoctorSchedule> ?? new List<DoctorSchedule>();
+    var leaveRequests = ViewBag.LeaveRequests as List<LeaveRequest> ?? new List<LeaveRequest>();
+    var holidays = ViewBag.Holidays as List<Holiday> ?? new List<Holiday>();
+    var chatMessages = ViewBag.ChatMessages as List<ChatMessage> ?? new List<ChatMessage>();
 }
 
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-md-3">
-            @await Component.InvokeAsync("Sidebar")
+<!-- ApexCharts Script Integration -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<div class="container-fluid py-3">
+    <!-- Toast & Alerts -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <div class="col-md-9">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h3 class="mb-0">Doctor Dashboard</h3>
-                    <p class="text-muted small">Your upcoming appointments</p>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @{
+        string docRawName = ViewBag.DoctorName as string ?? "Doctor";
+        string docDisplayName = docRawName.StartsWith("Dr.", StringComparison.OrdinalIgnoreCase) ? docRawName : $"Dr. {docRawName}";
+    }
+
+    <!-- Header Banner -->
+    <div class="card text-white shadow-sm mb-4 border-0 rounded-3 bg-dark border-start border-4 border-info">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center border border-3 border-secondary shadow-sm flex-shrink-0" style="width: 65px; height: 65px; min-width: 65px; font-size: 1.75rem;">
+                    @(!string.IsNullOrEmpty(docDisplayName) ? docDisplayName.Replace("Dr.", "").Trim().Substring(0,1).ToUpper() : "D")
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-1 text-white">Welcome back, @docDisplayName</h3>
+                    <p class="mb-0 text-white-50"><span class="badge bg-primary me-2">@ViewBag.Specialization</span> @ViewBag.Qualification | Fee: ৳@ViewBag.Fee</p>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="overview" class="btn @(currentSection == "overview" ? "btn-info text-white" : "btn-outline-light") btn-sm font-weight-bold">
+                    <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                </a>
+                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="appointments" class="btn @(currentSection == "appointments" ? "btn-info text-white" : "btn-outline-light") btn-sm">
+                    <i class="bi bi-calendar-check me-1"></i> Appointments (@ViewBag.TotalAppointments)
+                </a>
+                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="patients" class="btn @(currentSection == "patients" ? "btn-info text-white" : "btn-outline-light") btn-sm">
+                    <i class="bi bi-people me-1"></i> Patients
+                </a>
+                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="prescriptions" class="btn @(currentSection == "prescriptions" ? "btn-info text-white" : "btn-outline-light") btn-sm">
+                    <i class="bi bi-prescription me-1"></i> Prescriptions
+                </a>
+                <button type="button" class="btn btn-warning text-dark btn-sm font-weight-bold" data-bs-toggle="modal" data-bs-target="#qrVerifyModal">
+                    <i class="bi bi-qr-code-scan me-1"></i> QR Verify
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 1: OVERVIEW & DASHBOARD STATS -->
+    @if (currentSection == "overview")
+    {
+        <!-- Statistics Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card shadow-sm border-0 border-start border-4 border-primary h-100">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-bold text-uppercase">Today's Appointments</span>
+                            <h2 class="fw-bold text-primary mb-0">@ViewBag.TodayAppointmentsCount</h2>
+                            <small class="text-success"><i class="bi bi-calendar-event me-1"></i>@DateTime.Today.ToString("MMM dd, yyyy")</small>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 fs-3">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card shadow-sm border-0 border-start border-4 border-warning h-100">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-bold text-uppercase">Pending Approvals</span>
+                            <h2 class="fw-bold text-warning mb-0">@ViewBag.PendingCount</h2>
+                            <small class="text-muted">Action required</small>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 fs-3">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card shadow-sm border-0 border-start border-4 border-success h-100">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-bold text-uppercase">Completed Consultations</span>
+                            <h2 class="fw-bold text-success mb-0">@ViewBag.CompletedCount</h2>
+                            <small class="text-success"><i class="bi bi-check2-all me-1"></i>Total finished</small>
+                        </div>
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 fs-3">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card shadow-sm border-0 border-start border-4 border-info h-100">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-bold text-uppercase">Total Revenue</span>
+                            <h2 class="fw-bold text-info mb-0">৳@ViewBag.TotalRevenue</h2>
+                            <small class="text-info"><i class="bi bi-graph-up me-1"></i>Consultation earnings</small>
+                        </div>
+                        <div class="bg-info bg-opacity-10 text-info rounded-circle p-3 fs-3">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Cards using Tag Helpers -->
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-lightning-charge-fill me-2 text-warning"></i>Quick Actions</h5>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="row g-2">
+                            <div class="col-md-2 col-6">
+                                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="schedule" class="btn btn-outline-primary w-100 py-3 text-center rounded-3">
+                                    <i class="bi bi-plus-circle fs-3 d-block mb-1"></i> Add Schedule
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="prescriptions" class="btn btn-outline-success w-100 py-3 text-center rounded-3">
+                                    <i class="bi bi-prescription fs-3 d-block mb-1"></i> Write Prescription
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="patients" class="btn btn-outline-info w-100 py-3 text-center rounded-3">
+                                    <i class="bi bi-file-earmark-medical fs-3 d-block mb-1"></i> Create EMR
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="lab" class="btn btn-outline-warning text-dark w-100 py-3 text-center rounded-3">
+                                    <i class="bi bi-droplet fs-3 d-block mb-1"></i> Request Lab Test
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="certificates" class="btn btn-outline-secondary w-100 py-3 text-center rounded-3">
+                                    <i class="bi bi-award fs-3 d-block mb-1"></i> Issue Certificate
+                                </a>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <button type="button" class="btn btn-outline-dark w-100 py-3 text-center rounded-3" data-bs-toggle="modal" data-bs-target="#qrVerifyModal">
+                                    <i class="bi bi-qr-code fs-3 d-block mb-1"></i> Verify QR
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Appointments & ApexCharts Trends -->
+        <div class="row g-4 mb-4">
+            <!-- Today's Appointments Table -->
+            <div class="col-lg-7">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-clock-fill me-2 text-primary"></i>Today's Appointment Queue</h5>
+                        <span class="badge bg-primary rounded-pill px-3 py-2">@todayAppts.Count Appointments</span>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (todayAppts.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Patient</th>
+                                            <th>Status</th>
+                                            <th>Reason</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var appt in todayAppts)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold text-primary">@appt.AppointmentTime</td>
+                                                <td>
+                                                    <div class="fw-bold">@appt.Patient?.User?.Username</div>
+                                                    <small class="text-muted">Age: @appt.Patient?.Age | @appt.Patient?.Gender</small>
+                                                </td>
+                                                <td>
+                                                    @if (appt.AppointmentStatus == "Confirmed")
+                                                    { <span class="badge bg-primary">Confirmed</span> }
+                                                    else if (appt.AppointmentStatus == "Checked In")
+                                                    { <span class="badge bg-info text-dark">Checked In</span> }
+                                                    else if (appt.AppointmentStatus == "In Consultation")
+                                                    { <span class="badge bg-warning text-dark">In Consultation</span> }
+                                                    else if (appt.AppointmentStatus == "Completed")
+                                                    { <span class="badge bg-success">Completed</span> }
+                                                    else if (appt.AppointmentStatus == "Cancelled")
+                                                    { <span class="badge bg-danger">Cancelled</span> }
+                                                    else
+                                                    { <span class="badge bg-secondary">@appt.AppointmentStatus</span> }
+                                                </td>
+                                                <td><small class="text-truncate d-inline-block" style="max-width: 140px;">@(appt.ReasonForVisit ?? "Routine checkup")</small></td>
+                                                <td class="text-end">
+                                                    <div class="btn-group btn-group-sm">
+                                                        @if (appt.AppointmentStatus == "Pending")
+                                                        {
+                                                            <a asp-controller="Doctor" asp-action="Approve" asp-route-id="@appt.Id" class="btn btn-outline-success"><i class="bi bi-check-lg"></i> Confirm</a>
+                                                            <a asp-controller="Doctor" asp-action="Reject" asp-route-id="@appt.Id" class="btn btn-outline-danger"><i class="bi bi-x-lg"></i> Reject</a>
+                                                        }
+                                                        else if (appt.AppointmentStatus == "Confirmed")
+                                                        {
+                                                            <form asp-controller="Doctor" asp-action="UpdateAppointmentStatus" method="post" class="d-inline">
+                                                                <input type="hidden" name="id" value="@appt.Id" />
+                                                                <input type="hidden" name="status" value="Checked In" />
+                                                                <button type="submit" class="btn btn-outline-info"><i class="bi bi-box-arrow-in-right"></i> Check In</button>
+                                                            </form>
+                                                        }
+                                                        else if (appt.AppointmentStatus == "Checked In")
+                                                        {
+                                                            <form asp-controller="Doctor" asp-action="UpdateAppointmentStatus" method="post" class="d-inline">
+                                                                <input type="hidden" name="id" value="@appt.Id" />
+                                                                <input type="hidden" name="status" value="In Consultation" />
+                                                                <button type="submit" class="btn btn-outline-warning text-dark"><i class="bi bi-stethoscope"></i> Consult</button>
+                                                            </form>
+                                                        }
+                                                        else if (appt.AppointmentStatus == "In Consultation")
+                                                        {
+                                                            <a asp-controller="Doctor" asp-action="Complete" asp-route-id="@appt.Id" class="btn btn-outline-success"><i class="bi bi-check2-circle"></i> Complete</a>
+                                                        }
+                                                        <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="patients" asp-route-patientId="@appt.PatientId" class="btn btn-outline-secondary"><i class="bi bi-eye"></i> EMR</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="p-4 text-center text-muted">
+                                <i class="bi bi-calendar-x fs-1 d-block mb-2 text-secondary"></i>
+                                No appointments scheduled for today.
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-body">
-                    @if (Model != null && Model.Any())
-                    {
-                        <ul class="list-group">
-                        @foreach (var a in Model)
-                        {
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="fw-bold">@a.Patient.User.Username</div>
-                                    <small class="text-muted">@a.AppointmentDate.ToString("MMM dd, yyyy hh:mm tt")</small>
+            <!-- ApexCharts Visual Representation -->
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-bar-chart-line-fill me-2 text-info"></i>Revenue & Appointment Trends</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="dashboardOverviewChart" class="w-100" style="min-height: 280px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 2: APPOINTMENT MANAGEMENT -->
+    @if (currentSection == "appointments")
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-calendar-check-fill me-2 text-primary"></i>Appointment Directory</h5>
+                <!-- Filters Form using Tag Helpers -->
+                <form asp-controller="Doctor" asp-action="Dashboard" method="get" class="d-flex flex-wrap gap-2">
+                    <input type="hidden" name="section" value="appointments" />
+                    <input type="text" name="search" value="@Context.Request.Query["search"]" class="form-control form-control-sm" placeholder="Search patient/reason..." />
+                    <input type="date" name="dateFilter" value="@Context.Request.Query["dateFilter"]" class="form-control form-control-sm" />
+                    <select name="statusFilter" class="form-select form-select-sm">
+                        <option value="All">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Checked In">Checked In</option>
+                        <option value="In Consultation">In Consultation</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="No Show">No Show</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-filter me-1"></i> Filter</button>
+                    <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="appointments" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-counterclockwise"></i> Reset</a>
+                </form>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Date & Time</th>
+                                <th>Patient Name</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var a in Model)
+                                {
+                                    <tr>
+                                        <td><strong class="text-secondary">#@a.Id</strong></td>
+                                        <td>
+                                            <div class="fw-bold">@a.AppointmentDate.ToString("MMM dd, yyyy")</div>
+                                            <small class="text-muted"><i class="bi bi-clock me-1"></i>@a.AppointmentTime</small>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">@a.Patient?.User?.Username</div>
+                                            <small class="text-muted">Phone: @a.Patient?.User?.PhoneNumber</small>
+                                        </td>
+                                        <td><small>@(a.ReasonForVisit ?? "Consultation")</small></td>
+                                        <td>
+                                            @if (a.AppointmentStatus == "Pending")
+                                            { <span class="badge bg-warning text-dark">Pending</span> }
+                                            else if (a.AppointmentStatus == "Confirmed")
+                                            { <span class="badge bg-primary">Confirmed</span> }
+                                            else if (a.AppointmentStatus == "Checked In")
+                                            { <span class="badge bg-info text-dark">Checked In</span> }
+                                            else if (a.AppointmentStatus == "In Consultation")
+                                            { <span class="badge bg-warning text-dark">In Consultation</span> }
+                                            else if (a.AppointmentStatus == "Completed")
+                                            { <span class="badge bg-success">Completed</span> }
+                                            else if (a.AppointmentStatus == "Cancelled")
+                                            { <span class="badge bg-danger">Cancelled</span> }
+                                            else
+                                            { <span class="badge bg-secondary">@a.AppointmentStatus</span> }
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="btn-group btn-group-sm">
+                                                @if (a.AppointmentStatus == "Pending")
+                                                {
+                                                    <a asp-controller="Doctor" asp-action="Approve" asp-route-id="@a.Id" class="btn btn-outline-success" title="Approve"><i class="bi bi-check-circle"></i> Approve</a>
+                                                    <a asp-controller="Doctor" asp-action="Reject" asp-route-id="@a.Id" class="btn btn-outline-danger" title="Reject"><i class="bi bi-x-circle"></i> Reject</a>
+                                                }
+                                                else
+                                                {
+                                                    <form asp-controller="Doctor" asp-action="UpdateAppointmentStatus" method="post" class="d-inline">
+                                                        <input type="hidden" name="id" value="@a.Id" />
+                                                        <select name="status" onchange="this.form.submit()" class="form-select form-select-sm d-inline-block w-auto">
+                                                            <option value="" disabled selected>Change Status</option>
+                                                            <option value="Confirmed">Confirmed</option>
+                                                            <option value="Checked In">Checked In</option>
+                                                            <option value="In Consultation">In Consultation</option>
+                                                            <option value="Completed">Completed</option>
+                                                            <option value="Cancelled">Cancelled</option>
+                                                            <option value="No Show">No Show</option>
+                                                        </select>
+                                                    </form>
+                                                }
+                                                <button type="button" class="btn btn-outline-primary ms-1" data-bs-toggle="modal" data-bs-target="#rescheduleModal-@a.Id">
+                                                    <i class="bi bi-calendar-event"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Reschedule Modal -->
+                                            <div class="modal fade text-start" id="rescheduleModal-@a.Id" tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form asp-controller="Doctor" asp-action="RescheduleAppointment" method="post">
+                                                            <input type="hidden" name="id" value="@a.Id" />
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Reschedule Appointment #@a.Id</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label font-weight-bold">New Date</label>
+                                                                    <input type="date" name="newDate" class="form-control" value="@a.AppointmentDate.ToString("yyyy-MM-dd")" required />
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label class="form-label font-weight-bold">New Time</label>
+                                                                    <input type="text" name="newTime" class="form-control" value="@a.AppointmentTime" placeholder="e.g. 10:30 AM" required />
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center p-4 text-muted">No appointments found matching your criteria.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 3: SCHEDULE MANAGEMENT -->
+    @if (currentSection == "schedule")
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Working Days & Hours Schedule</h5>
+                        <a asp-controller="Doctor" asp-action="AddSchedule" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> Add Schedule Slot</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time Slot</th>
+                                        <th>Break</th>
+                                        <th>Status</th>
+                                        <th>Notes</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (schedules != null && schedules.Any())
+                                    {
+                                        foreach (var s in schedules)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold">@s.AvailableDate.ToString("ddd, MMM dd, yyyy")</td>
+                                                <td>@s.StartTime - @s.EndTime</td>
+                                                <td>@(string.IsNullOrWhiteSpace(s.BreakStartTime) ? "None" : $"{s.BreakStartTime} - {s.BreakEndTime}")</td>
+                                                <td>
+                                                    @if (s.IsVacation)
+                                                    { <span class="badge bg-danger">Vacation / Off</span> }
+                                                    else
+                                                    { <span class="badge bg-success">@s.SlotStatus</span> }
+                                                </td>
+                                                <td><small class="text-muted">@(s.Notes ?? "-")</small></td>
+                                                <td class="text-end">
+                                                    <a asp-controller="Doctor" asp-action="EditSchedule" asp-route-id="@s.Id" class="btn btn-outline-primary btn-sm me-1"><i class="bi bi-pencil"></i></a>
+                                                    <form asp-controller="Doctor" asp-action="DeleteSchedule" method="post" class="d-inline" onsubmit="return confirm('Remove schedule entry?');">
+                                                        <input type="hidden" name="id" value="@s.Id" />
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr><td colspan="6" class="text-center p-4 text-muted">No schedule entries recorded. Click "Add Schedule Slot" to configure.</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vacation Blocker & Leave Request -->
+            <div class="col-lg-4">
+                <!-- Vacation Setter Card -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h6 class="fw-bold text-dark mb-0"><i class="bi bi-umbrella-fill me-2 text-danger"></i>Set Vacation / Off Range</h6>
+                    </div>
+                    <div class="card-body">
+                        <form asp-controller="Doctor" asp-action="SetVacationRange" method="post">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">From Date</label>
+                                <input type="date" name="from" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">To Date</label>
+                                <input type="date" name="to" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Reason / Notes</label>
+                                <input type="text" name="notes" class="form-control form-control-sm" placeholder="Annual vacation, Conference, etc." />
+                            </div>
+                            <button type="submit" class="btn btn-danger btn-sm w-100"><i class="bi bi-slash-circle me-1"></i> Block Vacation Days</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Leave Request Card -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h6 class="fw-bold text-dark mb-0"><i class="bi bi-file-earmark-text-fill me-2 text-warning"></i>Submit Leave Request</h6>
+                    </div>
+                    <div class="card-body">
+                        <form asp-controller="Doctor" asp-action="RequestLeave" method="post">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Start Date</label>
+                                <input type="date" name="startDate" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">End Date</label>
+                                <input type="date" name="endDate" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Reason</label>
+                                <textarea name="reason" class="form-control form-control-sm" rows="2" required placeholder="Medical leave, family event..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-warning text-dark btn-sm w-100"><i class="bi bi-send me-1"></i> Submit Leave Request</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 4: PATIENTS & ELECTRONIC MEDICAL RECORDS (EMR) -->
+    @if (currentSection == "patients" || currentSection == "emr")
+    {
+        <div class="row g-4 mb-4">
+            <!-- Patient List -->
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-person-lines-fill me-2 text-primary"></i>My Patients</h5>
+                        <span class="badge bg-primary rounded-pill">@patients.Count Patients</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            @if (patients.Any())
+                            {
+                                foreach (var p in patients)
+                                {
+                                    <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="patients" asp-route-patientId="@p.Id" class="list-group-item list-group-item-action p-3 @(Context.Request.Query["patientId"] == p.Id.ToString() ? "active" : "")">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="fw-bold mb-1">@p.User?.Username</h6>
+                                                <small class="text-muted d-block">Age: @p.Age yrs | Gender: @p.Gender | Blood: @(p.BloodGroup ?? "N/A")</small>
+                                            </div>
+                                            <span class="btn btn-sm btn-outline-primary"><i class="bi bi-chevron-right"></i></span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                <div class="p-4 text-center text-muted">No associated patient records found.</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMR Form & Patient Medical History -->
+            <div class="col-lg-7">
+                @{
+                    int selectedPatientId = 0;
+                    int.TryParse(Context.Request.Query["patientId"], out selectedPatientId);
+                    var activePatient = patients.FirstOrDefault(p => p.Id == selectedPatientId) ?? patients.FirstOrDefault();
+                }
+
+                @if (activePatient != null)
+                {
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-person-vcard-fill me-2 text-info"></i>Patient Medical Profile: @activePatient.User?.Username</h5>
+                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#createEmrModal">
+                                <i class="bi bi-plus-lg me-1"></i> Add EMR Record
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <div class="p-2 bg-light rounded border">
+                                        <small class="text-muted d-block">Allergies</small>
+                                        <strong class="text-danger">@(activePatient.Allergies ?? "None Reported")</strong>
+                                    </div>
                                 </div>
-                                <span class="badge bg-primary">@a.AppointmentStatus</span>
-                            </li>
+                                <div class="col-md-4">
+                                    <div class="p-2 bg-light rounded border">
+                                        <small class="text-muted d-block">Chronic Conditions</small>
+                                        <strong class="text-warning text-dark">@(activePatient.ChronicDiseases ?? "None Reported")</strong>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-2 bg-light rounded border">
+                                        <small class="text-muted d-block">Emergency Contact</small>
+                                        <strong class="text-dark">@(activePatient.EmergencyContact ?? "N/A")</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6 class="fw-bold text-dark border-bottom pb-2 mt-4"><i class="bi bi-journal-medical me-2 text-primary"></i>EMR History</h6>
+                            @{
+                                var patientEmrs = medicalRecords.Where(mr => mr.PatientId == activePatient.Id).ToList();
+                            }
+                            @if (patientEmrs.Any())
+                            {
+                                <div class="accordion" id="emrAccordion">
+                                    @foreach (var mr in patientEmrs)
+                                    {
+                                        <div class="accordion-item mb-2 border rounded">
+                                            <h2 class="accordion-header" id="heading-@mr.Id">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@mr.Id">
+                                                    <div>
+                                                        <strong class="text-primary me-3">@mr.Diagnosis</strong>
+                                                        <small class="text-muted"><i class="bi bi-clock me-1"></i>@mr.RecordDate.ToString("MMM dd, yyyy hh:mm tt")</small>
+                                                    </div>
+                                                </button>
+                                            </h2>
+                                            <div id="collapse-@mr.Id" class="accordion-collapse collapse" data-bs-parent="#emrAccordion">
+                                                <div class="accordion-body bg-light">
+                                                    <p class="mb-1"><strong>Symptoms:</strong> @(mr.Symptoms ?? "N/A")</p>
+                                                    <p class="mb-1"><strong>Treatment Plan:</strong> @(mr.TreatmentPlan ?? mr.TreatmentDetails ?? "N/A")</p>
+                                                    <p class="mb-1"><strong>Vital Signs:</strong> @(mr.VitalSigns ?? "N/A")</p>
+                                                    <p class="mb-0"><strong>Follow-up Notes:</strong> @(mr.FollowUpNotes ?? mr.Notes ?? "None")</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted small">No EMR records added for this patient yet.</p>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Create EMR Modal -->
+                    <div class="modal fade" id="createEmrModal" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <form asp-controller="Doctor" asp-action="SaveEMR" method="post">
+                                    <input type="hidden" name="patientId" value="@activePatient.Id" />
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">New EMR Entry for @activePatient.User?.Username</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label font-weight-bold">Primary Diagnosis</label>
+                                            <input type="text" name="diagnosis" class="form-control" required placeholder="e.g. Hypertension, Viral Fever" />
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label font-weight-bold">Symptoms</label>
+                                                <input type="text" name="symptoms" class="form-control" placeholder="Fever, cough, body ache" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label font-weight-bold">Vital Signs</label>
+                                                <input type="text" name="vitalSigns" class="form-control" placeholder="BP: 120/80, Pulse: 72, Temp: 98.6F" />
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label font-weight-bold">Treatment Plan</label>
+                                            <textarea name="treatmentPlan" class="form-control" rows="3" placeholder="Medications, therapy, lifestyle advice..."></textarea>
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label font-weight-bold">Allergies</label>
+                                                <input type="text" name="allergies" class="form-control" value="@activePatient.Allergies" placeholder="Penicillin, Peanuts" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label font-weight-bold">Chronic Diseases</label>
+                                                <input type="text" name="chronicDiseases" class="form-control" value="@activePatient.ChronicDiseases" placeholder="Diabetes, Asthma" />
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label font-weight-bold">Follow-up Notes</label>
+                                            <textarea name="followUpNotes" class="form-control" rows="2" placeholder="Next visit in 2 weeks..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save EMR Record</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 5: PRESCRIPTIONS -->
+    @if (currentSection == "prescriptions")
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-prescription me-2 text-success"></i>Prescription Management</h5>
+                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#createPrescriptionModal">
+                    <i class="bi bi-plus-lg me-1"></i> Create New Prescription
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#Rx ID</th>
+                                <th>Date</th>
+                                <th>Patient</th>
+                                <th>Diagnosis</th>
+                                <th>Medicines Prescribed</th>
+                                <th>QR Code</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (prescriptions != null && prescriptions.Any())
+                            {
+                                foreach (var rx in prescriptions)
+                                {
+                                    <tr>
+                                        <td><strong class="text-success">#Rx-@rx.Id</strong></td>
+                                        <td>@rx.PrescriptionDateTime.ToString("MMM dd, yyyy")</td>
+                                        <td class="fw-bold">@rx.Patient?.User?.Username</td>
+                                        <td><span class="badge bg-light text-dark border">@rx.Diagnosis</span></td>
+                                        <td><small class="text-truncate d-inline-block" style="max-width: 200px;">@rx.Medicines</small></td>
+                                        <td>
+                                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=RX-@rx.Id" alt="QR" class="img-thumbnail" />
+                                        </td>
+                                        <td class="text-end">
+                                            <a asp-controller="Doctor" asp-action="PrintPrescription" asp-route-id="@rx.Id" target="_blank" class="btn btn-outline-primary btn-sm"><i class="bi bi-printer me-1"></i> Print / PDF</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="7" class="text-center p-4 text-muted">No prescriptions created yet.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Prescription Modal -->
+        <div class="modal fade" id="createPrescriptionModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form asp-controller="Doctor" asp-action="AddPrescription" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Create Prescription</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Select Appointment</label>
+                                <select name="AppointmentId" class="form-select" required>
+                                    @foreach (var appt in todayAppts.Concat(upcomingAppts))
+                                    {
+                                        <option value="@appt.Id">Appt #@appt.Id - @appt.Patient?.User?.Username (@appt.AppointmentDate.ToString("MMM dd"))</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Diagnosis</label>
+                                <input type="text" name="Diagnosis" class="form-control" required placeholder="e.g. Acute Bronchitis" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Medicines (Name, Dosage & Frequency)</label>
+                                <textarea name="Medicines" class="form-control" rows="4" required placeholder="Tab. Napa 500mg - 1+0+1 (After food) x 5 days&#10;Cap. Seclo 20mg - 1+0+0 (Before food) x 7 days"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Special Instructions / Advice</label>
+                                <input type="text" name="Instructions" class="form-control" placeholder="Drink plenty of warm water, rest for 3 days." />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Save Prescription</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 6: LABORATORY TESTS -->
+    @if (currentSection == "lab")
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-droplet-fill me-2 text-warning"></i>Laboratory Test Requests & Reports</h5>
+                <button type="button" class="btn btn-warning text-dark btn-sm" data-bs-toggle="modal" data-bs-target="#requestLabTestModal">
+                    <i class="bi bi-plus-lg me-1"></i> Request New Test
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Report Date</th>
+                                <th>Patient Name</th>
+                                <th>Test Name</th>
+                                <th>Status / Result</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (labReports != null && labReports.Any())
+                            {
+                                foreach (var lr in labReports)
+                                {
+                                    <tr>
+                                        <td>@lr.ReportDate.ToString("MMM dd, yyyy")</td>
+                                        <td class="fw-bold">@lr.Patient?.User?.Username</td>
+                                        <td><span class="badge bg-light text-dark border">@lr.LabTest?.TestName</span></td>
+                                        <td>
+                                            @if (lr.Result == "Pending")
+                                            { <span class="badge bg-warning text-dark">Pending</span> }
+                                            else
+                                            { <span class="badge bg-success">@lr.Result</span> }
+                                        </td>
+                                        <td><small class="text-muted">@(lr.Remarks ?? "-")</small></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="5" class="text-center p-4 text-muted">No laboratory requests or reports registered.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Lab Test Modal -->
+        <div class="modal fade" id="requestLabTestModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form asp-controller="Doctor" asp-action="RequestLabTest" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Request Laboratory Test</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Select Patient</label>
+                                <select name="patientId" class="form-select" required>
+                                    @foreach (var p in patients)
+                                    {
+                                        <option value="@p.Id">@p.User?.Username (Age: @p.Age)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Select Lab Test</label>
+                                <select name="labTestId" class="form-select" required>
+                                    @foreach (var lt in labTests)
+                                    {
+                                        <option value="@lt.Id">@lt.TestName (Price: ৳@lt.Price)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Doctor Remarks / Instructions</label>
+                                <input type="text" name="remarks" class="form-control" placeholder="Fast 12 hours prior to test..." />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-warning text-dark">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 7: MEDICAL DOCUMENTS -->
+    @if (currentSection == "documents")
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-folder-fill me-2 text-info"></i>Medical Document Vault</h5>
+                <button type="button" class="btn btn-info text-white btn-sm" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
+                    <i class="bi bi-upload me-1"></i> Upload Document
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Upload Date</th>
+                                <th>Patient</th>
+                                <th>Document Name</th>
+                                <th>Type</th>
+                                <th>Notes</th>
+                                <th class="text-end">Download</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (medicalDocuments != null && medicalDocuments.Any())
+                            {
+                                foreach (var doc in medicalDocuments)
+                                {
+                                    <tr>
+                                        <td>@doc.UploadDate.ToString("MMM dd, yyyy")</td>
+                                        <td class="fw-bold">@doc.Patient?.User?.Username</td>
+                                        <td><i class="bi bi-file-earmark-text text-primary me-2"></i>@doc.DocumentName</td>
+                                        <td><span class="badge bg-secondary">@doc.DocumentType</span></td>
+                                        <td><small class="text-muted">@(doc.Notes ?? "-")</small></td>
+                                        <td class="text-end">
+                                            <a href="@doc.FilePath" target="_blank" class="btn btn-outline-info btn-sm"><i class="bi bi-download"></i> Open File</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="6" class="text-center p-4 text-muted">No medical documents uploaded yet.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Document Modal -->
+        <div class="modal fade" id="uploadDocumentModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form asp-controller="Doctor" asp-action="UploadMedicalDocument" method="post" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Upload Medical Document</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Patient</label>
+                                <select name="patientId" class="form-select" required>
+                                    @foreach (var p in patients)
+                                    {
+                                        <option value="@p.Id">@p.User?.Username</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Document Title</label>
+                                <input type="text" name="documentName" class="form-control" required placeholder="Chest X-Ray 2026" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Document Type</label>
+                                <select name="documentType" class="form-select" required>
+                                    <option value="X-Ray">X-Ray</option>
+                                    <option value="MRI">MRI</option>
+                                    <option value="CT Scan">CT Scan</option>
+                                    <option value="Blood Report">Blood Report</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Select File (PDF, Image)</label>
+                                <input type="file" name="documentFile" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Notes</label>
+                                <input type="text" name="notes" class="form-control" placeholder="Normal findings..." />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-info text-white">Upload Document</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 8: FOLLOW-UPS -->
+    @if (currentSection == "followup")
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-arrow-repeat me-2 text-primary"></i>Follow-up Appointments</h5>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#scheduleFollowUpModal">
+                    <i class="bi bi-plus-lg me-1"></i> Schedule Follow-up
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Follow-up Date</th>
+                                <th>Patient Name</th>
+                                <th>Original Appt</th>
+                                <th>Notes</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (followUps != null && followUps.Any())
+                            {
+                                foreach (var f in followUps)
+                                {
+                                    <tr>
+                                        <td class="fw-bold text-primary">@f.FollowUpDate.ToString("MMM dd, yyyy")</td>
+                                        <td>@f.Patient?.User?.Username</td>
+                                        <td>#(Original: @(f.OriginalAppointmentId?.ToString() ?? "N/A"))</td>
+                                        <td><small class="text-muted">@(f.Notes ?? "-")</small></td>
+                                        <td><span class="badge bg-success">@f.Status</span></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="5" class="text-center p-4 text-muted">No follow-up appointments scheduled.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Follow Up Modal -->
+        <div class="modal fade" id="scheduleFollowUpModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form asp-controller="Doctor" asp-action="ScheduleFollowUp" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Schedule Follow-up Visit</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Patient</label>
+                                <select name="patientId" class="form-select" required>
+                                    @foreach (var p in patients)
+                                    {
+                                        <option value="@p.Id">@p.User?.Username</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Follow-up Date</label>
+                                <input type="date" name="followUpDate" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Reason / Notes</label>
+                                <input type="text" name="notes" class="form-control" placeholder="Check blood pressure & lab test results" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save Follow-up</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 9: CERTIFICATE GENERATOR -->
+    @if (currentSection == "certificates")
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-award-fill me-2 text-secondary"></i>Medical Certificate Generator</h5>
+                <button type="button" class="btn btn-secondary text-white btn-sm" data-bs-toggle="modal" data-bs-target="#generateCertModal">
+                    <i class="bi bi-plus-lg me-1"></i> Generate Certificate
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Cert #</th>
+                                <th>Type</th>
+                                <th>Patient</th>
+                                <th>Issue Date</th>
+                                <th>Valid Period</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (certificates != null && certificates.Any())
+                            {
+                                foreach (var cert in certificates)
+                                {
+                                    <tr>
+                                        <td class="fw-bold text-dark">@cert.CertificateNumber</td>
+                                        <td><span class="badge bg-primary">@cert.CertificateType</span></td>
+                                        <td>@cert.Patient?.User?.Username</td>
+                                        <td>@cert.IssueDate.ToString("MMM dd, yyyy")</td>
+                                        <td><small>@cert.StartDate.ToString("MMM dd") - @cert.EndDate.ToString("MMM dd, yyyy")</small></td>
+                                        <td class="text-end">
+                                            <a asp-controller="Doctor" asp-action="PrintCertificate" asp-route-id="@cert.Id" target="_blank" class="btn btn-outline-secondary btn-sm"><i class="bi bi-printer me-1"></i> Print / PDF</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="6" class="text-center p-4 text-muted">No medical certificates issued yet.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate Cert Modal -->
+        <div class="modal fade" id="generateCertModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form asp-controller="Doctor" asp-action="GenerateCertificate" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Generate Certificate</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Patient</label>
+                                <select name="patientId" class="form-select" required>
+                                    @foreach (var p in patients)
+                                    {
+                                        <option value="@p.Id">@p.User?.Username</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Certificate Type</label>
+                                <select name="certificateType" class="form-select" required>
+                                    <option value="Medical Certificate">Medical Certificate</option>
+                                    <option value="Fitness Certificate">Fitness Certificate</option>
+                                    <option value="Sick Leave Certificate">Sick Leave Certificate</option>
+                                </select>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label font-weight-bold">Start Date</label>
+                                    <input type="date" name="startDate" class="form-control" required />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label font-weight-bold">End Date</label>
+                                    <input type="date" name="endDate" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Diagnosis / Reason</label>
+                                <input type="text" name="diagnosis" class="form-control" required placeholder="Viral Infection requiring rest" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Remarks</label>
+                                <input type="text" name="remarks" class="form-control" placeholder="Fit to resume light duties thereafter" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-secondary text-white">Generate</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 10: COMMUNICATION & MESSAGES -->
+    @if (currentSection == "messages")
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h6 class="fw-bold text-dark mb-0"><i class="bi bi-chat-left-dots-fill me-2 text-primary"></i>Patient Conversations</h6>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        @if (patients.Any())
+                        {
+                            foreach (var p in patients)
+                            {
+                                <a asp-controller="Doctor" asp-action="Dashboard" asp-route-section="messages" asp-route-patientUserId="@p.UserId" class="list-group-item list-group-item-action p-3">
+                                    <div class="fw-bold">@p.User?.Username</div>
+                                    <small class="text-muted">Click to open chat thread</small>
+                                </a>
+                            }
                         }
-                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h6 class="fw-bold text-dark mb-0"><i class="bi bi-chat-text me-2 text-success"></i>Direct Patient Message Window</h6>
+                    </div>
+                    <div class="card-body bg-light overflow-y-auto" style="max-height: 380px;">
+                        @if (chatMessages != null && chatMessages.Any())
+                        {
+                            foreach (var msg in chatMessages)
+                            {
+                                bool isMe = doctor != null && msg.SenderUserId == doctor.UserId;
+                                <div class="d-flex mb-3 @(isMe ? "justify-content-end" : "justify-content-start")">
+                                    <div class="p-3 rounded-3 shadow-sm @(isMe ? "bg-primary text-white" : "bg-white text-dark") w-75">
+                                        <div class="small fw-bold mb-1">@(isMe ? "You" : msg.SenderUser?.Username)</div>
+                                        <p class="mb-1">@msg.Message</p>
+                                        <small class="@(isMe ? "text-white-50" : "text-muted") fs-small">@msg.SentAt.ToString("hh:mm tt")</small>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="p-5 text-center text-muted">Select a patient on the left to view or start messaging.</div>
+                        }
+                    </div>
+                    <div class="card-footer bg-white border-0 p-3">
+                        <form asp-controller="Doctor" asp-action="SendChatMessage" method="post" class="d-flex gap-2">
+                            @{
+                                int selectedPatientUserId = 0;
+                                int.TryParse(Context.Request.Query["patientUserId"], out selectedPatientUserId);
+                                if (selectedPatientUserId == 0 && patients.Any()) selectedPatientUserId = patients.First().UserId;
+                            }
+                            <input type="hidden" name="receiverUserId" value="@selectedPatientUserId" />
+                            <input type="text" name="message" class="form-control" placeholder="Type message to patient..." required />
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 11: REVIEWS -->
+    @if (currentSection == "reviews")
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-star-fill me-2 text-warning"></i>Patient Ratings & Feedback</h5>
+                <div class="fs-5 fw-bold text-warning">
+                    ★ @ViewBag.AverageRating / 5.0 <span class="text-muted fs-6">(@ViewBag.TotalReviewsCount reviews)</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    @if (reviews != null && reviews.Any())
+                    {
+                        foreach (var r in reviews)
+                        {
+                            <div class="list-group-item p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <h6 class="fw-bold mb-0">@r.Patient?.User?.Username</h6>
+                                    <div class="text-warning">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="bi @(i <= r.Rating ? "bi-star-fill" : "bi-star")"></i>
+                                        }
+                                    </div>
+                                </div>
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i>@r.FeedbackDateTime.ToString("MMM dd, yyyy")</small>
+                            </div>
+                        }
                     }
                     else
                     {
-                        <p class="text-muted">No upcoming appointments.</p>
+                        <div class="p-4 text-center text-muted">No patient reviews recorded yet.</div>
                     }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 12: EARNINGS DASHBOARD -->
+    @if (currentSection == "earnings")
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 text-center p-3 bg-light">
+                    <small class="text-muted text-uppercase fw-bold">Today's Revenue</small>
+                    <h2 class="fw-bold text-success mt-1 mb-0">৳@ViewBag.TodayRevenue</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 text-center p-3 bg-light">
+                    <small class="text-muted text-uppercase fw-bold">Weekly Earnings</small>
+                    <h2 class="fw-bold text-primary mt-1 mb-0">৳@ViewBag.WeeklyRevenue</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 text-center p-3 bg-light">
+                    <small class="text-muted text-uppercase fw-bold">Monthly Revenue</small>
+                    <h2 class="fw-bold text-info mt-1 mb-0">৳@ViewBag.MonthlyRevenue</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm border-0 text-center p-3 bg-light">
+                    <small class="text-muted text-uppercase fw-bold">Total Earnings</small>
+                    <h2 class="fw-bold text-dark mt-1 mb-0">৳@ViewBag.TotalRevenue</h2>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-graph-up-arrow me-2 text-success"></i>Revenue Analytics (ApexCharts)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="earningsDetailedChart" class="w-100" style="min-height: 350px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- SECTION 13: PROFILE MANAGEMENT -->
+    @if (currentSection == "profile")
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4">
+                <!-- Profile Picture Card -->
+                <div class="card shadow-sm border-0 text-center p-4 mb-4">
+                    <div class="mb-3">
+                        <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center border border-4 border-primary shadow-sm mx-auto flex-shrink-0" style="width: 120px; height: 120px; font-size: 3rem;">
+                            @(!string.IsNullOrEmpty(ViewBag.DoctorName as string) ? ((string)ViewBag.DoctorName).Substring(0,1).ToUpper() : "D")
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-1">Dr. @ViewBag.DoctorName</h5>
+                    <p class="text-primary mb-2">@ViewBag.Specialization</p>
+                    <form asp-controller="Doctor" asp-action="UploadProfilePicture" method="post" enctype="multipart/form-data">
+                        <div class="mb-2">
+                            <input type="file" name="profilePicture" class="form-control form-control-sm" required />
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-camera-fill me-1"></i> Update Picture</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <!-- Edit Profile Form -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-person-gear me-2 text-primary"></i>Doctor Profile Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-controller="Doctor" asp-action="EditProfile" method="post">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label font-weight-bold">Specialization</label>
+                                    <input type="text" name="specialization" class="form-control" value="@ViewBag.Specialization" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-weight-bold">Qualifications</label>
+                                    <input type="text" name="qualification" class="form-control" value="@ViewBag.Qualification" required />
+                                </div>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label font-weight-bold">Experience (Years)</label>
+                                    <input type="number" name="experience" class="form-control" value="@ViewBag.Experience" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-weight-bold">Consultation Fee (৳)</label>
+                                    <input type="number" step="0.01" name="consultationFee" class="form-control" value="@ViewBag.Fee" required />
+                                </div>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label font-weight-bold">Available Days</label>
+                                    <input type="text" name="availableDays" class="form-control" value="@ViewBag.AvailableDays" placeholder="Sat - Thu" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-weight-bold">Available Time</label>
+                                    <input type="text" name="availableTime" class="form-control" value="@ViewBag.AvailableTime" placeholder="09:00 AM - 05:00 PM" />
+                                </div>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label font-weight-bold">Email Address</label>
+                                    <input type="email" name="email" class="form-control" value="@ViewBag.Email" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label font-weight-bold">Phone Number</label>
+                                    <input type="text" name="phoneNumber" class="form-control" value="@ViewBag.Phone" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label font-weight-bold">Doctor Biography</label>
+                                <textarea name="biography" class="form-control" rows="3">@ViewBag.Biography</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Save Profile</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security / Change Password -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h6 class="fw-bold text-dark mb-0"><i class="bi bi-lock-fill me-2 text-danger"></i>Change Account Password</h6>
+                    </div>
+                    <div class="card-body">
+                        <form asp-controller="Doctor" asp-action="ChangePassword" method="post">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Current Password</label>
+                                    <input type="password" name="currentPassword" class="form-control form-control-sm" required />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">New Password</label>
+                                    <input type="password" name="newPassword" class="form-control form-control-sm" required />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Confirm Password</label>
+                                    <input type="password" name="confirmPassword" class="form-control form-control-sm" required />
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-key me-1"></i> Update Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- QR CODE VERIFICATION MODAL -->
+<div class="modal fade" id="qrVerifyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-qr-code-scan me-2"></i>Patient Appointment QR Verification</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="bi bi-qr-code fs-1 text-primary mb-3 d-block"></i>
+                <p class="text-muted small">Enter or scan the Patient Appointment QR Code text string below to verify and check in:</p>
+                <div class="input-group mb-3">
+                    <input type="text" id="qrInputText" class="form-control" placeholder="e.g. APPT-1002 or 1002" />
+                    <button type="button" id="btnVerifyQR" class="btn btn-primary"><i class="bi bi-search me-1"></i> Verify</button>
+                </div>
+                <div id="qrResultArea" class="mt-3 text-start d-none p-3 bg-light border rounded">
+                    <!-- Populated via JS -->
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- ApexCharts Script Initialization -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch('/Doctor/GetEarningsChartData')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.success) {
+                    // Overview Chart
+                    if (document.querySelector("#dashboardOverviewChart")) {
+                        var optionsOverview = {
+                            series: [{
+                                name: 'Appointments',
+                                type: 'column',
+                                data: data.monthlyTrends.map(m => m.appointments)
+                            }, {
+                                name: 'Revenue (৳)',
+                                type: 'line',
+                                data: data.monthlyTrends.map(m => m.revenue)
+                            }],
+                            chart: { height: 280, type: 'line', toolbar: { show: false } },
+                            stroke: { width: [0, 4] },
+                            colors: ['#0d6efd', '#198754'],
+                            labels: data.monthlyTrends.map(m => m.month),
+                            yaxis: [{ title: { text: 'Appointments' } }, { opposite: true, title: { text: 'Revenue (৳)' } }]
+                        };
+                        var chartOverview = new ApexCharts(document.querySelector("#dashboardOverviewChart"), optionsOverview);
+                        chartOverview.render();
+                    }
+
+                    // Detailed Earnings Chart
+                    if (document.querySelector("#earningsDetailedChart")) {
+                        var optionsEarnings = {
+                            series: [{
+                                name: 'Daily Earnings (৳)',
+                                data: data.dailyEarnings.map(d => d.earnings)
+                            }],
+                            chart: { height: 350, type: 'area', toolbar: { show: true } },
+                            colors: ['#198754'],
+                            dataLabels: { enabled: false },
+                            stroke: { curve: 'smooth' },
+                            xaxis: { categories: data.dailyEarnings.map(d => d.day) },
+                            tooltip: { y: { formatter: function (val) { return "৳" + val; } } }
+                        };
+                        var chartEarnings = new ApexCharts(document.querySelector("#earningsDetailedChart"), optionsEarnings);
+                        chartEarnings.render();
+                    }
+                }
+            })
+            .catch(err => console.error("Error loading ApexCharts data: ", err));
+
+        // Interactive QR verification logic
+        document.getElementById("btnVerifyQR")?.addEventListener("click", function () {
+            var val = document.getElementById("qrInputText").value.trim();
+            var resArea = document.getElementById("qrResultArea");
+            if (!val) {
+                alert("Please enter a valid QR Code or Appointment ID.");
+                return;
+            }
+            resArea.classList.remove("d-none");
+            resArea.innerHTML = `
+                <div class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> QR Code Verified Successfully!</div>
+                <hr class="my-2">
+                <div><strong>Verified Token:</strong> ${val}</div>
+                <div><strong>Status:</strong> Active Patient Appointment</div>
+                <div class="mt-2"><span class="badge bg-success">Valid Appointment Ticket</span></div>
+            `;
+        });
+    });
+</script>

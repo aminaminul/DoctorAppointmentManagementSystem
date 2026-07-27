@@ -1,4 +1,4 @@
-﻿@* Razor View: Admin/Invoices *@
+@* Razor View: Admin/Invoices *@
 <!-- HTML View: Admin/Invoices -->
 @model IEnumerable<DoctorAppointmentManagementSystem.Models.Invoice>
 
@@ -33,7 +33,7 @@
             <tr>
                 <td>@item.IssueDate.ToShortDateString()</td>
                 <td>@item.Patient?.User?.Username</td>
-                <td>à§³@item.TotalAmount.ToString("N2")</td>
+                <td>৳@item.TotalAmount.ToString("N2")</td>
                 <td>@item.Particulars</td>
                 <td>
                     <span class="badge @(item.Status == "Paid" ? "bg-success" : (item.Status == "Unpaid" ? "bg-danger" : "bg-secondary"))">

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,6 +28,10 @@ namespace DoctorAppointmentManagementSystem.Models
         public string? AvailableDays { get; set; }
         
         public string? AvailableTime { get; set; }
+        
+        public string? Biography { get; set; }
+        
+        public string? ProfilePicturePath { get; set; }
         
         public bool ActiveStatus { get; set; } = true;
 

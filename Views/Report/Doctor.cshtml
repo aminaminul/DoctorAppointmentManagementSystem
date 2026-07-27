@@ -1,4 +1,4 @@
-﻿@* Razor View: Report/Doctor *@
+@* Razor View: Report/Doctor *@
 <!-- HTML View: Report/Doctor -->
 @model IEnumerable<DoctorAppointmentManagementSystem.Models.Doctor>
 
@@ -29,7 +29,7 @@
                 <td>@item.Specialization</td>
                 <td>@(string.IsNullOrEmpty(item.Qualification) ? "N/A" : item.Qualification)</td>
                 <td>@item.Experience Years</td>
-                <td>à§³@item.ConsultationFee</td>
+                <td>৳@item.ConsultationFee</td>
                 <td>
                     <span class="badge @(item.ActiveStatus ? "bg-success" : "bg-danger")">
                         @(item.ActiveStatus ? "Active" : "Inactive")

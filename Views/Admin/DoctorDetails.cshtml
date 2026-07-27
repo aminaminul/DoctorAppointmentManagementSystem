@@ -1,4 +1,4 @@
-﻿@* Razor View: Admin/DoctorDetails *@
+@* Razor View: Admin/DoctorDetails *@
 <!-- HTML View: Admin/DoctorDetails -->
 @model DoctorAppointmentManagementSystem.Models.Doctor
 
@@ -6,8 +6,16 @@
     ViewData["Title"] = "Doctor Details";
 }
 
+@{
+    var doctorName = Model.User?.Username ?? "Doctor";
+    if (!doctorName.StartsWith("Dr.", StringComparison.OrdinalIgnoreCase))
+    {
+        doctorName = "Dr. " + doctorName;
+    }
+}
+
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Doctor Details - Dr. @Model.User?.Username</h2>
+    <h2>Doctor Details - @doctorName</h2>
     <a asp-action="Doctors" class="btn btn-secondary">Back to List</a>
 </div>
 
@@ -22,7 +30,7 @@
         <table class="table table-hover">
                     <tr>
                         <th style="width: 40%">Username / Name</th>
-                        <td>Dr. @Model.User?.Username</td>
+                        <td>@doctorName</td>
                     </tr>
                     <tr>
                         <th>Email Address</th>
@@ -46,7 +54,7 @@
                     </tr>
                     <tr>
                         <th>Consultation Fee</th>
-                        <td>à§³@Model.ConsultationFee</td>
+                        <td>৳@Model.ConsultationFee</td>
                     </tr>
                     <tr>
                         <th>Status</th>

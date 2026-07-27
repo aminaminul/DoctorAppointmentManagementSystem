@@ -122,6 +122,39 @@ namespace DoctorAppointmentManagementSystem.Migrations
                     b.ToTable("Branches");
                 });
 
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReceiverUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverUserId");
+
+                    b.HasIndex("SenderUserId");
+
+                    b.ToTable("ChatMessages");
+                });
+
             modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.Complaint", b =>
                 {
                     b.Property<int>("Id")
@@ -172,12 +205,18 @@ namespace DoctorAppointmentManagementSystem.Migrations
                     b.Property<string>("AvailableTime")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Biography")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("ConsultationFee")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Experience")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProfilePicturePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Qualification")
                         .HasColumnType("nvarchar(max)");
@@ -241,6 +280,45 @@ namespace DoctorAppointmentManagementSystem.Migrations
                     b.ToTable("DoctorSchedules");
                 });
 
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.FamilyMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BloodGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmergencyContact")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Relationship")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("FamilyMembers");
+                });
+
             modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.Feedback", b =>
                 {
                     b.Property<int>("Id")
@@ -248,6 +326,9 @@ namespace DoctorAppointmentManagementSystem.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
@@ -274,6 +355,44 @@ namespace DoctorAppointmentManagementSystem.Migrations
                     b.ToTable("Feedbacks");
                 });
 
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.FollowUp", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FollowUpDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OriginalAppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("OriginalAppointmentId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("FollowUps");
+                });
+
             modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.Holiday", b =>
                 {
                     b.Property<int>("Id")
@@ -292,6 +411,42 @@ namespace DoctorAppointmentManagementSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Holidays");
+                });
+
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.InsuranceInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CoverageDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PolicyNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProviderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("InsuranceInfos");
                 });
 
             modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.Invoice", b =>
@@ -422,6 +577,94 @@ namespace DoctorAppointmentManagementSystem.Migrations
                     b.ToTable("LeaveRequests");
                 });
 
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.MedicalCertificate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CertificateNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CertificateType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Diagnosis")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("MedicalCertificates");
+                });
+
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.MedicalDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DocumentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("MedicalDocuments");
+                });
+
             modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.MedicalRecord", b =>
                 {
                     b.Property<int>("Id")
@@ -430,8 +673,14 @@ namespace DoctorAppointmentManagementSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Allergies")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("AppointmentId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ChronicDiseases")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Diagnosis")
                         .IsRequired()
@@ -439,6 +688,9 @@ namespace DoctorAppointmentManagementSystem.Migrations
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
+
+                    b.Property<string>("FollowUpNotes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
@@ -449,10 +701,19 @@ namespace DoctorAppointmentManagementSystem.Migrations
                     b.Property<DateTime>("RecordDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Symptoms")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TestReports")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TreatmentDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TreatmentPlan")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VitalSigns")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -557,6 +818,9 @@ namespace DoctorAppointmentManagementSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BloodGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChronicDiseases")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -863,6 +1127,25 @@ namespace DoctorAppointmentManagementSystem.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.ChatMessage", b =>
+                {
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.User", "ReceiverUser")
+                        .WithMany()
+                        .HasForeignKey("ReceiverUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.User", "SenderUser")
+                        .WithMany()
+                        .HasForeignKey("SenderUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ReceiverUser");
+
+                    b.Navigation("SenderUser");
+                });
+
             modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.Complaint", b =>
                 {
                     b.HasOne("DoctorAppointmentManagementSystem.Models.User", "User")
@@ -896,6 +1179,17 @@ namespace DoctorAppointmentManagementSystem.Migrations
                     b.Navigation("Doctor");
                 });
 
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.FamilyMember", b =>
+                {
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.Feedback", b =>
                 {
                     b.HasOne("DoctorAppointmentManagementSystem.Models.Doctor", "Doctor")
@@ -911,6 +1205,43 @@ namespace DoctorAppointmentManagementSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.FollowUp", b =>
+                {
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.Appointment", "OriginalAppointment")
+                        .WithMany()
+                        .HasForeignKey("OriginalAppointmentId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("OriginalAppointment");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.InsuranceInfo", b =>
+                {
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Patient");
                 });
@@ -961,6 +1292,44 @@ namespace DoctorAppointmentManagementSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.MedicalCertificate", b =>
+                {
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.MedicalDocument", b =>
+                {
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DoctorAppointmentManagementSystem.Models.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("DoctorAppointmentManagementSystem.Models.MedicalRecord", b =>

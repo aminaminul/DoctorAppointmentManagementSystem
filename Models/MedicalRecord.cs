@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace DoctorAppointmentManagementSystem.Models
@@ -11,10 +11,22 @@ namespace DoctorAppointmentManagementSystem.Models
         
         [Required]
         public string Diagnosis { get; set; }
+
+        public string? Symptoms { get; set; }
+
+        public string? TreatmentPlan { get; set; }
         
         public string? TreatmentDetails { get; set; }
         
         public string? TestReports { get; set; }
+
+        public string? VitalSigns { get; set; }
+
+        public string? FollowUpNotes { get; set; }
+
+        public string? Allergies { get; set; }
+
+        public string? ChronicDiseases { get; set; }
         
         public string? Notes { get; set; }
         

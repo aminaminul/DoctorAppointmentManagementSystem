@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace DoctorAppointmentManagementSystem.Models
@@ -14,7 +14,9 @@ namespace DoctorAppointmentManagementSystem.Models
         public DateTime FeedbackDateTime { get; set; } = DateTime.Now;
         
         [Required]
-        public string Status { get; set; } // Active, Blocked, etc.
+        public string Status { get; set; } = "Active"; // Active, Blocked, etc.
+
+        public string? Comment { get; set; }
 
         public Patient Patient { get; set; }
         public Doctor Doctor { get; set; }

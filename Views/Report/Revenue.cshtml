@@ -1,4 +1,4 @@
-﻿@* Razor View: Report/Revenue *@
+@* Razor View: Report/Revenue *@
 <!-- HTML View: Report/Revenue -->
 @model IEnumerable<DoctorAppointmentManagementSystem.Models.Payment>
 
@@ -11,10 +11,10 @@
 </div>
 
 <div class="alert alert-info">
-    <strong>Total Revenue: à§³@ViewBag.TotalRevenue.ToString("N2")</strong>
+    <strong>Total Revenue: ৳@ViewBag.TotalRevenue.ToString("N2")</strong>
 </div>
 <!-- Data Table Block -->
-        <table class="table table-striped table-hover">
+<table class="table table-striped table-hover">
     <thead class="table-dark">
         <tr>
             <th>Date</th>
@@ -30,7 +30,7 @@
             <tr>
                 <td>@item.PaymentDateTime.ToShortDateString()</td>
                 <td>@item.Patient?.User?.Username</td>
-                <td>à§³@item.Amount.ToString("N2")</td>
+                <td>৳@item.Amount.ToString("N2")</td>
                 <td>@item.PaymentMethod</td>
                 <td>
                     <span class="badge @(item.PaymentStatus == "Paid" ? "bg-success" : (item.PaymentStatus == "Pending" ? "bg-warning text-dark" : "bg-danger"))">
@@ -41,4 +41,3 @@
         }
     </tbody>
 </table>
-

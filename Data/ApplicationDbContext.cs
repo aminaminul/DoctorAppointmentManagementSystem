@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using DoctorAppointmentManagementSystem.Models;
 
 namespace DoctorAppointmentManagementSystem.Data
@@ -34,6 +34,12 @@ namespace DoctorAppointmentManagementSystem.Data
         public DbSet<SystemSetting> SystemSettings { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<Branch> Branches { get; set; }
+        public DbSet<MedicalDocument> MedicalDocuments { get; set; }
+        public DbSet<FollowUp> FollowUps { get; set; }
+        public DbSet<MedicalCertificate> MedicalCertificates { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<FamilyMember> FamilyMembers { get; set; }
+        public DbSet<InsuranceInfo> InsuranceInfos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -194,6 +200,60 @@ namespace DoctorAppointmentManagementSystem.Data
                 .HasOne(c => c.User)
                 .WithMany()
                 .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<MedicalDocument>()
+                .HasOne(md => md.Patient)
+                .WithMany()
+                .HasForeignKey(md => md.PatientId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<MedicalDocument>()
+                .HasOne(md => md.Doctor)
+                .WithMany()
+                .HasForeignKey(md => md.DoctorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<FollowUp>()
+                .HasOne(f => f.Doctor)
+                .WithMany()
+                .HasForeignKey(f => f.DoctorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<FollowUp>()
+                .HasOne(f => f.Patient)
+                .WithMany()
+                .HasForeignKey(f => f.PatientId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<FollowUp>()
+                .HasOne(f => f.OriginalAppointment)
+                .WithMany()
+                .HasForeignKey(f => f.OriginalAppointmentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<MedicalCertificate>()
+                .HasOne(mc => mc.Doctor)
+                .WithMany()
+                .HasForeignKey(mc => mc.DoctorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<MedicalCertificate>()
+                .HasOne(mc => mc.Patient)
+                .WithMany()
+                .HasForeignKey(mc => mc.PatientId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ChatMessage>()
+                .HasOne(cm => cm.SenderUser)
+                .WithMany()
+                .HasForeignKey(cm => cm.SenderUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ChatMessage>()
+                .HasOne(cm => cm.ReceiverUser)
+                .WithMany()
+                .HasForeignKey(cm => cm.ReceiverUserId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

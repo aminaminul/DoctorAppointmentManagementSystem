@@ -1,4 +1,4 @@
-﻿@* Razor View: Appointment/Book *@
+@* Razor View: Appointment/Book *@
 <!-- HTML View: Appointment/Book -->
 @{
     Layout = "_Layout";
@@ -367,7 +367,7 @@
         document.getElementById('docName').textContent = opt.text;
         document.getElementById('docSpec').textContent = opt.dataset.spec;
         document.getElementById('docExp').textContent  = opt.dataset.exp + ' yrs';
-        document.getElementById('docFee').textContent  = 'à§³ ' + opt.dataset.fee;
+        document.getElementById('docFee').textContent  = '৳ ' + opt.dataset.fee;
         document.getElementById('docDays').textContent = opt.dataset.days || 'Varies';
 
         const avatarWrap = document.getElementById('doctorAvatarWrap');

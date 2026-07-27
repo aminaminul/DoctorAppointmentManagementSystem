@@ -1,4 +1,4 @@
-﻿@* Razor View: Admin/Doctors *@
+@* Razor View: Admin/Doctors *@
 <!-- HTML View: Admin/Doctors -->
 @model IEnumerable<DoctorAppointmentManagementSystem.Models.Doctor>
 
@@ -32,13 +32,18 @@
     <tbody>
         @foreach (var item in Model)
         {
+            var doctorDisplayName = item.User?.Username ?? "Doctor";
+            if (!doctorDisplayName.StartsWith("Dr.", StringComparison.OrdinalIgnoreCase))
+            {
+                doctorDisplayName = "Dr. " + doctorDisplayName;
+            }
             <tr>
-                <td>Dr. @item.User?.Username</td>
+                <td>@doctorDisplayName</td>
                 <td>@item.User?.Email</td>
                 <td>@item.Specialization</td>
                 <td>@(string.IsNullOrEmpty(item.Qualification) ? "N/A" : item.Qualification)</td>
                 <td>@item.Experience Years</td>
-                <td>@item.ConsultationFee</td>
+                <td>৳@item.ConsultationFee</td>
                 <td>
                     @if (item.ActiveStatus)
                     {
@@ -52,7 +57,7 @@
                 <td>
                     <a asp-action="DoctorDetails" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Details</a>
                     <a asp-action="EditDoctor" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="DeleteDoctor" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete Dr. @item.User?.Username?')" >Delete</a>
+                    <a asp-action="DeleteDoctor" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete @doctorDisplayName?')" >Delete</a>
                 </td>
             </tr>
         }

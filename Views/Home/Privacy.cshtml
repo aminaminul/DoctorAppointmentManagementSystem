@@ -1,73 +1,44 @@
-﻿@* Razor View: Home/Privacy *@
+@* Razor View: Home/Privacy *@
 <!-- HTML View: Home/Privacy -->
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Privacy Policy";
+    ViewData["HideSidebar"] = true;
+    ViewData["NavbarTheme"] = "white";
 }
 
-@{ ViewData["HideSidebar"] = true; ViewData["NavbarTheme"] = "white"; }
-
 <div class="container py-5">
-    <div class="card rounded-4 shadow-sm">
+    <div class="card rounded-4 shadow-sm border-0">
         <div class="card-body p-4">
             <div class="d-flex align-items-start gap-3 mb-3">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width:56px;height:56px;background:#4DA8DA;color:#fff;">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center text-white" style="width:56px;height:56px;background-color:#0b1727;">
                     <i class="bi bi-shield-lock-fill fs-4"></i>
                 </div>
                 <div>
                     <h1 class="h3 fw-bold mb-1 text-dark">Privacy Policy</h1>
-                    <p class="mb-0 text-muted">Your privacy matters. This page explains what information we collect and how we use it.</p>
+                    <p class="mb-0 text-muted">Your privacy matters. This policy outlines how DAMS collects, secures, and manages medical information.</p>
                 </div>
             </div>
 
-            <hr />
+            <hr class="my-4" />
 
-            <div>
-                @if (!string.IsNullOrEmpty(ViewBag.PrivacyContent))
+            <div class="policy-content-area">
+                @if (!string.IsNullOrEmpty(ViewBag.PrivacyContent as string))
                 {
-                    <div class="policy-content text-dark">
+                    <div class="policy-body">
                         @Html.Raw(ViewBag.PrivacyContent)
                     </div>
                 }
                 else
                 {
-                    <section class="mb-4">
-                        <h2 class="h5 fw-semibold text-dark">1. Information We Collect</h2>
-                        <p class="text-dark">We collect information you provide directly when you create an account, book appointments, or communicate with our support. This includes name, email, phone number, and profile details. We also collect appointment details and medical data you choose to share.</p>
-                    </section>
-
-                    <section class="mb-4">
-                        <h2 class="h5 fw-semibold text-dark">2. How We Use Information</h2>
-                        <p class="text-dark">Collected data is used to provide, maintain, and improve our services, to process bookings, send notifications, and for support. We never sell your personal information to third parties.</p>
-                    </section>
-
-                    <section class="mb-4">
-                        <h2 class="h5 fw-semibold text-dark">3. Data Security</h2>
-                        <p class="text-dark">We take reasonable measures to protect your data. Access to personal information is restricted to authorized personnel only. However, no system is completely secure; please contact us if you suspect any issue.</p>
-                    </section>
-
-                    <section class="mb-4">
-                        <h2 class="h5 fw-semibold text-dark">4. Cookies & Tracking</h2>
-                        <p class="text-dark">We use cookies to improve site experience and analytics. You can control cookie preferences via your browser settings.</p>
-                    </section>
-
-                    <section class="mb-4">
-                        <h2 class="h5 fw-semibold text-dark">5. Third-Party Links</h2>
-                        <p class="text-dark">Our site may include links to third-party services. We are not responsible for the privacy practices of external sites. Please review their privacy policies before sharing information.</p>
-                    </section>
-
-                    <section class="mb-0">
-                        <h2 class="h5 fw-semibold text-dark">Contact Us</h2>
-                        <p class="text-dark mb-2">If you have questions about this privacy policy, contact our support:</p>
-                        <p class="mb-0"><strong class="text-dark">Email:</strong> <a href="mailto:support@example.com" class="text-decoration-none" style="color:#4DA8DA;">support@example.com</a></p>
-                    </section>
+                    <div class="alert alert-warning">No Privacy Policy details have been published yet.</div>
                 }
             </div>
-            <div class="mt-4 text-end no-print">
-                <a class="btn btn-outline-secondary me-2" href="/Home/PrintPrivacy" target="_blank">Open Print View</a>
-                <a class="btn btn-primary" href="/Home/PrintPrivacy?autoprint=1" target="_blank">Print / Save as PDF</a>
+
+            <div class="mt-4 text-end">
+                <a class="btn btn-outline-secondary me-2" asp-controller="Home" asp-action="PrintPrivacy" target="_blank"><i class="bi bi-box-arrow-up-right me-1"></i> Open Print View</a>
+                <a class="btn btn-primary" asp-controller="Home" asp-action="PrintPrivacy" asp-route-autoprint="1" target="_blank"><i class="bi bi-printer me-1"></i> Print / Save as PDF</a>
             </div>
         </div>
     </div>
 </div>
-

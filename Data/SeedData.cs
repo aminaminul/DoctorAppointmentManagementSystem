@@ -1,4 +1,4 @@
-﻿using DoctorAppointmentManagementSystem.Models;
+using DoctorAppointmentManagementSystem.Models;
 
 namespace DoctorAppointmentManagementSystem.Data
 {
@@ -315,13 +315,34 @@ namespace DoctorAppointmentManagementSystem.Data
         {
             if (context.PrivacyPolicies.Any()) return;
 
-            context.PrivacyPolicies.AddRange(
-                new PrivacyPolicy { Content = "DAMS is committed to protecting your personal information. We collect your name, address, phone number, and health-related data solely for providing medical services and maintaining your health records securely.",                                                                  UpdatedAt = new DateTime(2025, 1, 1) },
-                new PrivacyPolicy { Content = "Your personal and health information will not be sold or transferred to any third party. Only the concerned doctor and authorized DAMS staff members are permitted to view your data.",                                                                                              UpdatedAt = new DateTime(2025, 3, 15) },
-                new PrivacyPolicy { Content = "We use industry-standard encryption and SSL/TLS security protocols to safeguard all your data and transactions made through DAMS.",                                                                                                                                                 UpdatedAt = new DateTime(2025, 5, 1) },
-                new PrivacyPolicy { Content = "You have the right to request access, correction, or deletion of your personal data at any time. Contact our support team at support@dams.com.bd to exercise these rights.",                                                                                                        UpdatedAt = new DateTime(2025, 6, 1) },
-                new PrivacyPolicy { Content = "Always use a strong, unique password to keep your DAMS account secure. Do not share your login credentials with anyone. If you notice suspicious activity, contact us immediately at support@dams.com.bd",                                                                          UpdatedAt = new DateTime(2025, 7, 1) }
-            );
+            string fullPolicyHtml = @"
+                <section class='mb-4'>
+                    <h4 class='fw-bold text-dark'>1. Information We Collect</h4>
+                    <p class='text-secondary'>DAMS is committed to protecting your personal information. We collect your name, address, email, phone number, and health-related data solely for providing medical services and maintaining your health records securely.</p>
+                </section>
+                <section class='mb-4'>
+                    <h4 class='fw-bold text-dark'>2. How We Use Information</h4>
+                    <p class='text-secondary'>Collected data is used to process appointment bookings, send SMS/Email notifications, manage prescriptions, and maintain medical history. Your personal and health information will not be sold or transferred to any third party.</p>
+                </section>
+                <section class='mb-4'>
+                    <h4 class='fw-bold text-dark'>3. Data Security & Encryption</h4>
+                    <p class='text-secondary'>We use industry-standard encryption protocols (SSL/TLS) and SQL data protection measures to safeguard all your personal data, medical records, and payment transactions through DAMS.</p>
+                </section>
+                <section class='mb-4'>
+                    <h4 class='fw-bold text-dark'>4. Patient Rights & Data Access</h4>
+                    <p class='text-secondary'>You have the right to request access, correction, or deletion of your personal data at any time. Contact our support team at support@dams.com.bd to exercise these rights.</p>
+                </section>
+                <section class='mb-4'>
+                    <h4 class='fw-bold text-dark'>5. Contact Us</h4>
+                    <p class='text-secondary mb-1'>If you have questions about this privacy policy, contact our medical support center:</p>
+                    <p class='mb-0'><strong class='text-dark'>Email:</strong> support@dams.com.bd | <strong class='text-dark'>Hotline:</strong> +880 1700-000000</p>
+                </section>";
+
+            context.PrivacyPolicies.Add(new PrivacyPolicy
+            {
+                Content = fullPolicyHtml,
+                UpdatedAt = DateTime.Now
+            });
             context.SaveChanges();
         }
     }

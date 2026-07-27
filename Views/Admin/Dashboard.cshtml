@@ -1,9 +1,8 @@
-﻿@* Razor View: Admin/Dashboard *@
+@* Razor View: Admin/Dashboard *@
 <!-- HTML View: Admin/Dashboard -->
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Admin Dashboard";
-    ViewData["HideSidebar"] = true; // Complete layout control to match reference image
 
     var greeting = "Welcome back";
     var hour = DateTime.Now.Hour;
@@ -13,245 +12,241 @@
 
     var recentAppointments = ViewBag.RecentAppointments as List<DoctorAppointmentManagementSystem.Models.Appointment> ?? new List<DoctorAppointmentManagementSystem.Models.Appointment>();
     var recentSchedules = ViewBag.RecentSchedules as List<DoctorAppointmentManagementSystem.Models.DoctorSchedule> ?? new List<DoctorAppointmentManagementSystem.Models.DoctorSchedule>();
+    var adminName = ViewData["Username"] as string ?? "Admin";
 }
-<!-- JavaScript Block -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="row g-0 dams-admin-layout">
+<!-- JavaScript Block -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container-fluid p-0">
     
-    <!-- Sidebar Navigation Panel -->
-    <div class="col-12 col-md-3 col-lg-2 sidebar-wrapper">
-        @await Component.InvokeAsync("Sidebar")
+    <!-- Admin Hero Banner matching Doctor/Patient Dashboard Theme -->
+    <div class="card text-white shadow-sm mb-4 border-0 rounded-3 bg-dark border-start border-4 border-primary">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center border border-3 border-secondary shadow-sm flex-shrink-0" style="width: 65px; height: 65px; min-width: 65px; font-size: 1.75rem;">
+                    @(!string.IsNullOrEmpty(adminName) ? adminName.Substring(0,1).ToUpper() : "A")
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-1 text-white">@greeting, @adminName!</h3>
+                    <p class="mb-0 text-white-50"><span class="badge bg-primary me-2">Super Admin</span> DAMS Management System | Total Scheduled Appointments: <span class="badge bg-info text-dark">@ViewBag.TotalAppointmentsCount</span></p>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-info text-white btn-sm font-weight-bold">
+                    <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                </a>
+                <a asp-controller="Admin" asp-action="Doctors" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-person-badge me-1"></i> Doctors (@ViewBag.TotalDoctorsCount)
+                </a>
+                <a asp-controller="Admin" asp-action="Patients" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-people me-1"></i> Patients (@ViewBag.TotalPatientsCount)
+                </a>
+                <a asp-controller="Admin" asp-action="Complaints" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-bell me-1"></i> Complaints
+                </a>
+                <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i> Print
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div class="col-12 col-md-9 col-lg-10 dashboard-main-content">
+    <!-- Dashboard Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Report" asp-action="Appointment" class="card text-decoration-none h-100 shadow-sm border-0 border-start border-4 border-primary">
+                <div class="card-body d-flex flex-column justify-content-between p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-uppercase small fw-bold text-primary">Appointments</span>
+                        <i class="bi bi-calendar-check text-primary fs-4"></i>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 mt-3">
+                        <h2 class="fw-bold text-dark mb-0">@ViewBag.TotalAppointmentsCount</h2>
+                        <span class="badge bg-success-subtle text-success">+12%</span>
+                    </div>
+                    <span class="text-muted small">Scheduled appointments</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Admin" asp-action="Doctors" class="card text-decoration-none h-100 shadow-sm border-0 border-start border-4 border-info">
+                <div class="card-body d-flex flex-column justify-content-between p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-uppercase small fw-bold text-info">Active Doctors</span>
+                        <i class="bi bi-person-badge text-info fs-4"></i>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 mt-3">
+                        <h2 class="fw-bold text-dark mb-0">@ViewBag.TotalDoctorsCount</h2>
+                        <span class="badge bg-info-subtle text-info">Active</span>
+                    </div>
+                    <span class="text-muted small">Verified specialists</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Admin" asp-action="Patients" class="card text-decoration-none h-100 shadow-sm border-0 border-start border-4 border-success">
+                <div class="card-body d-flex flex-column justify-content-between p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-uppercase small fw-bold text-success">Patients</span>
+                        <i class="bi bi-people text-success fs-4"></i>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 mt-3">
+                        <h2 class="fw-bold text-dark mb-0">@ViewBag.TotalPatientsCount</h2>
+                        <span class="badge bg-success-subtle text-success">+24%</span>
+                    </div>
+                    <span class="text-muted small">Registered clinic profiles</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="#doctor-schedules" class="card text-decoration-none h-100 shadow-sm border-0 border-start border-4 border-warning">
+                <div class="card-body d-flex flex-column justify-content-between p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-uppercase small fw-bold text-warning">Active Schedules</span>
+                        <i class="bi bi-clock-history text-warning fs-4"></i>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 mt-3">
+                        <h2 class="fw-bold text-dark mb-0">@ViewBag.TotalSchedulesCount</h2>
+                        <span class="badge bg-warning-subtle text-warning">Available</span>
+                    </div>
+                    <span class="text-muted small">Active doctor time-slots</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Charts & Recent Appointments Section -->
+    <div class="row g-4 mb-4">
         
-        <!-- Header Greeting Bar -->
-        <div class="top-greeting-bar d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h4 class="fw-bold text-dark m-0">@greeting, Super Admin!</h4>
-                <p class="text-muted small m-0">There are <a asp-controller="Report" asp-action="Appointment" class="text-primary fw-semibold text-decoration-none">@ViewBag.TotalAppointmentsCount appointments</a> scheduled in DAMS database.</p>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn-top-action rounded-circle" title="View Complaints" onclick="location.href='@Url.Action("Complaints", "Admin")'">
-                    <i class="bi bi-bell-fill"></i>
-                </button>
-                <div class="dropdown">
-                    <div class="avatar-badge" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
-                        SA
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark m-0">Patients Overview</h5>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-outline-secondary active">Week</button>
+                            <button type="button" class="btn btn-outline-secondary">Month</button>
+                            <button type="button" class="btn btn-outline-secondary">Year</button>
+                        </div>
                     </div>
-                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="adminDropdown">
-                        <li><h6 class="dropdown-header">Super Admin</h6></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/Account/Logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold text-dark mb-0">Dashboard</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard" class="text-decoration-none">DAMS</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                    </ol>
-                </nav>
-            </div>
-            <div class="d-flex gap-2">
-                <select class="form-select-custom-pill">
-                    <option>Today</option>
-                    <option>Week</option>
-                    <option>Month</option>
-                </select>
-                <button class="btn-export-pill" onclick="window.print()">
-                    <i class="bi bi-download me-1"></i> Export Data
-                </button>
-            </div>
-        </div>
-
-        <!-- Dashboard Statistics Cards -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="stats-card card h-100" onclick="location.href='@Url.Action("Appointment", "Report")'" style="cursor: pointer;">
-                    <div class="card-body d-flex flex-column justify-content-between p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="stats-card-title text-primary">Appointments</span>
-                            <i class="bi bi-calendar-check text-primary"></i>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2 mt-3">
-                            <h2 class="stats-number">@ViewBag.TotalAppointmentsCount</h2>
-                            <span class="badge bg-success-subtle text-success stats-badge">+12%</span>
-                        </div>
-                        <span class="stats-subtext">Scheduled appointments</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="stats-card card h-100" onclick="location.href='@Url.Action("Doctors", "Admin")'" style="cursor: pointer;">
-                    <div class="card-body d-flex flex-column justify-content-between p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="stats-card-title text-info">Active Doctors</span>
-                            <i class="bi bi-person-badge text-info"></i>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2 mt-3">
-                            <h2 class="stats-number">@ViewBag.TotalDoctorsCount</h2>
-                            <span class="badge bg-info-subtle text-info stats-badge">Active</span>
-                        </div>
-                        <span class="stats-subtext">Verified specialists</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="stats-card card h-100" onclick="location.href='@Url.Action("Patients", "Admin")'" style="cursor: pointer;">
-                    <div class="card-body d-flex flex-column justify-content-between p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="stats-card-title text-teal">Patients</span>
-                            <i class="bi bi-people text-teal"></i>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2 mt-3">
-                            <h2 class="stats-number">@ViewBag.TotalPatientsCount</h2>
-                            <span class="badge bg-success-subtle text-success stats-badge">+24%</span>
-                        </div>
-                        <span class="stats-subtext">Registered clinic profiles</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="stats-card card h-100" onclick="document.getElementById('doctor-schedules').scrollIntoView({ behavior: 'smooth' })" style="cursor: pointer;">
-                    <div class="card-body d-flex flex-column justify-content-between p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="stats-card-title text-warning">Active Schedules</span>
-                            <i class="bi bi-clock-history text-warning"></i>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2 mt-3">
-                            <h2 class="stats-number">@ViewBag.TotalSchedulesCount</h2>
-                            <span class="badge bg-warning-subtle text-warning stats-badge">Available</span>
-                        </div>
-                        <span class="stats-subtext">Active doctor time-slots</span>
+                    <div class="chart-container">
+                        <canvas id="patientsOverviewChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Charts & Recent Appointments Section -->
-        <div class="row g-4 mb-4">
-            
-            <div class="col-lg-8">
-                <div class="dashboard-chart-card card h-100">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="fw-bold text-dark m-0">Patients Overview</h5>
-                            <div class="btn-group btn-group-sm filter-pill-group">
-                                <button type="button" class="btn active">Week</button>
-                                <button type="button" class="btn">Month</button>
-                                <button type="button" class="btn">Year</button>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="patientsOverviewChart" style="height: 250px;"></canvas>
-                        </div>
-                    </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark m-0">Recent Appointments</h5>
+                    <a asp-controller="Report" asp-action="Appointment" class="small text-primary text-decoration-none">See all</a>
                 </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="dashboard-list-card card h-100">
-                    <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold text-dark m-0">Recent Appointments</h5>
-                        <a asp-controller="Report" asp-action="Appointment" class="small-text-link">See all</a>
-                    </div>
-                    <div class="card-body px-4 pb-4 pt-2">
-                        <div class="appointments-vertical-list">
-                            @if (recentAppointments.Any())
+                <div class="card-body px-4 pb-4 pt-2">
+                    <div class="appointments-vertical-list">
+                        @if (recentAppointments.Any())
+                        {
+                            foreach (var appt in recentAppointments)
                             {
-                                foreach (var appt in recentAppointments)
+                                var docName = appt.Doctor?.User?.Username ?? "Doctor";
+                                if (!docName.StartsWith("Dr.", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    <div class="appointment-item d-flex justify-content-between align-items-center py-2.5 border-bottom" onclick="location.href='@Url.Action("PatientDetails", "Admin", new { id = appt.PatientId })'" style="cursor: pointer;">
-                                        <div class="d-flex align-items-center gap-2.5">
-                                            <div class="patient-avatar-mini">
-                                                @(appt.Patient?.User?.Username?.Substring(0,1).ToUpper() ?? "P")
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold text-dark small"><a asp-controller="Admin" asp-action="PatientDetails" asp-route-id="@appt.PatientId" class="text-decoration-none text-dark">@appt.Patient?.User?.Username</a></div>
-                                                <div class="text-muted text-xs"><a asp-controller="Admin" asp-action="DoctorDetails" asp-route-id="@appt.DoctorId" class="text-decoration-none text-muted">Dr. @appt.Doctor?.User?.Username (@appt.Doctor?.Specialization)</a></div>
-                                            </div>
+                                    docName = "Dr. " + docName;
+                                }
+                                <div class="appointment-item d-flex justify-content-between align-items-center py-2 border-bottom">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center p-2">
+                                            @(appt.Patient?.User?.Username?.Substring(0,1).ToUpper() ?? "P")
                                         </div>
-                                        <div class="text-end">
-                                            <div class="text-dark fw-semibold text-xs">@appt.AppointmentTime</div>
-                                            <span class="badge text-xxs @(appt.AppointmentStatus == "Completed" ? "bg-success-subtle text-success" : (appt.AppointmentStatus == "Pending" ? "bg-warning-subtle text-warning" : "bg-primary-subtle text-primary"))">@appt.AppointmentStatus</span>
+                                        <div>
+                                            <div class="fw-bold text-dark small">
+                                                <a asp-controller="Admin" asp-action="PatientDetails" asp-route-id="@appt.PatientId" class="text-decoration-none text-dark">@appt.Patient?.User?.Username</a>
+                                            </div>
+                                            <div class="text-muted small">
+                                                <a asp-controller="Admin" asp-action="DoctorDetails" asp-route-id="@appt.DoctorId" class="text-decoration-none text-muted">@docName (@appt.Doctor?.Specialization)</a>
+                                            </div>
                                         </div>
                                     </div>
-                                }
-                            }
-                            else
-                            {
-                                <div class="text-center py-5 text-muted">
-                                    <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
-                                    <span class="small">No appointments scheduled.</span>
+                                    <div class="text-end">
+                                        <div class="text-dark fw-semibold small">@appt.AppointmentTime</div>
+                                        <span class="badge small @(appt.AppointmentStatus == "Completed" ? "bg-success" : (appt.AppointmentStatus == "Pending" ? "bg-warning text-dark" : "bg-primary"))">@appt.AppointmentStatus</span>
+                                    </div>
                                 </div>
                             }
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5 text-muted">
+                                <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
+                                <span class="small">No appointments scheduled.</span>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="row g-4 mb-4" id="doctor-schedules">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                    <div class="card-header bg-white border-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold text-dark m-0"><i class="bi bi-clock-fill me-2 text-primary"></i>Doctor Schedules & Chamber Slots</h5>
-                        <div class="d-flex gap-2">
-                            <a asp-controller="Admin" asp-action="Doctors" class="btn btn-sm btn-outline-primary rounded-pill px-3">Manage Doctors</a>
-                        </div>
+    <div class="row g-4 mb-4" id="doctor-schedules">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark m-0"><i class="bi bi-clock-fill me-2 text-primary"></i>Doctor Schedules & Chamber Slots</h5>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="Admin" asp-action="Doctors" class="btn btn-sm btn-outline-primary rounded-pill px-3">Manage Doctors</a>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-<!-- Data Table Block -->
-        <table class="table table-hover align-middle mb-0">
-                                <thead>
-                                    <tr class="table-light text-secondary text-xs">
-                                        <th class="ps-4">Doctor Name</th>
-                                        <th>Specialty</th>
-                                        <th>Chamber Date</th>
-                                        <th>Time Slot</th>
-                                        <th>Fee</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (recentSchedules.Any())
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="table-light text-secondary small">
+                                    <th class="ps-4">Doctor Name</th>
+                                    <th>Specialty</th>
+                                    <th>Chamber Date</th>
+                                    <th>Time Slot</th>
+                                    <th>Consultation Fee</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (recentSchedules.Any())
+                                {
+                                    foreach (var schedule in recentSchedules)
                                     {
-                                        foreach (var schedule in recentSchedules)
+                                        var docName = schedule.Doctor?.User?.Username ?? "Doctor";
+                                        if (!docName.StartsWith("Dr.", StringComparison.OrdinalIgnoreCase))
                                         {
-                                            <tr onclick="location.href='@Url.Action("DoctorDetails", "Admin", new { id = schedule.DoctorId })'" style="cursor: pointer;">
-                                                <td class="ps-4">
-                                                    <div class="fw-bold text-dark small"><a asp-controller="Admin" asp-action="DoctorDetails" asp-route-id="@schedule.DoctorId" class="text-decoration-none text-dark">Dr. @schedule.Doctor?.User?.Username</a></div>
-                                                    <div class="text-muted text-xs">@schedule.Doctor?.Qualification</div>
-                                                </td>
-                                                <td><span class="badge bg-secondary-subtle text-secondary text-xs">@schedule.Doctor?.Specialization</span></td>
-                                                <td class="text-dark small">@schedule.AvailableDate.ToString("dd MMM yyyy")</td>
-                                                <td class="text-dark small">@schedule.StartTime â€“ @schedule.EndTime</td>
-                                                <td class="fw-bold text-dark small">@schedule.Doctor?.ConsultationFee BDT</td>
-                                                <td>
-                                                    <span class="badge rounded-pill text-xs @(schedule.IsVacation ? "bg-danger bg-opacity-10 text-danger" : "bg-success bg-opacity-10 text-success")">
-                                                        @(schedule.IsVacation ? "Vacation" : schedule.SlotStatus)
-                                                    </span>
-                                                </td>
-                                            </tr>
+                                            docName = "Dr. " + docName;
                                         }
-                                    }
-                                    else
-                                    {
                                         <tr>
-                                            <td colspan="6" class="text-center py-4 text-muted small">No active doctor schedules found in database.</td>
+                                            <td class="ps-4">
+                                                <div class="fw-bold text-dark small">
+                                                    <a asp-controller="Admin" asp-action="DoctorDetails" asp-route-id="@schedule.DoctorId" class="text-decoration-none text-dark">@docName</a>
+                                                </div>
+                                                <div class="text-muted small">@schedule.Doctor?.Qualification</div>
+                                            </td>
+                                            <td><span class="badge bg-secondary text-white small">@schedule.Doctor?.Specialization</span></td>
+                                            <td class="text-dark small">@schedule.AvailableDate.ToString("dd MMM yyyy")</td>
+                                            <td class="text-dark small">@schedule.StartTime – @schedule.EndTime</td>
+                                            <td class="fw-bold text-dark small">৳@schedule.Doctor?.ConsultationFee</td>
+                                            <td>
+                                                <span class="badge rounded-pill small @(schedule.IsVacation ? "bg-danger" : "bg-success")">
+                                                    @(schedule.IsVacation ? "Vacation" : schedule.SlotStatus)
+                                                </span>
+                                            </td>
                                         </tr>
                                     }
-                                </tbody>
-                            </table>
-                        </div>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted small">No active doctor schedules found in database.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -260,8 +255,7 @@
 </div>
 
 @section Scripts {
-<!-- JavaScript Block -->
-        <script>
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             var ctx = document.getElementById('patientsOverviewChart').getContext('2d');
             var chart = new Chart(ctx, {
@@ -270,15 +264,15 @@
                     labels: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
                     datasets: [
                         {
-                            label: 'Patient enters',
-                            backgroundColor: '#1a6b9a',
+                            label: 'Patient Visits',
+                            backgroundColor: '#0b1727',
                             data: [350, 592, 420, 310, 680, 560, 240],
                             borderRadius: 6,
                             barPercentage: 0.6,
                             categoryPercentage: 0.6
                         },
                         {
-                            label: 'Patient is out',
+                            label: 'Discharged / Completed',
                             backgroundColor: '#4DA8DA',
                             data: [290, 452, 380, 280, 590, 490, 190],
                             borderRadius: 6,
@@ -333,214 +327,3 @@
         });
     </script>
 }
-<!-- CSS Style Block -->
-        <style>
-    
-    body {
-        background-color: #f7fafc !important;
-    }
-    main.py-4 {
-        padding: 0 !important;
-    }
-    main .container-fluid {
-        padding: 0 !important;
-    }
-    footer.mt-5 {
-        margin-top: 0 !important;
-    }
-
-    .dams-admin-layout {
-        min-height: 100vh;
-        margin: 0;
-        align-items: stretch;
-    }
-
-    .sidebar-wrapper {
-        background-color: #0b1727;
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .dashboard-main-content {
-        padding: 2.5rem 3rem;
-        background-color: #f8fafc;
-    }
-
-    .top-greeting-bar {
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        padding-bottom: 1.5rem;
-    }
-    .btn-top-action {
-        width: 42px;
-        height: 42px;
-        background-color: #ffffff;
-        border: 1px solid rgba(0,0,0,0.08);
-        color: #5c6b73;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-    }
-    .btn-top-action:hover {
-        background-color: #f1f5f9;
-        color: #1a6b9a;
-    }
-    .avatar-badge {
-        width: 42px;
-        height: 42px;
-        background-color: #1a6b9a;
-        color: #ffffff;
-        font-weight: 700;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .form-select-custom-pill {
-        border: 1px solid rgba(0,0,0,0.08);
-        padding: 8px 18px;
-        border-radius: 20px;
-        background-color: #ffffff;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #5c6b73;
-        outline: none;
-        cursor: pointer;
-    }
-    .btn-export-pill {
-        background-color: #1a6b9a;
-        color: #ffffff;
-        border: none;
-        padding: 8px 20px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 10px rgba(26, 107, 154, 0.25);
-    }
-    .btn-export-pill:hover {
-        background-color: #165b82;
-        transform: translateY(-1px);
-    }
-
-    .stats-card {
-        border: none;
-        border-radius: 16px;
-        background-color: #ffffff;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.015);
-        border: 1px solid rgba(0,0,0,0.04);
-        transition: all 0.25s ease;
-    }
-    .stats-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 24px rgba(26, 107, 154, 0.05);
-    }
-    .stats-card-title {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #5c6b73;
-        letter-spacing: 0.3px;
-    }
-    .stats-card i {
-        font-size: 1.4rem;
-    }
-    .stats-number {
-        font-size: 2.1rem;
-        font-weight: 800;
-        color: #0b1727;
-        margin: 0;
-    }
-    .stats-badge {
-        font-size: 0.72rem;
-        font-weight: 700;
-        padding: 4px 8px;
-        border-radius: 12px;
-    }
-    .stats-subtext {
-        font-size: 0.78rem;
-        color: #95a5a6;
-        font-weight: 500;
-        margin-top: 6px;
-        display: block;
-    }
-
-    .text-teal {
-        color: #0d9488 !important;
-    }
-
-    .dashboard-chart-card, .dashboard-list-card {
-        border: none;
-        border-radius: 20px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-        border: 1px solid rgba(0,0,0,0.04);
-    }
-    .filter-pill-group .btn {
-        border: 1px solid rgba(0,0,0,0.08);
-        padding: 5px 12px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        color: #5c6b73;
-        background-color: #ffffff;
-    }
-    .filter-pill-group .btn.active {
-        background-color: #f1f5f9;
-        color: #0b1727;
-        font-weight: 700;
-    }
-    .small-text-link {
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: #1a6b9a;
-        text-decoration: none;
-        transition: color 0.2s;
-    }
-    .small-text-link:hover {
-        color: #4DA8DA;
-    }
-
-    .patient-avatar-mini {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background-color: #e2f2fc;
-        color: #1a6b9a;
-        font-weight: 700;
-        font-size: 0.8rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1.5px solid #ffffff;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    }
-    .appointment-item {
-        transition: background-color 0.2s;
-    }
-    .appointment-item:hover {
-        background-color: #fafbfc;
-    }
-    .text-xs {
-        font-size: 0.78rem;
-    }
-    .text-xxs {
-        font-size: 0.68rem;
-        font-weight: 700;
-        padding: 2.5px 6px;
-        border-radius: 8px;
-    }
-
-    .table th {
-        font-weight: 700;
-        letter-spacing: 0.3px;
-        border-bottom: 1.5px solid rgba(0,0,0,0.06) !important;
-    }
-    .table td {
-        padding-top: 14px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid rgba(0,0,0,0.04);
-    }
-</style>
-
-

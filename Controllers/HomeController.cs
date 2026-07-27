@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using DoctorAppointmentManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,6 +20,11 @@ namespace DoctorAppointmentManagementSystem.Controllers
 // Index Action
         public IActionResult Index()
         {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId != null)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
 
             var doctors = _db.Doctors
                 .Include(d => d.User)

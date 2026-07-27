@@ -1,4 +1,4 @@
-﻿@* Razor View: Navbar/Default *@
+@* Razor View: Navbar/Default *@
 <!-- HTML View: Navbar/Default -->
 @{
     var controller  = ViewData["controller"]?.ToString() ?? "";
@@ -267,12 +267,12 @@
                             </a></li>
                             @if (userRole == "patient")
                             {
-                                <li><a class="dropdown-item" href="/Appointment/Book">
+                                <li><a class="dropdown-item" asp-controller="Appointment" asp-action="Book">
                                     <i class="bi bi-calendar-plus"></i> Book Appointment
                                 </a></li>
                             }
                             <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item text-danger" href="/Account/Logout">
+                            <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
                                 <i class="bi bi-box-arrow-right"></i> Logout
                             </a></li>
                         </ul>
@@ -280,10 +280,10 @@
                 }
                 else
                 {
-                    <a class="btn-nav-login" href="/Account/Login">
+                    <a class="btn-nav-login" asp-controller="Account" asp-action="Login">
                         <i class="bi bi-box-arrow-in-right me-1"></i> Login
                     </a>
-                    <a class="btn-nav-register" href="/Account/Register">
+                    <a class="btn-nav-register" asp-controller="Account" asp-action="Register">
                         <i class="bi bi-person-plus me-1"></i> Register
                     </a>
                 }

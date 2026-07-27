@@ -1,10 +1,15 @@
-﻿using DoctorAppointmentManagementSystem.Data;
+using DoctorAppointmentManagementSystem.Data;
 using DoctorAppointmentManagementSystem.Models;
+using DoctorAppointmentManagementSystem.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ISmsService, SmsService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Server=(localdb)\\mssqllocaldb;Database=DAMS;Trusted_Connection=True;";
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
