@@ -1,4 +1,4 @@
-﻿@* Razor View: Report/Appointment *@
+@* Razor View: Report/Appointment *@
 <!-- HTML View: Report/Appointment -->
 @model IEnumerable<DoctorAppointmentManagementSystem.Models.Appointment>
 
@@ -27,7 +27,7 @@
                 <td>@item.AppointmentDate.ToShortDateString()</td>
                 <td>@item.AppointmentTime</td>
                 <td>@item.Patient?.User?.Username</td>
-                <td>Dr. @item.Doctor?.User?.Username</td>
+                <td>@item.Doctor?.User?.Username</td>
                 <td>
                     <span class="badge @(item.AppointmentStatus == "Completed" ? "bg-success" : (item.AppointmentStatus == "Pending" ? "bg-warning text-dark" : "bg-primary"))">
                         @item.AppointmentStatus

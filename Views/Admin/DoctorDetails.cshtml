@@ -96,7 +96,7 @@
 
         <div class="d-flex gap-2 justify-content-end">
             <a asp-action="EditDoctor" asp-route-id="@Model.Id" class="btn btn-warning">Edit Profile</a>
-            <a asp-action="DeleteDoctor" asp-route-id="@Model.Id" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete Dr. @Model.User?.Username?')" >Delete Profile</a>
+            <a asp-action="DeleteDoctor" asp-route-id="@Model.Id" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete @Model.User?.Username?')" >Delete Profile</a>
         </div>
     </div>
 </div>

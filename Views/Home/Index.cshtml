@@ -1,4 +1,4 @@
-﻿@* Razor View: Home/Index *@
+@* Razor View: Home/Index *@
 <!-- HTML View: Home/Index -->
 @using DoctorAppointmentManagementSystem.Models
 @{
@@ -498,7 +498,7 @@
                         </div>
                         <h5>Certified Specialists</h5>
                         <p>Fully authorized medical clinicians with verified records, qualification data, and complete operational transparency.</p>
-                        <a asp-controller="Account" asp-action="Login" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
+                        <a href="@Url.Action("Index", "Home")#doctorsSection" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
 
@@ -509,7 +509,7 @@
                         </div>
                         <h5>Privacy Support</h5>
                         <p>Your electronic medical reports (EMR), visit history, and prescriptions are protected with strong local security layers.</p>
-                        <a href="/Home/Privacy" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
+                        <a asp-controller="Home" asp-action="Privacy" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
 
@@ -520,7 +520,7 @@
                         </div>
                         <h5>24/7 Available</h5>
                         <p>Schedule your clinic slots at any hour. Receive instant confirmations and real-time email notifications automatically.</p>
-                        <a asp-controller="Account" asp-action="Login" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
+                        <a href="@Url.Action("Index", "Home")#servicesSection" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
 
@@ -531,7 +531,7 @@
                         </div>
                         <h5>Dedicated Care</h5>
                         <p>Direct communication links between clinic patients, support staff, and doctors to prevent long delays and gaps.</p>
-                        <a asp-controller="Account" asp-action="Login" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
+                        <a href="@Url.Action("Index", "Home")#aboutSection" class="trust-card-link">Learn More <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -585,68 +585,86 @@
 
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon-box">
-                            <i class="bi bi-heart-pulse"></i>
+                    <a asp-controller="Home" asp-action="Department" asp-route-name="Cardiology" class="text-decoration-none">
+                        <div class="service-card h-100">
+                            <div class="service-icon-box">
+                                <i class="bi bi-heart-pulse"></i>
+                            </div>
+                            <h4>Cardiology</h4>
+                            <p>Complete cardiac health checkups, monitoring, diagnostic reports, and specialized consultation schedules.</p>
+                            <span class="text-primary fw-bold small mt-2 d-inline-block">View Details & Doctors <i class="bi bi-arrow-right"></i></span>
                         </div>
-                        <h4>Cardiology</h4>
-                        <p>Complete cardiac health checkups, monitoring, diagnostic reports, and specialized consultation schedules.</p>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon-box">
-                            <i class="bi bi-activity"></i>
+                    <a asp-controller="Home" asp-action="Department" asp-route-name="Neurology" class="text-decoration-none">
+                        <div class="service-card h-100">
+                            <div class="service-icon-box">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <h4>Neurology</h4>
+                            <p>Advanced diagnostic procedures for nervous system issues, offering customized and dedicated care plans.</p>
+                            <span class="text-primary fw-bold small mt-2 d-inline-block">View Details & Doctors <i class="bi bi-arrow-right"></i></span>
                         </div>
-                        <h4>Neurology</h4>
-                        <p>Advanced diagnostic procedures for nervous system issues, offering customized and dedicated care plans.</p>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon-box">
-                            <i class="bi bi-emoji-smile"></i>
+                    <a asp-controller="Home" asp-action="Department" asp-route-name="Pediatrics" class="text-decoration-none">
+                        <div class="service-card h-100">
+                            <div class="service-icon-box">
+                                <i class="bi bi-emoji-smile"></i>
+                            </div>
+                            <h4>Pediatrics</h4>
+                            <p>Dedicated child care, vaccination alerts, regular health checkups, and child specialist consultants.</p>
+                            <span class="text-primary fw-bold small mt-2 d-inline-block">View Details & Doctors <i class="bi bi-arrow-right"></i></span>
                         </div>
-                        <h4>Pediatrics</h4>
-                        <p>Dedicated child care, vaccination alerts, regular health checkups, and child specialist consultants.</p>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon-box">
-                            <i class="bi bi-clipboard-pulse"></i>
+                    <a asp-controller="Home" asp-action="Department" asp-route-name="Orthopedics" class="text-decoration-none">
+                        <div class="service-card h-100">
+                            <div class="service-icon-box">
+                                <i class="bi bi-clipboard-pulse"></i>
+                            </div>
+                            <h4>Orthopedics</h4>
+                            <p>Treatment for bone and muscle issues, joint consultations, therapies, and post-surgery recovery tracking.</p>
+                            <span class="text-primary fw-bold small mt-2 d-inline-block">View Details & Doctors <i class="bi bi-arrow-right"></i></span>
                         </div>
-                        <h4>Orthopedics</h4>
-                        <p>Treatment for bone and muscle issues, joint consultations, therapies, and post-surgery recovery tracking.</p>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon-box">
-                            <i class="bi bi-droplet-half"></i>
+                    <a asp-controller="Home" asp-action="Department" asp-route-name="Dermatology" class="text-decoration-none">
+                        <div class="service-card h-100">
+                            <div class="service-icon-box">
+                                <i class="bi bi-droplet-half"></i>
+                            </div>
+                            <h4>Dermatology</h4>
+                            <p>Specialized treatments for skin conditions, allergy diagnoses, cosmetic care, and recovery guides.</p>
+                            <span class="text-primary fw-bold small mt-2 d-inline-block">View Details & Doctors <i class="bi bi-arrow-right"></i></span>
                         </div>
-                        <h4>Dermatology</h4>
-                        <p>Specialized treatments for skin conditions, allergy diagnoses, cosmetic care, and recovery guides.</p>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon-box">
-                            <i class="bi bi-eye"></i>
+                    <a asp-controller="Home" asp-action="Department" asp-route-name="Ophthalmology" class="text-decoration-none">
+                        <div class="service-card h-100">
+                            <div class="service-icon-box">
+                                <i class="bi bi-eye"></i>
+                            </div>
+                            <h4>Ophthalmology</h4>
+                            <p>Comprehensive eye care assessments, vision tests, prescriptions, and lens consulting.</p>
+                            <span class="text-primary fw-bold small mt-2 d-inline-block">View Details & Doctors <i class="bi bi-arrow-right"></i></span>
                         </div>
-                        <h4>Ophthalmology</h4>
-                        <p>Comprehensive eye care assessments, vision tests, prescriptions, and lens consulting.</p>
-                    </div>
+                    </a>
                 </div>
             </div>
 
             <div class="text-center mt-5">
-                <a asp-controller="Account" asp-action="Login" class="btn btn-hero-primary">See More Services</a>
+                <a asp-controller="Home" asp-action="Department" class="btn btn-hero-primary">See More Services</a>
             </div>
         </div>
     </section>
@@ -673,7 +691,7 @@
                                     </div>
                                 </div>
                                 <div class="doctor-info-body">
-                                    <div class="doctor-name">Dr. @(doc.User?.Username ?? "Medical Consultant")</div>
+                                    <div class="doctor-name">@(doc.User?.Username ?? "Medical Consultant")</div>
                                     <div class="doctor-specialty">@doc.Specialization</div>
                                     <div class="small text-muted mb-3">Qualifications: @(string.IsNullOrEmpty(doc.Qualification) ? "MBBS" : doc.Qualification)</div>
                                     

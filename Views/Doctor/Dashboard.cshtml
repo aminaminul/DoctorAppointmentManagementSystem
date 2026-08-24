@@ -1367,7 +1367,7 @@
                             @(!string.IsNullOrEmpty(ViewBag.DoctorName as string) ? ((string)ViewBag.DoctorName).Substring(0,1).ToUpper() : "D")
                         </div>
                     </div>
-                    <h5 class="fw-bold mb-1">Dr. @ViewBag.DoctorName</h5>
+                    <h5 class="fw-bold mb-1">@ViewBag.DoctorName</h5>
                     <p class="text-primary mb-2">@ViewBag.Specialization</p>
                     <form asp-controller="Doctor" asp-action="UploadProfilePicture" method="post" enctype="multipart/form-data">
                         <div class="mb-2">

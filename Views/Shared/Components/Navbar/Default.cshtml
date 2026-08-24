@@ -221,30 +221,21 @@
                 <li class="nav-item">
                     <a class="dams-nav-link @(isHomePage ? "active-link" : "")" href="@Url.Action("Index", "Home")">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="dams-nav-link" href="@Url.Action("Index", "Home")#aboutSection">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="dams-nav-link" href="@Url.Action("Index", "Home")#servicesSection">Service</a>
-                </li>
-                <li class="nav-item">
-                    <a class="dams-nav-link" href="@Url.Action("Index", "Home")#doctorsSection">Doctor</a>
-                </li>
-                <li class="nav-item">
-                    <a class="dams-nav-link" href="@Url.Action("Index", "Home")#contactSection">Contact</a>
-                </li>
-                <li class="nav-item">
-                    <a class="dams-nav-link" href="javascript:void(0)" onclick="alert('Blog feature coming soon!')">Blog</a>
-                </li>
-                @if (isLoggedIn)
+                @if (userRole == "patient" || userRole == "student" || !isLoggedIn)
                 {
                     <li class="nav-item">
-                        <a class="dams-nav-link @(dashboardUrl == controller ? "active-link" : "")" href="@dashboardUrl">Dashboard</a>
+                        <a class="dams-nav-link" href="@(userRole == "patient" || userRole == "student" ? Url.Action("Dashboard", "Patient", new { section = "doctors" }) : Url.Action("Index", "Home") + "#doctorsSection")">Doctor</a>
                     </li>
                 }
             </ul>
 
             <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                <!-- Dark / Light Theme Toggle Button -->
+                <button type="button" id="themeToggleBtn" class="btn btn-sm btn-outline-light rounded-circle d-flex align-items-center justify-content-center p-0"
+                        style="width: 36px; height: 36px; border-color: rgba(255,255,255,0.2);" title="Toggle Dark/Light Mode">
+                    <i class="bi bi-moon-stars-fill" id="themeToggleIcon" style="font-size: 1rem;"></i>
+                </button>
+
                 @if (isLoggedIn)
                 {
                     <div class="dropdown">

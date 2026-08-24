@@ -20,12 +20,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
 // Index Action
         public IActionResult Index()
         {
-            int? userId = HttpContext.Session.GetInt32("UserId");
-            if (userId != null)
-            {
-                return RedirectToAction("Index", "Dashboard");
-            }
-
             var doctors = _db.Doctors
                 .Include(d => d.User)
                 .Where(d => d.ActiveStatus)
@@ -36,6 +30,47 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             return View();
         }
+        // Department Details Action
+        public IActionResult Department(string? name)
+        {
+            string deptName = string.IsNullOrWhiteSpace(name) ? "Cardiology" : name.Trim();
+
+            // Mapping department names to keywords that match doctor Specialization in database
+            string searchKey = deptName.ToLower() switch
+            {
+                "cardiology" => "cardio",
+                "neurology" => "neuro",
+                "pediatrics" => "pediatric",
+                "orthopedics" => "ortho",
+                "dermatology" => "derm",
+                "ophthalmology" => "ophthal",
+                "gynaecologist" or "gynecology" => "gynaec",
+                "medicine specialist" or "medicine" => "medicine",
+                _ => deptName.ToLower()
+            };
+
+            // Fetch doctors whose specialization strictly belongs to this department
+            var allActiveDoctors = _db.Doctors
+                .Include(d => d.User)
+                .Where(d => d.ActiveStatus)
+                .ToList();
+
+            var doctors = allActiveDoctors
+                .Where(d => !string.IsNullOrEmpty(d.Specialization) && 
+                            d.Specialization.ToLower().Contains(searchKey))
+                .ToList();
+
+            ViewBag.DepartmentName = deptName;
+            ViewBag.Doctors = doctors;
+            ViewBag.AllDepartments = new List<string> { 
+                "Cardiology", "Neurology", "Pediatrics", 
+                "Orthopedics", "Dermatology", "Ophthalmology",
+                "Gynaecologist", "Medicine Specialist"
+            };
+
+            return View();
+        }
+
 // Privacy Action
         public IActionResult Privacy()
         {

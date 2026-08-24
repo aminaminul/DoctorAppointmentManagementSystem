@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 namespace DoctorAppointmentManagementSystem.ViewModels
 
 
@@ -11,5 +11,7 @@ namespace DoctorAppointmentManagementSystem.ViewModels
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
+
+        public bool RememberMe { get; set; } = true;
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -51,9 +51,11 @@ namespace DoctorAppointmentManagementSystem.Controllers
         }
 
         // Admin Dashboard Action
-// Dashboard Action
         public IActionResult Dashboard(string section)
         {
+            var userName = HttpContext.Session.GetString("UserName");
+            ViewData["Username"] = !string.IsNullOrEmpty(userName) ? userName : "Admin";
+
             var roles = _context.Roles.ToList();
             ViewBag.Roles = roles;
 

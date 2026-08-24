@@ -9,7 +9,29 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <script>
+        (function() {
+            var savedTheme = localStorage.getItem('damsTheme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark-theme');
+            }
+        })();
+    </script>
     <style>
+        /* Universal Rule: Hide all placeholder texts from entry boxes globally */
+        input::placeholder,
+        textarea::placeholder,
+        select::placeholder,
+        input::-webkit-input-placeholder,
+        textarea::-webkit-input-placeholder,
+        input::-moz-placeholder,
+        textarea::-moz-placeholder,
+        input:-ms-input-placeholder,
+        textarea:-ms-input-placeholder {
+            color: transparent !important;
+            opacity: 0 !important;
+        }
+
         html, body {
             height: 100%;
             margin: 0;
@@ -40,19 +62,222 @@
             min-width: 0;
             background-color: #f8fafc;
         }
+
+        /* Global Dark Theme Overrides for Landing, Login & Register pages */
+        html.dark-theme, html.dark-theme body {
+            background-color: #0b1320 !important;
+            color: #e2e8f0 !important;
+        }
+
+        html.dark-theme .content-column,
+        html.dark-theme .home-container {
+            background-color: #0f172a !important;
+            color: #e2e8f0 !important;
+        }
+
+        /* Landing Page Sections Dark Theme */
+        html.dark-theme .hero-sec {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+        }
+
+        html.dark-theme .hero-title,
+        html.dark-theme .sec-header h2,
+        html.dark-theme .about-sec h2,
+        html.dark-theme .consult-box h2,
+        html.dark-theme .welcome-title,
+        html.dark-theme .form-title {
+            color: #f8fafc !important;
+        }
+
+        html.dark-theme .hero-desc,
+        html.dark-theme .sec-header p,
+        html.dark-theme .about-desc,
+        html.dark-theme .welcome-subtitle,
+        html.dark-theme .form-subtitle,
+        html.dark-theme .signup-text,
+        html.dark-theme .login-redirect-text {
+            color: #94a3b8 !important;
+        }
+
+        html.dark-theme .hero-img-bg {
+            background-color: #1e293b !important;
+        }
+
+        html.dark-theme .service-card,
+        html.dark-theme .trust-card,
+        html.dark-theme .doctor-card,
+        html.dark-theme .consult-box,
+        html.dark-theme .card,
+        html.dark-theme .modal-content,
+        html.dark-theme .list-group-item,
+        html.dark-theme .bg-white,
+        html.dark-theme .bg-light {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+
+        html.dark-theme .service-card h4,
+        html.dark-theme .trust-card h5,
+        html.dark-theme .doctor-name {
+            color: #f8fafc !important;
+        }
+
+        html.dark-theme .service-card p,
+        html.dark-theme .trust-card p,
+        html.dark-theme .doctor-spec {
+            color: #94a3b8 !important;
+        }
+
+        html.dark-theme .services-sec,
+        html.dark-theme .trust-sec,
+        html.dark-theme .about-sec,
+        html.dark-theme .doctors-sec,
+        html.dark-theme .consult-sec {
+            background-color: #0f172a !important;
+        }
+
+        /* Login & Register Glass Cards Dark Theme */
+        html.dark-theme .login-wrapper,
+        html.dark-theme .register-wrapper {
+            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #1e293b 90.1%) !important;
+        }
+
+        html.dark-theme .glass-card,
+        html.dark-theme .glass-register-card {
+            background: rgba(15, 23, 42, 0.92) !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        html.dark-theme .brand-panel {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+            border-right-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        html.dark-theme .input-label {
+            color: #38bdf8 !important;
+        }
+
+        html.dark-theme .form-input,
+        html.dark-theme .form-select-custom {
+            color: #f8fafc !important;
+            border-bottom-color: rgba(255, 255, 255, 0.2) !important;
+            background-color: transparent !important;
+        }
+
+        html.dark-theme .form-select-custom option {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+        }
+
+        html.dark-theme .form-input::placeholder {
+            color: #64748b !important;
+        }
+
+        html.dark-theme .form-input:focus,
+        html.dark-theme .form-select-custom:focus {
+            border-bottom-color: #38bdf8 !important;
+        }
+
+        html.dark-theme .input-icon,
+        html.dark-theme .btn-toggle-pass {
+            color: #94a3b8 !important;
+        }
+
+        html.dark-theme .role-fields-container {
+            background-color: rgba(56, 189, 248, 0.06) !important;
+            border-color: rgba(56, 189, 248, 0.3) !important;
+        }
+
+        html.dark-theme .role-section-title {
+            color: #38bdf8 !important;
+        }
+
+        html.dark-theme .forgot-link,
+        html.dark-theme .signup-link,
+        html.dark-theme .login-redirect-link {
+            color: #38bdf8 !important;
+        }
+
+        /* General Dark Theme Adjustments */
+        html.dark-theme .table {
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+
+        html.dark-theme .table td,
+        html.dark-theme .table th {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+
+        html.dark-theme .text-dark,
+        html.dark-theme h1, html.dark-theme h2, html.dark-theme h3,
+        html.dark-theme h4, html.dark-theme h5, html.dark-theme h6 {
+            color: #f8fafc !important;
+        }
+
+        html.dark-theme .text-muted,
+        html.dark-theme .text-secondary {
+            color: #94a3b8 !important;
+        }
+
+        html.dark-theme .form-control,
+        html.dark-theme .form-select {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        html.dark-theme .form-control:focus,
+        html.dark-theme .form-select:focus {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            border-color: #38bdf8 !important;
+        }
+
+        html.dark-theme .dropdown-menu {
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
+        }
+
+        html.dark-theme .dropdown-item {
+            color: #e2e8f0 !important;
+        }
+
+        html.dark-theme .dropdown-item:hover {
+            background-color: #334155 !important;
+            color: #ffffff !important;
+        }
+
+        html.dark-theme .border,
+        html.dark-theme .border-top,
+        html.dark-theme .border-bottom,
+        html.dark-theme .border-start,
+        html.dark-theme .border-end {
+            border-color: #334155 !important;
+        }
     </style>
 </head>
+@using Microsoft.AspNetCore.Http
 <body class="bg-light text-dark">
 
     <div class="layout-wrapper">
         <!-- Topbar Navbar -->
         @await Component.InvokeAsync("Navbar")
 
+        @{
+            bool userIsLoggedIn = Context.Session.GetInt32("UserId") != null;
+            bool shouldHideSidebar = (ViewData["HideSidebar"] as bool? == true) || !userIsLoggedIn;
+        }
+
         <!-- Main Body: Sidebar + Main Content -->
         <div class="layout-body">
-            @if (ViewData["HideSidebar"] as bool? == true)
+            @if (shouldHideSidebar)
             {
-                <main class="content-column p-4" role="main">
+                <main class="content-column p-0" role="main">
                     @RenderBody()
                 </main>
             }
@@ -78,6 +303,39 @@
     <!-- JavaScript Block -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var themeBtn = document.getElementById("themeToggleBtn");
+            var themeIcon = document.getElementById("themeToggleIcon");
+
+            function applyTheme(theme) {
+                if (theme === "dark") {
+                    document.documentElement.classList.add("dark-theme");
+                    if (themeIcon) {
+                        themeIcon.className = "bi bi-sun-fill text-warning";
+                    }
+                } else {
+                    document.documentElement.classList.remove("dark-theme");
+                    if (themeIcon) {
+                        themeIcon.className = "bi bi-moon-stars-fill text-white";
+                    }
+                }
+            }
+
+            var currentTheme = localStorage.getItem("damsTheme") || "light";
+            applyTheme(currentTheme);
+
+            if (themeBtn) {
+                themeBtn.addEventListener("click", function () {
+                    var isDark = document.documentElement.classList.contains("dark-theme");
+                    var nextTheme = isDark ? "light" : "dark";
+                    localStorage.setItem("damsTheme", nextTheme);
+                    applyTheme(nextTheme);
+                });
+            }
+        });
+    </script>
 
     @RenderSection("Scripts", required: false)
 </body>

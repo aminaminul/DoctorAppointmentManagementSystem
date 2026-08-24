@@ -1,10 +1,11 @@
-﻿@* Razor View: Account/Register *@
+@* Razor View: Account/Register *@
 <!-- HTML View: Account/Register -->
 @model DoctorAppointmentManagementSystem.ViewModels.RegisterViewModel
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Register";
     ViewData["HideSidebar"] = true;
+    ViewData["HideFooter"] = true;
 }
 
 <div class="register-wrapper">
@@ -66,7 +67,7 @@
                                 <label class="input-label" asp-for="Username">Username</label>
                                 <div class="input-container">
                                     <i class="bi bi-person input-icon"></i>
-                                    <input asp-for="Username" class="form-input" placeholder="e.g. JohnDoe" />
+                                    <input asp-for="Username" class="form-input" />
                                 </div>
                                 <span asp-validation-for="Username" class="text-danger small mt-1 d-block"></span>
                             </div>
@@ -75,7 +76,7 @@
                                 <label class="input-label" asp-for="Email">Email Address</label>
                                 <div class="input-container">
                                     <i class="bi bi-envelope input-icon"></i>
-                                    <input asp-for="Email" class="form-input" placeholder="name@gmail.com" />
+                                    <input asp-for="Email" class="form-input" />
                                 </div>
                                 <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
                             </div>
@@ -86,7 +87,7 @@
                                 <label class="input-label" asp-for="Password">Password</label>
                                 <div class="input-container">
                                     <i class="bi bi-lock input-icon"></i>
-                                    <input asp-for="Password" type="password" class="form-input" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" id="regPass" />
+                                    <input asp-for="Password" type="password" class="form-input" id="regPass" />
                                     <button type="button" class="btn-toggle-pass" onclick="togglePassVisibility('regPass')">
                                         <i class="bi bi-eye" id="regPassEye"></i>
                                     </button>
@@ -98,7 +99,7 @@
                                 <label class="input-label" asp-for="PhoneNumber">Phone Number (optional)</label>
                                 <div class="input-container">
                                     <i class="bi bi-telephone input-icon"></i>
-                                    <input asp-for="PhoneNumber" class="form-input" placeholder="01700-000000" />
+                                    <input asp-for="PhoneNumber" class="form-input" />
                                 </div>
                                 <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
                             </div>
@@ -154,7 +155,7 @@
                                     <label class="input-label" asp-for="Age">Calculated Age</label>
                                     <div class="input-container">
                                         <i class="bi bi-patch-question input-icon"></i>
-                                        <input asp-for="Age" type="number" id="Age" class="form-input" placeholder="Age" />
+                                        <input asp-for="Age" type="number" id="Age" class="form-input" />
                                     </div>
                                     <span asp-validation-for="Age" class="text-danger small mt-1 d-block"></span>
                                 </div>
@@ -183,7 +184,7 @@
                                     <label class="input-label" asp-for="Specialization">Area of Specialization</label>
                                     <div class="input-container">
                                         <i class="bi bi-award input-icon"></i>
-                                        <input asp-for="Specialization" class="form-input" placeholder="e.g. Cardiologist" />
+                                        <input asp-for="Specialization" class="form-input" />
                                     </div>
                                     <span asp-validation-for="Specialization" class="text-danger small mt-1 d-block"></span>
                                 </div>
@@ -192,7 +193,7 @@
                                     <label class="input-label" asp-for="Availability">Daily Availability</label>
                                     <div class="input-container">
                                         <i class="bi bi-clock input-icon"></i>
-                                        <input asp-for="Availability" class="form-input" placeholder="e.g. 10AM - 4PM" />
+                                        <input asp-for="Availability" class="form-input" />
                                     </div>
                                     <span asp-validation-for="Availability" class="text-danger small mt-1 d-block"></span>
                                 </div>
@@ -277,8 +278,8 @@
 <!-- CSS Style Block -->
         <style>
     
-    body.bg-white {
-        background-color: #0b1727 !important;
+    body, html, .content-column {
+        background-color: #1a6b9a !important;
     }
     main {
         padding: 0 !important;

@@ -1,4 +1,4 @@
-﻿using DoctorAppointmentManagementSystem.Models;
+using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -150,9 +150,12 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return View(model);
             }
 
+            var email = (model.Email ?? "").Trim().ToLower();
+            var password = (model.Password ?? "").Trim();
+
             var user = _context.Users
                 .Include(u => u.Role)
-                .FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
+                .FirstOrDefault(u => u.Email.ToLower() == email && u.Password == password);
 
             if (user == null)
             {
@@ -160,12 +163,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return View(model);
             }
 
-            string roleName = user.Role?.Name ?? "Patient";
-            int virtualRoleId = roleName switch
+            var role = user.Role ?? _context.Roles.FirstOrDefault(r => r.Id == user.RoleId);
+            string roleName = role?.Name ?? "Patient";
+            
+            int virtualRoleId = roleName.ToLower() switch
             {
-                "Admin" => 1,
-                "Doctor" => 2,
-                "Patient" => 3,
+                "admin" => 1,
+                "doctor" => 2,
+                "patient" => 3,
                 _ => 3
             };
 
@@ -174,18 +179,39 @@ namespace DoctorAppointmentManagementSystem.Controllers
             HttpContext.Session.SetString("UserRole", roleName);
             HttpContext.Session.SetString("UserName", user.Username ?? user.Email);
 
-            if (virtualRoleId == 1)
-                return RedirectToAction("Dashboard", "Admin");
+            if (model.RememberMe)
+            {
+                var cookieOptions = new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(30),
+                    HttpOnly = true,
+                    IsEssential = true
+                };
+                Response.Cookies.Append("dams_remember_user", user.Id.ToString(), cookieOptions);
+            }
+            else
+            {
+                Response.Cookies.Delete("dams_remember_user");
+            }
 
-            if (virtualRoleId == 2)
+            if (virtualRoleId == 1 || roleName.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                return RedirectToAction("Dashboard", "Admin");
+            }
+
+            if (virtualRoleId == 2 || roleName.Equals("Doctor", StringComparison.OrdinalIgnoreCase))
+            {
                 return RedirectToAction("Dashboard", "Doctor");
+            }
 
             return RedirectToAction("Dashboard", "Patient");
         }
-// Logout Action
+
+        // Logout Action
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
+            Response.Cookies.Delete("dams_remember_user");
             return RedirectToAction("Login");
         }
 

@@ -266,6 +266,51 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
+        // =========================================================================
+        // DOCTOR PROFILE VIEW
+        // =========================================================================
+        public IActionResult DoctorProfile(int id)
+        {
+            var patient = GetCurrentPatient();
+            if (patient == null) return RedirectToAction("Login", "Account");
+
+            var doctor = _context.Doctors
+                .Include(d => d.User)
+                .FirstOrDefault(d => d.Id == id);
+
+            if (doctor == null) return NotFound();
+
+            // Get doctor's feedback/reviews with patient info
+            var reviews = _context.Feedbacks
+                .Include(f => f.Patient).ThenInclude(p => p!.User)
+                .Where(f => f.DoctorId == id)
+                .OrderByDescending(f => f.FeedbackDateTime)
+                .ToList();
+
+            // Get total appointment count for this doctor
+            var totalPatients = _context.Appointments
+                .Where(a => a.DoctorId == id && a.AppointmentStatus == "Completed")
+                .Select(a => a.PatientId)
+                .Distinct()
+                .Count();
+
+            // Get available schedules
+            var schedules = _context.DoctorSchedules
+                .Where(s => s.DoctorId == id && !s.IsVacation && s.AvailableDate >= DateTime.Today)
+                .OrderBy(s => s.AvailableDate)
+                .Take(7)
+                .ToList();
+
+            ViewBag.Reviews = reviews;
+            ViewBag.TotalPatients = totalPatients;
+            ViewBag.Schedules = schedules;
+            ViewBag.AvgRating = reviews.Any() ? reviews.Average(r => r.Rating) : 0;
+            ViewBag.PatientId = patient.Id;
+
+            return View(doctor);
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CancelAppointment(int id)

@@ -1,4 +1,4 @@
-﻿@* Razor View: Doctor/Schedule *@
+@* Razor View: Doctor/Schedule *@
 <!-- HTML View: Doctor/Schedule -->
 @model List<DoctorAppointmentManagementSystem.Models.DoctorSchedule>
 @{
@@ -123,7 +123,7 @@
     <aside class="dash-sidebar">
         <div class="sidebar-profile">
             <div class="sidebar-avatar"><i class="bi bi-person-circle"></i></div>
-            <div class="sidebar-name">Dr. @ViewBag.DoctorName</div>
+            <div class="sidebar-name">@ViewBag.DoctorName</div>
         </div>
         <span class="nav-section-label">Main</span>
         <a href="/Doctor/Dashboard" class="dash-nav-link">

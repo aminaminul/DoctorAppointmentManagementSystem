@@ -25,7 +25,7 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>Dr. @item.User?.Username</td>
+                <td>@item.User?.Username</td>
                 <td>@item.Specialization</td>
                 <td>@(string.IsNullOrEmpty(item.Qualification) ? "N/A" : item.Qualification)</td>
                 <td>@item.Experience Years</td>

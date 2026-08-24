@@ -166,7 +166,7 @@
     <div class="container-fluid px-5">
         <div class="row g-5">
             <div class="col-lg-4 col-md-6">
-                <a class="dams-footer-brand" href="/">
+                <a class="dams-footer-brand" asp-controller="Home" asp-action="Index">
                     <i class="bi bi-heart-pulse-fill dams-footer-brand-icon"></i>
                     <span>DAMS</span>
                 </a>
@@ -192,22 +192,23 @@
             <div class="col-lg-2 col-md-6 ms-lg-auto">
                 <h5>Links</h5>
                 <ul class="dams-footer-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/Appointment/Book">Book Visit</a></li>
-                    <li><a href="/Home/Privacy">Privacy Policy</a></li>
-                    <li><a href="/Account/Register">Create Account</a></li>
-                    <li><a href="/Account/Login">Sign In</a></li>
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Home" asp-action="Index" asp-fragment="doctorsSection">Find a Doctor</a></li>
+                    <li><a asp-controller="Home" asp-action="Privacy">Privacy Policy</a></li>
+                    <li><a asp-controller="Account" asp-action="Register">Create Account</a></li>
+                    <li><a asp-controller="Account" asp-action="Login">Sign In</a></li>
                 </ul>
             </div>
 
             <div class="col-lg-3 col-md-6">
                 <h5>Departments</h5>
                 <ul class="dams-footer-links">
-                    <li><a href="/Appointment/Book">Cardiology</a></li>
-                    <li><a href="/Appointment/Book">Neurology</a></li>
-                    <li><a href="/Appointment/Book">Pediatrics</a></li>
-                    <li><a href="/Appointment/Book">Orthopedics</a></li>
-                    <li><a href="/Appointment/Book">Dermatology</a></li>
+                    <li><a asp-controller="Home" asp-action="Department" asp-route-name="Cardiology">Cardiology</a></li>
+                    <li><a asp-controller="Home" asp-action="Department" asp-route-name="Neurology">Neurology</a></li>
+                    <li><a asp-controller="Home" asp-action="Department" asp-route-name="Pediatrics">Pediatrics</a></li>
+                    <li><a asp-controller="Home" asp-action="Department" asp-route-name="Orthopedics">Orthopedics</a></li>
+                    <li><a asp-controller="Home" asp-action="Department" asp-route-name="Dermatology">Dermatology</a></li>
+                    <li><a asp-controller="Home" asp-action="Department" asp-route-name="Ophthalmology">Ophthalmology</a></li>
                 </ul>
             </div>
 
@@ -241,7 +242,7 @@
 <div class="dams-sub-footer">
     <div class="container-fluid px-5 d-flex justify-content-between align-items-center">
         <div>
-            Â© @DateTime.Now.Year DAMS. All Rights Reserved.
+            &copy; @DateTime.Now.Year DAMS. All Rights Reserved.
         </div>
         <div class="d-flex align-items-center gap-3">
             <span>Site by Antigravity.</span>

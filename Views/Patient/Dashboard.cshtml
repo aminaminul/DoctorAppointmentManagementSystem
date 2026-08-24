@@ -147,7 +147,7 @@
                 <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                     <div>
                         <span class="badge bg-info text-dark uppercase fw-bold mb-2">Next Upcoming Consultation</span>
-                        <h4 class="fw-bold text-dark mb-1">Dr. @nextAppt.Doctor?.User?.Username (@nextAppt.Doctor?.Specialization)</h4>
+                        <h4 class="fw-bold text-dark mb-1">@nextAppt.Doctor?.User?.Username (@nextAppt.Doctor?.Specialization)</h4>
                         <p class="mb-0 text-secondary">
                             <i class="bi bi-calendar3 me-1"></i><strong>@nextAppt.AppointmentDate.ToString("dd MMMM yyyy")</strong> at 
                             <i class="bi bi-clock me-1 ms-2"></i><strong>@nextAppt.AppointmentTime</strong> | 
@@ -233,7 +233,7 @@
                                                     <h6 class="fw-bold text-primary mb-0"><i class="bi bi-journal-medical me-1"></i> Diagnosis: @rec.Diagnosis</h6>
                                                     <small class="text-muted">@rec.RecordDate.ToString("dd MMM yyyy, hh:mm tt")</small>
                                                 </div>
-                                                <p class="mb-1 text-dark small"><strong>Doctor:</strong> Dr. @rec.Doctor?.User?.Username</p>
+                                                <p class="mb-1 text-dark small"><strong>Doctor:</strong> @rec.Doctor?.User?.Username</p>
                                                 <p class="mb-1 text-secondary small"><strong>Symptoms:</strong> @(rec.Symptoms ?? "N/A")</p>
                                                 <p class="mb-0 text-secondary small"><strong>Treatment Plan:</strong> @(rec.TreatmentPlan ?? "Standard Care")</p>
                                             </div>
@@ -283,7 +283,7 @@
                                             <small class="text-muted">@appt.AppointmentTime</small>
                                         </td>
                                         <td>
-                                            <div class="fw-bold text-dark">Dr. @appt.Doctor?.User?.Username</div>
+                                            <div class="fw-bold text-dark">@appt.Doctor?.User?.Username</div>
                                             <small class="text-muted">@appt.Doctor?.Specialization</small>
                                         </td>
                                         <td><small class="text-secondary">@(appt.ReasonForVisit ?? "Consultation")</small></td>
@@ -311,7 +311,7 @@
                                                 </div>
                                                 <div class="modal-body text-center p-4">
                                                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=DAMS-APPT-@appt.Id" alt="QR Ticket" class="img-fluid border p-2 rounded mb-3" />
-                                                    <h5 class="fw-bold text-dark mb-1">Dr. @appt.Doctor?.User?.Username</h5>
+                                                    <h5 class="fw-bold text-dark mb-1">@appt.Doctor?.User?.Username</h5>
                                                     <p class="text-muted small mb-2">@appt.AppointmentDate.ToString("dd MMM yyyy") at @appt.AppointmentTime</p>
                                                     <span class="badge bg-success px-3 py-2 fs-6">Status: @appt.AppointmentStatus</span>
                                                 </div>
@@ -328,7 +328,7 @@
                                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body p-4 text-center">
-                                                    <p class="mb-3">Are you sure you want to cancel your appointment with <strong>Dr. @appt.Doctor?.User?.Username</strong> on <strong>@appt.AppointmentDate.ToString("dd MMM yyyy")</strong>?</p>
+                                                    <p class="mb-3">Are you sure you want to cancel your appointment with <strong>@appt.Doctor?.User?.Username</strong> on <strong>@appt.AppointmentDate.ToString("dd MMM yyyy")</strong>?</p>
                                                     <form asp-controller="Patient" asp-action="CancelAppointment" method="post">
                                                         <input type="hidden" name="id" value="@appt.Id" />
                                                         <button type="submit" class="btn btn-danger w-100">Yes, Cancel Appointment</button>
@@ -394,48 +394,13 @@
                                         <div class="rounded-circle bg-primary bg-opacity-10 text-primary mx-auto d-flex align-items-center justify-content-center fw-bold fs-3 mb-3 flex-shrink-0" style="width: 70px; height: 70px;">
                                             @(doc.User?.Username?.Substring(0,1).ToUpper() ?? "D")
                                         </div>
-                                        <h5 class="fw-bold text-dark mb-1">Dr. @doc.User?.Username</h5>
+                                        <h5 class="fw-bold text-dark mb-1">@doc.User?.Username</h5>
                                         <p class="badge bg-primary me-1">@doc.Specialization</p>
                                         <p class="text-muted small mb-2">@doc.Qualification | Exp: @doc.Experience Years</p>
                                         <h4 class="fw-bold text-success mb-3">৳@doc.ConsultationFee <small class="text-muted fs-6">/ Fee</small></h4>
-                                        <button type="button" class="btn btn-outline-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#bookDocModal-@doc.Id">
-                                            <i class="bi bi-calendar-plus me-1"></i> Book Consultation
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Doctor Booking Modal -->
-                            <div class="modal fade" id="bookDocModal-@doc.Id" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content border-0 shadow">
-                                        <div class="modal-header bg-primary text-white">
-                                            <h5 class="modal-title fw-bold">Book Visit - Dr. @doc.User?.Username</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body p-4">
-                                            <form asp-controller="Patient" asp-action="BookAppointment" method="post">
-                                                <input type="hidden" name="doctorId" value="@doc.Id" />
-                                                <div class="mb-3">
-                                                    <label class="form-label font-weight-bold">Appointment Date</label>
-                                                    <input type="date" name="appointmentDate" class="form-control" required value="@DateTime.Today.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label font-weight-bold">Time Slot</label>
-                                                    <select name="appointmentTime" class="form-select" required>
-                                                        <option value="09:00 AM">09:00 AM - 10:00 AM</option>
-                                                        <option value="10:00 AM">10:00 AM - 11:00 AM</option>
-                                                        <option value="04:00 PM">04:00 PM - 05:00 PM</option>
-                                                        <option value="06:00 PM">06:00 PM - 07:00 PM</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label font-weight-bold">Reason for Visit</label>
-                                                    <textarea name="reasonForVisit" class="form-control" rows="2" placeholder="Symptoms or checkup reason..."></textarea>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary w-100">Confirm & Book Visit</button>
-                                            </form>
-                                        </div>
+                                        <a asp-controller="Patient" asp-action="DoctorProfile" asp-route-id="@doc.Id" class="btn btn-outline-primary btn-sm w-100">
+                                            <i class="bi bi-person-lines-fill me-1"></i> View More
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -472,7 +437,7 @@
                                 {
                                     <tr>
                                         <td class="fw-bold text-primary">@rx.PrescriptionDateTime.ToString("dd MMM yyyy")</td>
-                                        <td>Dr. @rx.Doctor?.User?.Username</td>
+                                        <td>@rx.Doctor?.User?.Username</td>
                                         <td>@rx.Diagnosis</td>
                                         <td><small class="text-secondary">@rx.Medicines</small></td>
                                         <td class="text-end">
@@ -594,7 +559,7 @@
                         <select name="doctorId" class="form-select" required>
                             @foreach (var doc in doctors)
                             {
-                                <option value="@doc.Id">Dr. @doc.User?.Username (@doc.Specialization) - Fee: ৳@doc.ConsultationFee</option>
+                                <option value="@doc.Id">@doc.User?.Username (@doc.Specialization) - Fee: ৳@doc.ConsultationFee</option>
                             }
                         </select>
                     </div>
