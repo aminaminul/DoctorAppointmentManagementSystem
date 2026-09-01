@@ -742,7 +742,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>#Rx ID</th>
+                                <th>#Prescription ID</th>
                                 <th>Date</th>
                                 <th>Patient</th>
                                 <th>Diagnosis</th>
@@ -757,7 +757,7 @@
                                 foreach (var rx in prescriptions)
                                 {
                                     <tr>
-                                        <td><strong class="text-success">#Rx-@rx.Id</strong></td>
+                                        <td><strong class="text-success">#PR-@rx.Id</strong></td>
                                         <td>@rx.PrescriptionDateTime.ToString("MMM dd, yyyy")</td>
                                         <td class="fw-bold">@rx.Patient?.User?.Username</td>
                                         <td><span class="badge bg-light text-dark border">@rx.Diagnosis</span></td>
@@ -794,9 +794,9 @@
                             <div class="mb-3">
                                 <label class="form-label font-weight-bold">Select Appointment</label>
                                 <select name="AppointmentId" class="form-select" required>
-                                    @foreach (var appt in todayAppts.Concat(upcomingAppts))
+                                    @foreach (var appt in (Model ?? new List<DoctorAppointmentManagementSystem.Models.Appointment>()).Where(a => a.AppointmentStatus != "Cancelled"))
                                     {
-                                        <option value="@appt.Id">Appt #@appt.Id - @appt.Patient?.User?.Username (@appt.AppointmentDate.ToString("MMM dd"))</option>
+                                        <option value="@appt.Id">Appt #@appt.Id - @appt.Patient?.User?.Username (@appt.AppointmentDate.ToString("MMM dd") - @appt.AppointmentStatus)</option>
                                     }
                                 </select>
                             </div>

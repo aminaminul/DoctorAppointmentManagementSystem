@@ -98,10 +98,18 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .FirstOrDefault();
             ViewBag.NextAppointment = nextAppt;
 
-            // Stats
+            // Stats & Payments
             var payments = _context.Payments.Where(p => p.PatientId == patient.Id).ToList();
             ViewBag.TotalSpent = payments.Sum(p => p.Amount);
             ViewBag.Payments = payments;
+
+            // Invoices & Billing
+            var invoices = _context.Invoices
+                .Include(i => i.Appointment).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
+                .Where(i => i.PatientId == patient.Id)
+                .OrderByDescending(i => i.IssueDate)
+                .ToList();
+            ViewBag.Invoices = invoices;
 
             // Prescriptions
             var prescriptions = _context.Prescriptions
@@ -220,50 +228,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
         // =========================================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BookAppointment(int doctorId, DateTime appointmentDate, string appointmentTime, string? reasonForVisit, int? familyMemberId, bool isEmergency)
+        public IActionResult BookAppointment(int doctorId, DateTime appointmentDate, string? reasonForVisit, bool isEmergency)
         {
             var patient = GetCurrentPatient();
             if (patient == null) return RedirectToAction("Login", "Account");
 
-            var doctor = _context.Doctors.Include(d => d.User).FirstOrDefault(d => d.Id == doctorId);
-            if (doctor == null)
-            {
-                TempData["Error"] = "Selected doctor not found.";
-                return RedirectToAction("Dashboard", new { section = "doctors" });
-            }
-
-            var appointment = new Appointment
-            {
-                PatientId = patient.Id,
-                DoctorId = doctorId,
-                AppointmentDate = appointmentDate,
-                AppointmentTime = appointmentTime,
-                ReasonForVisit = string.IsNullOrWhiteSpace(reasonForVisit) ? "Routine Consultation" : reasonForVisit,
-                AppointmentStatus = "Pending",
-                IsEmergency = isEmergency,
-                BookingDateTime = DateTime.Now
-            };
-
-            _context.Appointments.Add(appointment);
-            _context.SaveChanges();
-
-            // Auto-Generate Notification
-            try
-            {
-                var notification = new Notification
-                {
-                    UserId = patient.UserId,
-                    Message = $"Your appointment request with Dr. {doctor.User?.Username} for {appointmentDate.ToString("dd MMM yyyy")} at {appointmentTime} has been submitted.",
-                    SentDateTime = DateTime.Now,
-                    NotificationStatus = "Unread"
-                };
-                _context.Notifications.Add(notification);
-                _context.SaveChanges();
-            }
-            catch { }
-
-            TempData["Success"] = "Appointment booked successfully! Status: Pending Approval.";
-            return RedirectToAction("Dashboard", new { section = "appointments" });
+            string dateStr = appointmentDate.ToString("yyyy-MM-dd");
+            return Redirect($"/Appointment/SelectTime?doctorId={doctorId}&date={dateStr}&reason={Uri.EscapeDataString(reasonForVisit ?? "")}&isEmergency={isEmergency}");
         }
 
         // =========================================================================
@@ -614,6 +585,25 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             TempData["Success"] = "Profile updated successfully!";
             return RedirectToAction("Dashboard", new { section = "profile" });
+        }
+
+        // =========================================================================
+        // INVOICE & RECEIPT PRINT
+        // =========================================================================
+        public IActionResult PrintInvoice(int id)
+        {
+            var invoice = _context.Invoices
+                .Include(i => i.Patient).ThenInclude(p => p.User)
+                .Include(i => i.Appointment).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
+                .FirstOrDefault(i => i.Id == id || i.AppointmentId == id);
+
+            if (invoice == null) return NotFound();
+
+            var payment = _context.Payments
+                .FirstOrDefault(p => p.AppointmentId == invoice.AppointmentId || p.PatientId == invoice.PatientId);
+            ViewBag.Payment = payment;
+
+            return View(invoice);
         }
     }
 }

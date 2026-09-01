@@ -1,0 +1,109 @@
+@model DoctorAppointmentManagementSystem.Models.Prescription
+@{
+    Layout = null;
+    ViewData["Title"] = "Prescription - #" + Model.Id;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prescription - #@Model.Id</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+</head>
+<body class="bg-light p-4">
+    <div class="container bg-white p-5 shadow-sm rounded-3 my-3" style="max-width: 850px;">
+        <!-- Header -->
+        <div class="row border-bottom pb-4 mb-4 align-items-center">
+            <div class="col-8">
+                <h2 class="text-primary fw-bold mb-1"><i class="bi bi-hospital me-2"></i>Doctor Appointment Medical Center</h2>
+                <p class="text-muted mb-0 small">123 Healthcare Avenue, Medical District | Phone: +880 1700-000000</p>
+            </div>
+            <div class="col-4 text-end">
+                <div class="badge bg-primary fs-6 mb-2">Prescription #@Model.Id</div>
+                <div class="text-muted small">Date: @Model.PrescriptionDateTime.ToString("MMM dd, yyyy")</div>
+            </div>
+        </div>
+
+        <!-- Doctor & Patient Info -->
+        <div class="row bg-light p-3 rounded mb-4 border">
+            <div class="col-md-6 border-end">
+                <h6 class="text-secondary fw-bold text-uppercase mb-2">Prescribing Doctor</h6>
+                <h5 class="fw-bold mb-1">@Model.Doctor?.User?.Username</h5>
+                <p class="mb-1 text-primary small">@Model.Doctor?.Specialization</p>
+                <small class="text-muted">@Model.Doctor?.Qualification | Experience: @Model.Doctor?.Experience yrs</small>
+            </div>
+            <div class="col-md-6 ps-md-4 mt-3 mt-md-0">
+                <h6 class="text-secondary fw-bold text-uppercase mb-2">Patient Details</h6>
+                <h5 class="fw-bold mb-1">@Model.Patient?.User?.Username</h5>
+                <p class="mb-1 small text-muted">Gender: @Model.Patient?.Gender | Age: @Model.Patient?.Age yrs | Blood: @(Model.Patient?.BloodGroup ?? "N/A")</p>
+                <small class="text-muted">Email: @Model.Patient?.User?.Email</small>
+            </div>
+        </div>
+
+        <!-- Diagnosis & Vitals -->
+        <div class="mb-4">
+            <h6 class="fw-bold text-dark border-bottom pb-2 mb-2"><i class="bi bi-file-earmark-medical me-2"></i>Diagnosis & Clinical Notes</h6>
+            <div class="p-3 bg-white border rounded">
+                <strong>Diagnosis:</strong> @Model.Diagnosis
+            </div>
+        </div>
+
+        <!-- Prescriptions Header & Medicines -->
+        <div class="mb-4">
+            <h4 class="fw-bold text-primary mb-3"><i class="bi bi-prescription me-2"></i>Prescribed Medicines</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Medicine Details</th>
+                            <th>Instructions / Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var meds = Model.Medicines.Split(new[] { '\n', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            int index = 1;
+                        }
+                        @foreach (var med in meds)
+                        {
+                            <tr>
+                                <td>@(index++)</td>
+                                <td class="fw-bold text-dark">@med.Trim()</td>
+                                <td>@(string.IsNullOrWhiteSpace(Model.Instructions) ? "As directed by physician" : Model.Instructions)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer & QR Code -->
+        <div class="row pt-4 mt-4 border-top align-items-center">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=RX-@Model.Id-DOC-@Model.DoctorId-PAT-@Model.PatientId" alt="QR Code" class="img-thumbnail" />
+                    <div>
+                        <small class="fw-bold d-block text-dark">Digital QR Verification</small>
+                        <small class="text-muted">Scan to verify prescription authenticity.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="mt-4 pt-3 border-top d-inline-block px-4">
+                    <p class="fw-bold mb-0 text-dark">@Model.Doctor?.User?.Username</p>
+                    <small class="text-muted">Doctor's Digital Signature</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Print Action Buttons -->
+        <div class="mt-4 pt-3 text-center d-print-none">
+            <button onclick="window.print()" class="btn btn-primary btn-lg me-2"><i class="bi bi-printer me-2"></i>Print / Save PDF</button>
+            <button onclick="window.close()" class="btn btn-outline-secondary btn-lg"><i class="bi bi-x-circle me-2"></i>Close</button>
+        </div>
+    </div>
+</body>
+</html>

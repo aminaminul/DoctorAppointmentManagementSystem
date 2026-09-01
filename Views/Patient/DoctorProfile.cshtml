@@ -1,0 +1,419 @@
+@model DoctorAppointmentManagementSystem.Models.Doctor
+@{
+    ViewData["Title"] = "Doctor Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var reviews = ViewBag.Reviews as List<DoctorAppointmentManagementSystem.Models.Feedback> ?? new();
+    var schedules = ViewBag.Schedules as List<DoctorAppointmentManagementSystem.Models.DoctorSchedule> ?? new();
+    double avgRating = ViewBag.AvgRating ?? 0;
+    int totalPatients = ViewBag.TotalPatients ?? 0;
+
+    string docName = Model.User?.Username ?? "Doctor";
+    string initial = string.IsNullOrEmpty(docName) ? "D" : docName.Substring(0, 1).ToUpper();
+}
+
+<div class="container py-4">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Patient" asp-action="Dashboard" asp-route-section="doctors" class="text-decoration-none">Find Doctors</a>
+            </li>
+            <li class="breadcrumb-item active">@docName</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+
+        <!-- LEFT: Profile Card -->
+        <div class="col-lg-3 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden text-center">
+                <!-- Avatar -->
+                <div class="bg-primary bg-opacity-10 py-4">
+                    <div class="rounded-circle bg-primary text-white fw-bold mx-auto d-flex align-items-center justify-content-center border border-4 border-white shadow" style="width: 110px; height: 110px; font-size: 2.8rem;">
+                        @initial
+                    </div>
+                </div>
+                <div class="card-body px-3 pb-4">
+                    <h5 class="fw-bold mb-1 mt-2">@docName</h5>
+                    <span class="badge bg-primary mb-1">@Model.Specialization</span><br />
+                    <small class="text-muted">@Model.Qualification</small>
+
+                    <hr class="my-3" />
+
+                    <!-- Key Info -->
+                    <ul class="list-unstyled text-start small">
+                        <li class="mb-2">
+                            <i class="bi bi-briefcase-fill text-primary me-2"></i>
+                            <strong>Experience:</strong> @Model.Experience Years
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-calendar-check-fill text-success me-2"></i>
+                            <strong>Available:</strong> @(Model.AvailableDays ?? "By Appointment")
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-clock-fill text-warning me-2"></i>
+                            <strong>Hours:</strong> @(Model.AvailableTime ?? "Contact Clinic")
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-people-fill text-info me-2"></i>
+                            <strong>Patients:</strong> @totalPatients+ Served
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-star-fill text-warning me-2"></i>
+                            <strong>Rating:</strong>
+                            @if (avgRating > 0)
+                            {
+                                <span class="text-warning fw-bold">@avgRating.ToString("F1") / 5</span>
+                                <small class="text-muted">(@reviews.Count reviews)</small>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No reviews yet</span>
+                            }
+                        </li>
+                    </ul>
+
+                    <hr class="my-3" />
+
+                    <!-- Fee & Book -->
+                    <div class="bg-success bg-opacity-10 rounded-3 p-3 mb-3">
+                        <div class="text-muted small">Consultation Fee</div>
+                        <h4 class="fw-bold text-success mb-0">৳@Model.ConsultationFee</h4>
+                    </div>
+
+                    <button class="btn btn-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#bookModal">
+                        <i class="bi bi-calendar-plus me-1"></i> Book Consultation
+                    </button>
+                    <a asp-controller="Patient" asp-action="Dashboard" asp-route-section="doctors" class="btn btn-outline-secondary w-100 rounded-pill mt-2">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Doctors
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Tabbed Info Panel -->
+        <div class="col-lg-9 col-md-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-0 px-4 pt-4 pb-0">
+                    <ul class="nav nav-tabs border-0" id="doctorTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-semibold px-4" id="bio-tab" data-bs-toggle="tab" data-bs-target="#bio" type="button" role="tab">
+                                <i class="bi bi-person-circle me-1"></i> Biography
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold px-4" id="edu-tab" data-bs-toggle="tab" data-bs-target="#edu" type="button" role="tab">
+                                <i class="bi bi-mortarboard me-1"></i> Education
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold px-4" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule" type="button" role="tab">
+                                <i class="bi bi-calendar3 me-1"></i> Schedule
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold px-4" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
+                                <i class="bi bi-star me-1"></i> Reviews
+                                @if (reviews.Any())
+                                {
+                                    <span class="badge bg-warning text-dark ms-1">@reviews.Count</span>
+                                }
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold px-4" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab">
+                                <i class="bi bi-info-circle me-1"></i> Others
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="tab-content" id="doctorTabContent">
+
+                        <!-- Biography Tab -->
+                        <div class="tab-pane fade show active" id="bio" role="tabpanel">
+                            <h5 class="fw-bold text-dark mb-3">About @docName</h5>
+                            @if (!string.IsNullOrWhiteSpace(Model.Biography))
+                            {
+                                <p class="text-muted lh-lg">@Model.Biography</p>
+                            }
+                            else
+                            {
+                                <div class="alert alert-light border rounded-3 text-muted">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <strong>@docName</strong> is a highly experienced <strong>@Model.Specialization</strong> with
+                                    <strong>@Model.Experience years</strong> of professional practice. Qualified with
+                                    <strong>@Model.Qualification</strong>, dedicated to providing exceptional patient care.
+                                </div>
+                            }
+
+                            <!-- Stats Row -->
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-4">
+                                    <div class="border rounded-3 p-3 text-center bg-primary bg-opacity-10">
+                                        <h3 class="fw-bold text-primary mb-0">@Model.Experience+</h3>
+                                        <small class="text-muted">Years Experience</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="border rounded-3 p-3 text-center bg-success bg-opacity-10">
+                                        <h3 class="fw-bold text-success mb-0">@totalPatients+</h3>
+                                        <small class="text-muted">Patients Treated</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="border rounded-3 p-3 text-center bg-warning bg-opacity-10">
+                                        <h3 class="fw-bold text-warning mb-0">@avgRating.ToString("F1")</h3>
+                                        <small class="text-muted">Average Rating</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Education Tab -->
+                        <div class="tab-pane fade" id="edu" role="tabpanel">
+                            <h5 class="fw-bold text-dark mb-4">Education & Qualifications</h5>
+                            @if (!string.IsNullOrWhiteSpace(Model.Qualification))
+                            {
+                                var degrees = Model.Qualification.Split(',', System.StringSplitOptions.RemoveEmptyEntries);
+                                <div class="timeline">
+                                    @foreach (var deg in degrees)
+                                    {
+                                        <div class="d-flex gap-3 mb-4">
+                                            <div class="flex-shrink-0">
+                                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+                                                    <i class="bi bi-mortarboard-fill"></i>
+                                                </div>
+                                            </div>
+                                            <div class="border-start border-2 border-primary ps-3 pb-3 flex-grow-1">
+                                                <h6 class="fw-bold mb-0 text-dark">@deg.Trim()</h6>
+                                                <small class="text-muted">Medical Degree / Certification</small>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No qualification details available.</p>
+                            }
+
+                            <div class="alert alert-primary border-0 rounded-3 mt-3">
+                                <i class="bi bi-award-fill me-2"></i>
+                                <strong>Specialization:</strong> @Model.Specialization
+                            </div>
+                        </div>
+
+                        <!-- Schedule Tab -->
+                        <div class="tab-pane fade" id="schedule" role="tabpanel">
+                            <h5 class="fw-bold text-dark mb-3">Upcoming Available Slots</h5>
+                            @if (schedules.Any())
+                            {
+                                <div class="row g-3">
+                                    @foreach (var slot in schedules)
+                                    {
+                                        <div class="col-md-6">
+                                            <div class="border rounded-3 p-3 d-flex align-items-center gap-3 @(slot.AvailableDate.Date == DateTime.Today ? "border-success bg-success bg-opacity-10" : "")">
+                                                <div class="text-center bg-primary bg-opacity-10 rounded-3 p-2" style="min-width: 56px;">
+                                                    <div class="fw-bold text-primary fs-5">@slot.AvailableDate.Day</div>
+                                                    <div class="text-muted small">@slot.AvailableDate.ToString("MMM")</div>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold text-dark">@slot.AvailableDate.ToString("dddd")</div>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-clock me-1"></i>
+                                                        @slot.StartTime – @slot.EndTime
+                                                    </small>
+                                                    @if (slot.AvailableDate.Date == DateTime.Today)
+                                                    {
+                                                        <span class="badge bg-success ms-2">Today</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-calendar-x display-5 d-block mb-2"></i>
+                                    No upcoming scheduled slots. Contact clinic for appointment.
+                                </div>
+                            }
+
+                            <!-- General availability info -->
+                            <div class="row g-3 mt-3">
+                                @if (!string.IsNullOrEmpty(Model.AvailableDays))
+                                {
+                                    <div class="col-md-6">
+                                        <div class="border rounded-3 p-3">
+                                            <small class="text-muted d-block">Available Days</small>
+                                            <span class="fw-semibold text-dark"><i class="bi bi-calendar3 text-primary me-2"></i>@Model.AvailableDays</span>
+                                        </div>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.AvailableTime))
+                                {
+                                    <div class="col-md-6">
+                                        <div class="border rounded-3 p-3">
+                                            <small class="text-muted d-block">Consultation Hours</small>
+                                            <span class="fw-semibold text-dark"><i class="bi bi-clock text-success me-2"></i>@Model.AvailableTime</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Reviews Tab -->
+                        <div class="tab-pane fade" id="reviews" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold text-dark mb-0">Patient Reviews</h5>
+                                @if (avgRating > 0)
+                                {
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                                            <i class="bi bi-star-fill me-1"></i>@avgRating.ToString("F1")
+                                        </span>
+                                        <small class="text-muted">from @reviews.Count review(s)</small>
+                                    </div>
+                                }
+                            </div>
+
+                            @if (reviews.Any())
+                            {
+                                foreach (var review in reviews)
+                                {
+                                    <div class="border rounded-3 p-3 mb-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 38px; height: 38px;">
+                                                    @(review.Patient?.User?.Username?.Substring(0,1).ToUpper() ?? "P")
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold text-dark">@(review.Patient?.User?.Username ?? "Anonymous")</div>
+                                                    <small class="text-muted">@review.FeedbackDateTime.ToString("MMM dd, yyyy")</small>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    <i class="bi bi-star-fill @(i <= review.Rating ? "text-warning" : "text-muted")"></i>
+                                                }
+                                            </div>
+                                        </div>
+                                        @if (!string.IsNullOrWhiteSpace(review.Comment))
+                                        {
+                                            <p class="text-muted mb-0 mt-2 ms-5 small">@review.Comment</p>
+                                        }
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted py-5">
+                                    <i class="bi bi-star display-5 d-block mb-2"></i>
+                                    No reviews yet. Be the first to rate!
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Others / Contact Tab -->
+                        <div class="tab-pane fade" id="contact" role="tabpanel">
+                            <h5 class="fw-bold text-dark mb-4">Additional Information</h5>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="border rounded-3 p-3">
+                                        <small class="text-muted d-block mb-1"><i class="bi bi-person-badge text-primary me-1"></i> Full Name</small>
+                                        <span class="fw-semibold">@(Model.User?.Username ?? "N/A")</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded-3 p-3">
+                                        <small class="text-muted d-block mb-1"><i class="bi bi-envelope text-primary me-1"></i> Email</small>
+                                        <span class="fw-semibold">@(Model.User?.Email ?? "N/A")</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded-3 p-3">
+                                        <small class="text-muted d-block mb-1"><i class="bi bi-heart-pulse text-danger me-1"></i> Specialization</small>
+                                        <span class="fw-semibold">@Model.Specialization</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded-3 p-3">
+                                        <small class="text-muted d-block mb-1"><i class="bi bi-currency-dollar text-success me-1"></i> Consultation Fee</small>
+                                        <span class="fw-bold text-success">৳@Model.ConsultationFee</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded-3 p-3">
+                                        <small class="text-muted d-block mb-1"><i class="bi bi-briefcase text-primary me-1"></i> Experience</small>
+                                        <span class="fw-semibold">@Model.Experience Years</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded-3 p-3">
+                                        <small class="text-muted d-block mb-1"><i class="bi bi-toggle-on text-success me-1"></i> Status</small>
+                                        @if (Model.ActiveStatus)
+                                        {
+                                            <span class="badge bg-success">Active / Accepting Patients</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#bookModal">
+                                    <i class="bi bi-calendar-plus me-1"></i> Book Appointment Now
+                                </button>
+                            </div>
+                        </div>
+
+                    </div><!-- /.tab-content -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Book Appointment Modal -->
+<div class="modal fade" id="bookModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header bg-primary text-white rounded-top-4">
+                <h5 class="modal-title fw-bold"><i class="bi bi-calendar-plus me-2"></i>Book - @docName</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="get" action="/Appointment/SelectTime">
+                    <input type="hidden" name="doctorId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Appointment Date</label>
+                        <input type="date" name="date" class="form-control" required
+                               value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                               min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Reason for Visit</label>
+                        <textarea name="reason" class="form-control" rows="3" placeholder="Symptoms or reason..."></textarea>
+                    </div>
+                    <div class="alert alert-info py-2 small mb-3">
+                        <i class="bi bi-info-circle me-1"></i>Consultation Fee (৳@Model.ConsultationFee) + Hospital Ticket Fee (৳50) will be charged upon online checkout.
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold py-2.5">
+                        <i class="bi bi-credit-card me-1"></i> Select Time Slot &amp; Pay Online (50৳ Ticket)
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

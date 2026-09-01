@@ -22,20 +22,26 @@
             <th>Amount</th>
             <th>Method</th>
             <th>Status</th>
+            <th class="text-end">Receipt</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.PaymentDateTime.ToShortDateString()</td>
+                <td>@item.PaymentDateTime.ToString("dd MMM yyyy")</td>
                 <td>@item.Patient?.User?.Username</td>
-                <td>৳@item.Amount.ToString("N2")</td>
+                <td class="fw-bold">৳@item.Amount.ToString("N2")</td>
                 <td>@item.PaymentMethod</td>
                 <td>
                     <span class="badge @(item.PaymentStatus == "Paid" ? "bg-success" : (item.PaymentStatus == "Pending" ? "bg-warning text-dark" : "bg-danger"))">
                         @item.PaymentStatus
                     </span>
+                </td>
+                <td class="text-end">
+                    <a asp-controller="Report" asp-action="PrintInvoice" asp-route-id="@item.AppointmentId" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill">
+                        <i class="bi bi-printer me-1"></i> Print Receipt
+                    </a>
                 </td>
             </tr>
         }

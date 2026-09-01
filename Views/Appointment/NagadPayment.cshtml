@@ -1,22 +1,22 @@
-@* Razor View: Appointment/bkashPayment *@
-<!-- HTML View: Appointment/bkashPayment -->
+@* Razor View: Appointment/NagadPayment *@
+<!-- HTML View: Appointment/NagadPayment -->
 @{
     Layout = "_Layout";
 }
 
 <div class="container mt-5" style="max-width: 500px;">
-    <div class="card shadow-lg border-0 rounded-4 p-4" style="background: linear-gradient(135deg, #fce4ec 0%, #ffffff 100%);">
+    <div class="card shadow-lg border-0 rounded-4 p-4" style="background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%);">
         <div class="text-center mb-4">
-            <div class="d-inline-block rounded-circle p-3 mb-2" style="background-color: #d12053; color: white; width: 70px; height: 70px; font-size: 24px; font-weight: bold; line-height: 38px; text-align: center;">
+            <div class="d-inline-block rounded-circle p-3 mb-2" style="background-color: #ff6f00; color: white; width: 70px; height: 70px; font-size: 24px; font-weight: bold; line-height: 38px; text-align: center;">
                 ৳
             </div>
-            <h3 class="fw-bold text-dark m-0">bKash Payment</h3>
-            <p class="text-muted small">Please enter your bKash mobile number to pay the consultation fee</p>
+            <h3 class="fw-bold text-dark m-0">Nagad Payment</h3>
+            <p class="text-muted small">Please enter your Nagad account number to pay the consultation fee</p>
         </div>
 
         <form method="post" action="/Appointment/FinalConfirm">
             <div class="mb-3">
-                <label class="form-label fw-semibold text-secondary">bKash Account Number</label>
+                <label class="form-label fw-semibold text-secondary">Nagad Account Number</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-phone"></i></span>
                     <input type="text"
@@ -33,7 +33,7 @@
                 By clicking confirm, a simulated OTP verification and payment approval will be processed.
             </div>
 
-            <button type="submit" class="btn btn-danger w-100 py-2.5 text-white fw-bold rounded-3" style="background-color: #d12053; border-color: #d12053; font-size: 1rem; box-shadow: 0 4px 15px rgba(209, 32, 83, 0.3);">
+            <button type="submit" class="btn btn-warning w-100 py-2.5 text-white fw-bold rounded-3" style="background-color: #ff6f00; border-color: #ff6f00; font-size: 1rem; box-shadow: 0 4px 15px rgba(255, 111, 0, 0.3);">
                 <i class="bi bi-shield-check me-2"></i>Confirm Payment
             </button>
         </form>

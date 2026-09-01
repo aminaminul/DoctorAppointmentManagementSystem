@@ -1,4 +1,4 @@
-﻿using DoctorAppointmentManagementSystem.Data;
+using DoctorAppointmentManagementSystem.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -45,6 +45,23 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             var doctors = _context.Doctors.Include(d => d.User).ToList();
             return View(doctors);
+        }
+
+        // PrintInvoice Action
+        public IActionResult PrintInvoice(int id)
+        {
+            var invoice = _context.Invoices
+                .Include(i => i.Patient).ThenInclude(p => p.User)
+                .Include(i => i.Appointment).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
+                .FirstOrDefault(i => i.Id == id || i.AppointmentId == id);
+
+            if (invoice == null) return NotFound();
+
+            var payment = _context.Payments
+                .FirstOrDefault(p => p.AppointmentId == invoice.AppointmentId || p.PatientId == invoice.PatientId);
+            ViewBag.Payment = payment;
+
+            return View("~/Views/Patient/PrintInvoice.cshtml", invoice);
         }
     }
 }

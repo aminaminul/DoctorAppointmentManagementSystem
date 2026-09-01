@@ -64,6 +64,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.TotalAppointmentsCount = _context.Appointments.Count();
             ViewBag.TotalSchedulesCount = _context.DoctorSchedules.Count();
 
+            // Total Collection & Revenue from Database
+            var allPayments = _context.Payments.Where(p => p.PaymentStatus == "Paid" || p.PaymentStatus == "Completed").ToList();
+            ViewBag.TotalCollection = allPayments.Sum(p => p.Amount);
+            ViewBag.TodayCollection = allPayments.Where(p => p.PaymentDateTime.Date == DateTime.Today).Sum(p => p.Amount);
+            ViewBag.MonthlyCollection = allPayments.Where(p => p.PaymentDateTime.Month == DateTime.Today.Month && p.PaymentDateTime.Year == DateTime.Today.Year).Sum(p => p.Amount);
+            ViewBag.TotalInvoicesCount = _context.Invoices.Count();
+
             ViewBag.RecentAppointments = _context.Appointments
                 .Include(a => a.Patient).ThenInclude(p => p.User)
                 .Include(a => a.Doctor).ThenInclude(d => d.User)

@@ -1,4 +1,4 @@
-﻿using DoctorAppointmentManagementSystem.Models;
+using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using DoctorAppointmentManagementSystem.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -185,8 +185,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
             TempData["PaymentMethod"]  = PaymentMethod;
             TempData["CardType"]       = CardType;
 
+            TempData.Keep();
+
             if (PaymentMethod == "Bkash")
                 return RedirectToAction("BkashPayment");
+
+            if (PaymentMethod == "Nagad")
+                return RedirectToAction("NagadPayment");
 
             if (PaymentMethod == "Card")
                 return RedirectToAction("CardPayment");
@@ -198,6 +203,15 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login", "Account");
+            TempData.Keep();
+            return View();
+        }
+// NagadPayment Action
+        public IActionResult NagadPayment()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "Account");
+            TempData.Keep();
             return View();
         }
 // CardPayment Action
@@ -205,6 +219,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login", "Account");
+            TempData.Keep();
             return View();
         }
 
@@ -225,6 +240,8 @@ namespace DoctorAppointmentManagementSystem.Controllers
             string timeSlot      = TempData["TimeSlot"]?.ToString() ?? "";
             string reason        = TempData["ReasonForVisit"]?.ToString() ?? "";
             bool   isEmergency   = Convert.ToBoolean(TempData["IsEmergency"]);
+            string paymentMethod = TempData["PaymentMethod"]?.ToString() ?? "Cash";
+            string cardType      = TempData["CardType"]?.ToString() ?? "";
 
             if (!DateTime.TryParse(dateStr, out DateTime bookingDate))
             {
@@ -250,6 +267,11 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 return RedirectToAction("Book");
             }
 
+            var doctor = _context.Doctors.Include(d => d.User).FirstOrDefault(d => d.Id == doctorId);
+            decimal doctorFee = doctor?.ConsultationFee ?? 0;
+            decimal ticketFee = 50;
+            decimal totalAmount = doctorFee + ticketFee;
+
             var appointment = new Appointment
             {
                 PatientId          = patient.Id,
@@ -258,12 +280,43 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 AppointmentTime    = timeSlot,
                 ReasonForVisit     = reason,
                 IsEmergency        = isEmergency,
-                AppointmentStatus  = "Pending",
+                AppointmentStatus  = "Confirmed",
                 BookingDateTime    = DateTime.Now
             };
 
             _context.Appointments.Add(appointment);
             _context.SaveChanges();
+
+            string? transactionId = null;
+            if (!string.IsNullOrEmpty(PaymentNumber))
+            {
+                string suffix = DateTime.Now.Ticks.ToString();
+                suffix = suffix.Substring(suffix.Length - 6);
+                transactionId = (paymentMethod.ToUpper() == "BKASH" ? "BK" : (paymentMethod.ToUpper() == "NAGAD" ? "NG" : "CRD")) + suffix;
+            }
+
+            var payment = new Payment
+            {
+                AppointmentId = appointment.Id,
+                PatientId     = patient.Id,
+                Amount        = totalAmount,
+                PaymentMethod = paymentMethod,
+                TransactionId = transactionId,
+                PaymentDateTime = DateTime.Now,
+                PaymentStatus = "Paid"
+            };
+            _context.Payments.Add(payment);
+
+            var invoice = new Invoice
+            {
+                PatientId     = patient.Id,
+                AppointmentId = appointment.Id,
+                TotalAmount   = totalAmount,
+                IssueDate     = DateTime.Now,
+                Status        = "Paid",
+                Particulars   = $"Doctor Consultation Fee (৳{doctorFee}) + Hospital Ticket / Booking Fee (৳{ticketFee}) for Dr. {doctor?.User?.Username ?? ""} ({doctor?.Specialization ?? ""})"
+            };
+            _context.Invoices.Add(invoice);
 
             var scheduleSlot = _context.DoctorSchedules
                 .FirstOrDefault(ds => ds.DoctorId == doctorId
@@ -273,18 +326,19 @@ namespace DoctorAppointmentManagementSystem.Controllers
             if (scheduleSlot != null)
             {
                 scheduleSlot.SlotStatus = "Booked";
-                _context.SaveChanges();
             }
+            _context.SaveChanges();
 
             try { await _notificationService.SendAppointmentConfirmationAsync(appointment); }
             catch { }
 
-            TempData["BookingSuccess"]    = "true";
-            TempData["BookedDoctorId"]    = doctorId;
-            TempData["BookedDate"]        = bookingDate.ToString("dddd, MMMM dd, yyyy");
-            TempData["BookedTime"]        = timeSlot;
-            TempData["BookedReason"]      = reason;
+            TempData["BookingSuccess"]      = "true";
+            TempData["BookedDoctorId"]      = doctorId;
+            TempData["BookedDate"]          = bookingDate.ToString("dddd, MMMM dd, yyyy");
+            TempData["BookedTime"]          = timeSlot;
+            TempData["BookedReason"]        = reason;
             TempData["BookedAppointmentId"] = appointment.Id;
+            TempData["BookedPaymentMethod"] = paymentMethod;
 
             return RedirectToAction("Confirmation");
         }
@@ -302,13 +356,20 @@ namespace DoctorAppointmentManagementSystem.Controllers
             var doctor = _context.Doctors.Include(d => d.User)
                                          .FirstOrDefault(d => d.Id == doctorId);
 
-            ViewBag.DoctorName   = doctor?.User?.Username ?? "Doctor";
+            decimal docFee = doctor?.ConsultationFee ?? 0;
+            decimal ticketFee = 50;
+
+            ViewBag.DoctorName     = doctor?.User?.Username ?? "Doctor";
             ViewBag.Specialization = doctor?.Specialization ?? "";
-            ViewBag.Fee          = doctor?.ConsultationFee ?? 0;
-            ViewBag.Date         = TempData["BookedDate"];
-            ViewBag.TimeSlot     = TempData["BookedTime"];
-            ViewBag.Reason       = TempData["BookedReason"];
-            ViewBag.AppointmentId = TempData["BookedAppointmentId"];
+            ViewBag.Fee            = docFee;
+            ViewBag.DoctorFee      = docFee;
+            ViewBag.TicketFee      = ticketFee;
+            ViewBag.TotalAmount    = docFee + ticketFee;
+            ViewBag.PaymentMethod  = TempData["BookedPaymentMethod"]?.ToString() ?? "Online Payment";
+            ViewBag.Date           = TempData["BookedDate"];
+            ViewBag.TimeSlot       = TempData["BookedTime"];
+            ViewBag.Reason         = TempData["BookedReason"];
+            ViewBag.AppointmentId   = TempData["BookedAppointmentId"];
 
             return View();
         }

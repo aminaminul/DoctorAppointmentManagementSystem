@@ -18,6 +18,7 @@
     var insurance = ViewBag.Insurance as InsuranceInfo;
     var doctors = ViewBag.Doctors as List<Doctor> ?? new List<Doctor>();
     var payments = ViewBag.Payments as List<Payment> ?? new List<Payment>();
+    var invoices = ViewBag.Invoices as List<Invoice> ?? new List<Invoice>();
     var notifications = ViewBag.Notifications as List<Notification> ?? new List<Notification>();
     var reviews = ViewBag.Reviews as List<Feedback> ?? new List<Feedback>();
     var chatMessages = ViewBag.ChatMessages as List<ChatMessage> ?? new List<ChatMessage>();
@@ -70,6 +71,9 @@
                 <a asp-controller="Patient" asp-action="Dashboard" asp-route-section="prescriptions" class="btn @(currentSection == "prescriptions" ? "btn-info text-white" : "btn-outline-light") btn-sm">
                     <i class="bi bi-prescription me-1"></i> Prescriptions
                 </a>
+                <a asp-controller="Patient" asp-action="Dashboard" asp-route-section="invoices" class="btn @(currentSection == "invoices" || currentSection == "payments" ? "btn-info text-white" : "btn-outline-light") btn-sm">
+                    <i class="bi bi-receipt me-1"></i> Invoices &amp; Bills (@invoices.Count)
+                </a>
                 <button type="button" class="btn btn-primary btn-sm font-weight-bold" data-bs-toggle="modal" data-bs-target="#bookApptModal">
                     <i class="bi bi-calendar-plus me-1"></i> Book Appointment
                 </button>
@@ -116,7 +120,7 @@
                         <div>
                             <span class="text-muted small fw-bold text-uppercase">Active Prescriptions</span>
                             <h2 class="fw-bold text-success mb-0">@prescriptions.Count</h2>
-                            <small class="text-success"><i class="bi bi-file-medical me-1"></i>Digital RX Issued</small>
+                            <small class="text-success"><i class="bi bi-file-medical me-1"></i>Digital Prescription Issued</small>
                         </div>
                         <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 fs-3">
                             <i class="bi bi-prescription"></i>
@@ -441,7 +445,7 @@
                                         <td>@rx.Diagnosis</td>
                                         <td><small class="text-secondary">@rx.Medicines</small></td>
                                         <td class="text-end">
-                                            <a asp-controller="Doctor" asp-action="PrintPrescription" asp-route-id="@rx.Id" target="_blank" class="btn btn-outline-primary btn-sm"><i class="bi bi-printer me-1"></i> Print RX</a>
+                                            <a asp-controller="Doctor" asp-action="PrintPrescription" asp-route-id="@rx.Id" target="_blank" class="btn btn-outline-primary btn-sm"><i class="bi bi-printer me-1"></i> Print Prescription</a>
                                         </td>
                                     </tr>
                                 }
@@ -542,6 +546,81 @@
             </div>
         </div>
     }
+
+    <!-- SECTION 6: INVOICES & PAYMENTS -->
+    @if (currentSection == "invoices" || currentSection == "payments")
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-0 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-receipt me-2 text-primary"></i>Your Consultation Invoices &amp; Payment Receipts</h5>
+                            <small class="text-muted">Itemized breakdown of Doctor Consultation Fees, Hospital Ticket Fees, and Payment Proofs</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-success px-3 py-2 fs-6">Total Spent: ৳ @ViewBag.TotalSpent</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (invoices.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Invoice #</th>
+                                            <th>Doctor &amp; Consultation</th>
+                                            <th>Appointment Date</th>
+                                            <th>Generated On</th>
+                                            <th>Amount Breakdown</th>
+                                            <th>Status</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var inv in invoices)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold text-primary">#INV-@inv.Id</td>
+                                                <td>
+                                                    <div class="fw-bold text-dark">@(inv.Appointment?.Doctor?.User?.Username != null ? "Dr. " + inv.Appointment.Doctor.User.Username : "Doctor Consultation")</div>
+                                                    <div class="text-muted small">@(inv.Particulars ?? "Consultation Fee + Ticket Fee")</div>
+                                                </td>
+                                                <td>@(inv.Appointment != null ? inv.Appointment.AppointmentDate.ToString("dd MMM yyyy") : "N/A")</td>
+                                                <td class="text-muted small">@inv.IssueDate.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                                <td>
+                                                    <span class="fw-bold text-dark fs-6">৳ @inv.TotalAmount</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge @(inv.Status == "Paid" ? "bg-success" : "bg-warning text-dark") px-2.5 py-1.5">
+                                                        <i class="bi bi-check-circle-fill me-1"></i>@inv.Status
+                                                    </span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <a asp-controller="Patient" asp-action="PrintInvoice" asp-route-id="@inv.Id" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill">
+                                                        <i class="bi bi-printer me-1"></i>Print Invoice / PDF
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="p-5 text-center text-muted">
+                                <i class="bi bi-receipt-cutoff fs-1 d-block mb-3 text-secondary"></i>
+                                <h5>No invoices found</h5>
+                                <p class="small">When your appointments are booked and completed by the doctor, your invoices and payment receipts with ticket charges will appear here.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 <!-- GLOBAL MODAL: BOOK APPOINTMENT -->
@@ -553,7 +632,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <form asp-controller="Patient" asp-action="BookAppointment" method="post">
+                <form method="get" action="/Appointment/SelectTime">
                     <div class="mb-3">
                         <label class="form-label font-weight-bold">Select Specialist Doctor</label>
                         <select name="doctorId" class="form-select" required>
@@ -565,20 +644,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label font-weight-bold">Appointment Date</label>
-                        <input type="date" name="appointmentDate" class="form-control" required value="@DateTime.Today.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label font-weight-bold">Time Slot</label>
-                        <select name="appointmentTime" class="form-select" required>
-                            <option value="09:00 AM">09:00 AM - 10:00 AM</option>
-                            <option value="10:00 AM">10:00 AM - 11:00 AM</option>
-                            <option value="04:00 PM">04:00 PM - 05:00 PM</option>
-                            <option value="06:00 PM">06:00 PM - 07:00 PM</option>
-                        </select>
+                        <input type="date" name="date" class="form-control" required value="@DateTime.Today.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label font-weight-bold">Reason for Visit</label>
-                        <textarea name="reasonForVisit" class="form-control" rows="2" placeholder="State your symptoms or consultation reason..."></textarea>
+                        <textarea name="reason" class="form-control" rows="2" placeholder="State your symptoms or consultation reason..."></textarea>
                     </div>
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" name="isEmergency" value="true" id="emergencyCheck">
@@ -586,7 +656,12 @@
                             Mark as Emergency Request
                         </label>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Submit Booking Request</button>
+                    <div class="alert alert-info py-2 small mb-3">
+                        <i class="bi bi-info-circle me-1"></i>A hospital ticket &amp; booking fee of <strong>৳50</strong> will be charged with the consultation fee upon checkout.
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2.5">
+                        <i class="bi bi-credit-card me-1"></i> Proceed to Time Slot &amp; Payment (50৳ Ticket Fee)
+                    </button>
                 </form>
             </div>
         </div>

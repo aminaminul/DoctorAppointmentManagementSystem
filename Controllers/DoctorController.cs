@@ -115,24 +115,22 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.CompletedAppointmentsList = allAppointments.Where(a => a.AppointmentStatus == "Completed").ToList();
             ViewBag.CancelledAppointmentsList = allAppointments.Where(a => a.AppointmentStatus == "Cancelled").ToList();
 
-            // Revenue Calculations
-            decimal completedRevenue = _context.Payments
-                .Where(p => p.Appointment.DoctorId == doctor.Id && p.PaymentStatus == "Completed")
-                .Sum(p => (decimal?)p.Amount) ?? (allAppointments.Count(a => a.AppointmentStatus == "Completed") * doctor.ConsultationFee);
+            // Revenue Calculations from Database Payments
+            var docPayments = _context.Payments
+                .Where(p => p.Appointment.DoctorId == doctor.Id && (p.PaymentStatus == "Paid" || p.PaymentStatus == "Completed"))
+                .ToList();
 
-            decimal todayRevenue = _context.Payments
-                .Where(p => p.Appointment.DoctorId == doctor.Id && p.PaymentStatus == "Completed" && p.PaymentDateTime.Date == today)
-                .Sum(p => (decimal?)p.Amount) ?? (allAppointments.Count(a => a.AppointmentStatus == "Completed" && a.AppointmentDate.Date == today) * doctor.ConsultationFee);
+            decimal completedRevenue = docPayments.Sum(p => p.Amount);
+            if (completedRevenue == 0)
+            {
+                completedRevenue = allAppointments.Count(a => a.AppointmentStatus == "Completed") * doctor.ConsultationFee;
+            }
 
+            decimal todayRevenue = docPayments.Where(p => p.PaymentDateTime.Date == today).Sum(p => p.Amount);
             DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek);
-            decimal weeklyRevenue = _context.Payments
-                .Where(p => p.Appointment.DoctorId == doctor.Id && p.PaymentStatus == "Completed" && p.PaymentDateTime.Date >= startOfWeek)
-                .Sum(p => (decimal?)p.Amount) ?? (allAppointments.Count(a => a.AppointmentStatus == "Completed" && a.AppointmentDate.Date >= startOfWeek) * doctor.ConsultationFee);
-
+            decimal weeklyRevenue = docPayments.Where(p => p.PaymentDateTime.Date >= startOfWeek).Sum(p => p.Amount);
             DateTime startOfMonth = new DateTime(today.Year, today.Month, 1);
-            decimal monthlyRevenue = _context.Payments
-                .Where(p => p.Appointment.DoctorId == doctor.Id && p.PaymentStatus == "Completed" && p.PaymentDateTime.Date >= startOfMonth)
-                .Sum(p => (decimal?)p.Amount) ?? (allAppointments.Count(a => a.AppointmentStatus == "Completed" && a.AppointmentDate.Date >= startOfMonth) * doctor.ConsultationFee);
+            decimal monthlyRevenue = docPayments.Where(p => p.PaymentDateTime.Date >= startOfMonth).Sum(p => p.Amount);
 
             ViewBag.TotalRevenue = completedRevenue;
             ViewBag.TodayRevenue = todayRevenue;
@@ -388,12 +386,53 @@ namespace DoctorAppointmentManagementSystem.Controllers
             var doctor = GetCurrentDoctor();
             if (doctor == null) return RedirectToAction("Login", "Account");
 
-            var appt = _context.Appointments.FirstOrDefault(a => a.Id == id && a.DoctorId == doctor.Id);
+            var appt = _context.Appointments
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .FirstOrDefault(a => a.Id == id && a.DoctorId == doctor.Id);
+
             if (appt != null)
             {
                 appt.AppointmentStatus = "Completed";
+
+                decimal docFee = doctor.ConsultationFee;
+                decimal ticketFee = 50;
+                decimal total = docFee + ticketFee;
+
+                var existingInvoice = _context.Invoices.FirstOrDefault(i => i.AppointmentId == appt.Id);
+                if (existingInvoice == null)
+                {
+                    var invoice = new Invoice
+                    {
+                        PatientId = appt.PatientId,
+                        AppointmentId = appt.Id,
+                        TotalAmount = total,
+                        IssueDate = DateTime.Now,
+                        Status = "Paid",
+                        Particulars = $"Doctor Consultation Fee (৳{docFee}) + Hospital Ticket / Booking Fee (৳{ticketFee}) for Dr. {doctor.User?.Username ?? "Doctor"} ({doctor.Specialization})"
+                    };
+                    _context.Invoices.Add(invoice);
+                }
+                else
+                {
+                    existingInvoice.Status = "Paid";
+                }
+
+                if (appt.Patient?.UserId != null)
+                {
+                    var notification = new Notification
+                    {
+                        UserId = appt.Patient.UserId,
+                        NotificationType = "Invoice",
+                        Title = $"Consultation Invoice Ready (Appt #{appt.Id})",
+                        Message = $"Dr. {doctor.User?.Username ?? "Doctor"} has completed your appointment. Total Bill: ৳{total} (Consultation Fee: ৳{docFee}, Ticket Fee: ৳{ticketFee}). Your invoice has been updated in your dashboard.",
+                        SentDateTime = DateTime.Now,
+                        NotificationStatus = "Unread"
+                    };
+                    _context.Notifications.Add(notification);
+                }
+
                 _context.SaveChanges();
-                TempData["Success"] = "Appointment marked as Completed.";
+                TempData["Success"] = "Appointment marked as Completed. Payment invoice and notification generated for patient.";
             }
             else
             {
@@ -429,12 +468,56 @@ namespace DoctorAppointmentManagementSystem.Controllers
             var doctor = GetCurrentDoctor();
             if (doctor == null) return RedirectToAction("Login", "Account");
 
-            var appt = _context.Appointments.FirstOrDefault(a => a.Id == id && a.DoctorId == doctor.Id);
+            var appt = _context.Appointments
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .FirstOrDefault(a => a.Id == id && a.DoctorId == doctor.Id);
+
             if (appt != null)
             {
                 appt.AppointmentStatus = status;
+
+                if (status == "Completed")
+                {
+                    decimal docFee = doctor.ConsultationFee;
+                    decimal ticketFee = 50;
+                    decimal total = docFee + ticketFee;
+
+                    var existingInvoice = _context.Invoices.FirstOrDefault(i => i.AppointmentId == appt.Id);
+                    if (existingInvoice == null)
+                    {
+                        var invoice = new Invoice
+                        {
+                            PatientId = appt.PatientId,
+                            AppointmentId = appt.Id,
+                            TotalAmount = total,
+                            IssueDate = DateTime.Now,
+                            Status = "Paid",
+                            Particulars = $"Doctor Consultation Fee (৳{docFee}) + Hospital Ticket / Booking Fee (৳{ticketFee}) for Dr. {doctor.User?.Username ?? "Doctor"} ({doctor.Specialization})"
+                        };
+                        _context.Invoices.Add(invoice);
+                    }
+                    else
+                    {
+                        existingInvoice.Status = "Paid";
+                    }
+
+                    if (appt.Patient?.UserId != null)
+                    {
+                        var notification = new Notification
+                        {
+                            UserId = appt.Patient.UserId,
+                            NotificationType = "Invoice",
+                            Title = $"Consultation Invoice Ready (Appt #{appt.Id})",
+                            Message = $"Dr. {doctor.User?.Username ?? "Doctor"} has marked your appointment as Completed. Total Bill: ৳{total} (Consultation Fee: ৳{docFee}, Ticket Fee: ৳{ticketFee}). Your invoice has been updated in your dashboard.",
+                            SentDateTime = DateTime.Now,
+                            NotificationStatus = "Unread"
+                        };
+                        _context.Notifications.Add(notification);
+                    }
+                }
+
                 _context.SaveChanges();
-                TempData["Success"] = $"Appointment #{id} status updated to {status}.";
+                TempData["Success"] = $"Appointment #{id} status updated to {status}." + (status == "Completed" ? " Invoice generated for patient." : "");
             }
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
@@ -522,12 +605,63 @@ namespace DoctorAppointmentManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPrescription(Prescription model)
         {
-            var appointment = _context.Appointments.FirstOrDefault(a => a.Id == model.AppointmentId);
+            var appointment = _context.Appointments
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .Include(a => a.Doctor).ThenInclude(d => d.User)
+                .FirstOrDefault(a => a.Id == model.AppointmentId);
+
             if (appointment != null)
             {
                 model.DoctorId = appointment.DoctorId;
                 model.PatientId = appointment.PatientId;
+                appointment.AppointmentStatus = "Completed";
+
+                // Automatically update queue entry to Completed
+                var queueEntry = _context.QueueEntries.FirstOrDefault(q => q.AppointmentId == appointment.Id);
+                if (queueEntry != null)
+                {
+                    queueEntry.Status = "Completed";
+                    queueEntry.CompletionTime = DateTime.Now;
+                }
+
+                decimal docFee = appointment.Doctor?.ConsultationFee ?? 500;
+                decimal ticketFee = 50;
+                decimal total = docFee + ticketFee;
+
+                var existingInvoice = _context.Invoices.FirstOrDefault(i => i.AppointmentId == appointment.Id);
+                if (existingInvoice == null)
+                {
+                    var invoice = new Invoice
+                    {
+                        PatientId = appointment.PatientId,
+                        AppointmentId = appointment.Id,
+                        TotalAmount = total,
+                        IssueDate = DateTime.Now,
+                        Status = "Paid",
+                        Particulars = $"Doctor Consultation Fee (৳{docFee}) + Hospital Ticket / Booking Fee (৳{ticketFee}) for Dr. {appointment.Doctor?.User?.Username ?? "Doctor"} ({appointment.Doctor?.Specialization ?? ""})"
+                    };
+                    _context.Invoices.Add(invoice);
+                }
+                else
+                {
+                    existingInvoice.Status = "Paid";
+                }
+
+                if (appointment.Patient?.UserId != null)
+                {
+                    var notification = new Notification
+                    {
+                        UserId = appointment.Patient.UserId,
+                        NotificationType = "Prescription",
+                        Title = $"Prescription Issued & Completed (Appt #{appointment.Id})",
+                        Message = $"Dr. {appointment.Doctor?.User?.Username ?? "Doctor"} has issued your digital prescription and marked appointment #{appointment.Id} as Completed.",
+                        SentDateTime = DateTime.Now,
+                        NotificationStatus = "Unread"
+                    };
+                    _context.Notifications.Add(notification);
+                }
             }
+
             model.Status = "Active";
             model.PrescriptionDateTime = DateTime.Now;
             if (string.IsNullOrEmpty(model.Diagnosis))
@@ -540,7 +674,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             try { await _notificationService.SendPrescriptionReadyAsync(model); } catch { }
 
-            TempData["Success"] = "Prescription created successfully!";
+            TempData["Success"] = $"Prescription created successfully! Appointment #{model.AppointmentId} is now marked as Completed.";
             return RedirectToAction("Dashboard", new { section = "prescriptions" });
         }
 
@@ -708,6 +842,22 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             if (cert == null) return NotFound();
             return View(cert);
+        }
+
+        public IActionResult PrintInvoice(int id)
+        {
+            var invoice = _context.Invoices
+                .Include(i => i.Patient).ThenInclude(p => p.User)
+                .Include(i => i.Appointment).ThenInclude(a => a.Doctor).ThenInclude(d => d.User)
+                .FirstOrDefault(i => i.Id == id || i.AppointmentId == id);
+
+            if (invoice == null) return NotFound();
+
+            var payment = _context.Payments
+                .FirstOrDefault(p => p.AppointmentId == invoice.AppointmentId || p.PatientId == invoice.PatientId);
+            ViewBag.Payment = payment;
+
+            return View("~/Views/Patient/PrintInvoice.cshtml", invoice);
         }
 
         // =========================================================================
@@ -1028,7 +1178,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             {
                 day = d.ToString("ddd (MMM dd)"),
                 earnings = _context.Payments
-                    .Where(p => p.Appointment.DoctorId == doctor.Id && p.PaymentStatus == "Completed" && p.PaymentDateTime.Date == d)
+                    .Where(p => p.Appointment.DoctorId == doctor.Id && (p.PaymentStatus == "Paid" || p.PaymentStatus == "Completed") && p.PaymentDateTime.Date == d)
                     .Sum(p => (decimal?)p.Amount) ?? (_context.Appointments.Count(a => a.DoctorId == doctor.Id && a.AppointmentStatus == "Completed" && a.AppointmentDate.Date == d) * doctor.ConsultationFee)
             }).ToList();
 
@@ -1038,7 +1188,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 month = m.ToString("MMM yyyy"),
                 appointments = _context.Appointments.Count(a => a.DoctorId == doctor.Id && a.AppointmentDate.Month == m.Month && a.AppointmentDate.Year == m.Year),
                 revenue = _context.Payments
-                    .Where(p => p.Appointment.DoctorId == doctor.Id && p.PaymentStatus == "Completed" && p.PaymentDateTime.Month == m.Month && p.PaymentDateTime.Year == m.Year)
+                    .Where(p => p.Appointment.DoctorId == doctor.Id && (p.PaymentStatus == "Paid" || p.PaymentStatus == "Completed") && p.PaymentDateTime.Month == m.Month && p.PaymentDateTime.Year == m.Year)
                     .Sum(p => (decimal?)p.Amount) ?? (_context.Appointments.Count(a => a.DoctorId == doctor.Id && a.AppointmentStatus == "Completed" && a.AppointmentDate.Month == m.Month && a.AppointmentDate.Year == m.Year) * doctor.ConsultationFee)
             }).ToList();
 
