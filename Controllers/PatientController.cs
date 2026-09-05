@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DoctorAppointmentManagementSystem.Data;
 using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.Services;
+using DoctorAppointmentManagementSystem.Filters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
+    [AuthorizeRole("Patient")]
     public class PatientController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -129,11 +131,13 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             // Lab Reports & Tests
             var labReports = _context.LabReports
+                .Include(lr => lr.LabTest)
                 .Include(lr => lr.Patient).ThenInclude(p => p.User)
                 .Where(lr => lr.PatientId == patient.Id)
                 .OrderByDescending(lr => lr.ReportDate)
                 .ToList();
             ViewBag.LabReports = labReports;
+            ViewBag.AllLabTests = _context.LabTests.ToList();
 
             // Medical Documents
             var medicalDocuments = _context.MedicalDocuments
@@ -142,12 +146,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .OrderByDescending(md => md.UploadDate)
                 .ToList();
             ViewBag.MedicalDocuments = medicalDocuments;
-
-            // Family Members
-            var familyMembers = _context.FamilyMembers
-                .Where(fm => fm.PatientId == patient.Id)
-                .ToList();
-            ViewBag.FamilyMembers = familyMembers;
 
             // Insurance Info
             var insurance = _context.InsuranceInfos
@@ -284,22 +282,89 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CancelAppointment(int id)
+        public async Task<IActionResult> CancelAppointment(int id)
         {
             var patient = GetCurrentPatient();
             if (patient == null) return RedirectToAction("Login", "Account");
 
-            var appt = _context.Appointments.FirstOrDefault(a => a.Id == id && a.PatientId == patient.Id);
-            if (appt != null)
+            var appt = _context.Appointments
+                .Include(a => a.Doctor).ThenInclude(d => d.User)
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .FirstOrDefault(a => a.Id == id && a.PatientId == patient.Id);
+
+            if (appt == null)
             {
-                appt.AppointmentStatus = "Cancelled";
-                _context.SaveChanges();
-                TempData["Success"] = "Appointment cancelled successfully.";
+                TempData["Error"] = "Appointment not found.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            if (appt.AppointmentStatus == "Completed")
+            {
+                TempData["Error"] = "Cannot cancel an appointment that has already been completed.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            if (appt.AppointmentStatus == "Cancelled")
+            {
+                TempData["Error"] = "Appointment is already cancelled.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            appt.AppointmentStatus = "Cancelled";
+
+            // Free slot
+            var slot = _context.DoctorSchedules.FirstOrDefault(ds =>
+                ds.DoctorId == appt.DoctorId &&
+                ds.AvailableDate.Date == appt.AppointmentDate.Date &&
+                ds.StartTime == appt.AppointmentTime);
+            if (slot != null)
+            {
+                slot.SlotStatus = "Available";
+            }
+
+            // Cancel Queue entry if present
+            var queueEntry = _context.QueueEntries.FirstOrDefault(q => q.AppointmentId == appt.Id);
+            if (queueEntry != null)
+            {
+                queueEntry.Status = "Cancelled";
+            }
+
+            // Refund payment
+            var payment = _context.Payments.FirstOrDefault(p => p.AppointmentId == appt.Id);
+            if (payment != null && (payment.PaymentStatus == "Paid" || payment.PaymentStatus == "Completed"))
+            {
+                payment.PaymentStatus = "Refunded";
+
+                var invoice = _context.Invoices.FirstOrDefault(i => i.AppointmentId == appt.Id);
+                if (invoice != null)
+                {
+                    invoice.Status = "Cancelled / Refunded";
+                }
+
+                try
+                {
+                    await _notificationService.SendAppointmentRefundNotificationAsync(appt, payment, "Cancelled by patient");
+                }
+                catch { }
+
+                var adminUser = _context.Users.FirstOrDefault(u => u.RoleId == 1);
+                _context.AdminLogs.Add(new AdminLog
+                {
+                    AdminId = adminUser?.Id ?? patient.UserId,
+                    ActionPerformed = $"Patient Cancelled Appointment #{appt.Id}. Refund initiated for ৳{payment.Amount:N2} ({payment.PaymentMethod})",
+                    Description = $"Patient: {patient.User?.Username}, Doctor: {appt.Doctor?.User?.Username}, TrxID: {payment.TransactionId}",
+                    ActionDateTime = DateTime.Now
+                });
+
+                TempData["Success"] = $"Appointment #{appt.Id} cancelled successfully. Full refund of ৳{payment.Amount:N2} has been initiated to your {payment.PaymentMethod}.";
             }
             else
             {
-                TempData["Error"] = "Appointment not found.";
+                try { await _notificationService.SendAppointmentCancelledAsync(appt); } catch { }
+                TempData["Success"] = "Appointment cancelled successfully.";
             }
+
+            _context.SaveChanges();
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
@@ -324,51 +389,6 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 TempData["Error"] = "Appointment not found.";
             }
             return RedirectToAction("Dashboard", new { section = "appointments" });
-        }
-
-        // =========================================================================
-        // FAMILY MEMBERS MANAGEMENT
-        // =========================================================================
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult AddFamilyMember(string name, string relationship, string gender, int age, string? bloodGroup, string? emergencyContact)
-        {
-            var patient = GetCurrentPatient();
-            if (patient == null) return RedirectToAction("Login", "Account");
-
-            var fm = new FamilyMember
-            {
-                PatientId = patient.Id,
-                Name = name,
-                Relationship = relationship,
-                Gender = gender,
-                Age = age,
-                BloodGroup = bloodGroup,
-                EmergencyContact = emergencyContact
-            };
-
-            _context.FamilyMembers.Add(fm);
-            _context.SaveChanges();
-
-            TempData["Success"] = "Family member added successfully.";
-            return RedirectToAction("Dashboard", new { section = "family" });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteFamilyMember(int id)
-        {
-            var patient = GetCurrentPatient();
-            if (patient == null) return RedirectToAction("Login", "Account");
-
-            var fm = _context.FamilyMembers.FirstOrDefault(f => f.Id == id && f.PatientId == patient.Id);
-            if (fm != null)
-            {
-                _context.FamilyMembers.Remove(fm);
-                _context.SaveChanges();
-                TempData["Success"] = "Family member removed.";
-            }
-            return RedirectToAction("Dashboard", new { section = "family" });
         }
 
         // =========================================================================
@@ -590,6 +610,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
         // =========================================================================
         // INVOICE & RECEIPT PRINT
         // =========================================================================
+        [AuthorizeRole("Patient", "Doctor", "Admin")]
         public IActionResult PrintInvoice(int id)
         {
             var invoice = _context.Invoices

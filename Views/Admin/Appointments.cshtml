@@ -1,0 +1,343 @@
+@model IEnumerable<DoctorAppointmentManagementSystem.Models.Appointment>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Appointments Management";
+
+    var paymentsMap = ViewBag.PaymentsMap as Dictionary<int, DoctorAppointmentManagementSystem.Models.Payment> ?? new Dictionary<int, DoctorAppointmentManagementSystem.Models.Payment>();
+    var prescriptionsMap = ViewBag.PrescriptionsMap as Dictionary<int, DoctorAppointmentManagementSystem.Models.Prescription> ?? new Dictionary<int, DoctorAppointmentManagementSystem.Models.Prescription>();
+    var doctors = ViewBag.Doctors as List<DoctorAppointmentManagementSystem.Models.Doctor> ?? new List<DoctorAppointmentManagementSystem.Models.Doctor>();
+    string selectedStatus = ViewBag.SelectedStatus as string ?? "";
+    int? selectedDoctorId = ViewBag.SelectedDoctorId as int?;
+    string selectedDate = ViewBag.SelectedDate as string ?? "";
+    string searchTerm = ViewBag.SearchTerm as string ?? "";
+}
+
+<div class="container-fluid p-0">
+    <!-- Header Banner -->
+    <div class="card text-white shadow-sm mb-4 border-0 rounded-3 bg-dark border-start border-4 border-primary">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <h3 class="fw-bold mb-1 text-white"><i class="bi bi-calendar-check me-2 text-primary"></i>Central Appointments Management</h3>
+                <p class="mb-0 text-white-50">Monitor, reschedule, manage statuses, and oversee clinical consultations across all departments.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="Appointments" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</a>
+                <a asp-action="Queue" class="btn btn-primary btn-sm fw-bold"><i class="bi bi-people-fill me-1"></i>Live Queue</a>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Search & Filter Controls -->
+    <div class="card shadow-sm border-0 mb-4 rounded-3">
+        <div class="card-body p-3">
+            <form method="get" asp-action="Appointments" class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted mb-1">Search Patient / Doctor / ID</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" class="form-control" placeholder="Type keyword..." value="@searchTerm" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold text-muted mb-1">Doctor</label>
+                    <select name="doctorId" class="form-select form-select-sm">
+                        <option value="">All Doctors</option>
+                        @foreach (var d in doctors)
+                        {
+                            <option value="@d.Id" selected="@(selectedDoctorId == d.Id ? "selected" : null)">Dr. @d.User?.Username (@d.Specialization)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold text-muted mb-1">Status</label>
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">All Statuses</option>
+                        <option value="Pending" selected="@(selectedStatus == "Pending" ? "selected" : null)">Pending</option>
+                        <option value="Confirmed" selected="@(selectedStatus == "Confirmed" ? "selected" : null)">Confirmed</option>
+                        <option value="Checked In" selected="@(selectedStatus == "Checked In" ? "selected" : null)">Checked In</option>
+                        <option value="In Consultation" selected="@(selectedStatus == "In Consultation" ? "selected" : null)">In Consultation</option>
+                        <option value="Completed" selected="@(selectedStatus == "Completed" ? "selected" : null)">Completed</option>
+                        <option value="Cancelled" selected="@(selectedStatus == "Cancelled" ? "selected" : null)">Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold text-muted mb-1">Date</label>
+                    <input type="date" name="date" class="form-control form-control-sm" value="@selectedDate" />
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-sm flex-grow-1"><i class="bi bi-funnel me-1"></i>Filter</button>
+                    <a asp-action="Appointments" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x-circle"></i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Appointments Table Card -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-dark">
+                Appointments List
+                <span class="badge bg-primary-subtle text-primary rounded-pill ms-2">@Model.Count() Total</span>
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary small">
+                        <tr>
+                            <th class="ps-4">Appt #</th>
+                            <th>Date &amp; Time</th>
+                            <th>Patient Details</th>
+                            <th>Doctor &amp; Specialty</th>
+                            <th>Payment</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            foreach (var appt in Model)
+                            {
+                                var docName = appt.Doctor?.User?.Username ?? "Doctor";
+                                if (!docName.StartsWith("Dr.", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    docName = "Dr. " + docName;
+                                }
+
+                                bool isPaid = paymentsMap.ContainsKey(appt.Id) && (paymentsMap[appt.Id].PaymentStatus == "Paid" || paymentsMap[appt.Id].PaymentStatus == "Completed");
+                                bool isRefunded = paymentsMap.ContainsKey(appt.Id) && paymentsMap[appt.Id].PaymentStatus == "Refunded";
+                                var pmt = paymentsMap.ContainsKey(appt.Id) ? paymentsMap[appt.Id] : null;
+                                var rx = prescriptionsMap.ContainsKey(appt.Id) ? prescriptionsMap[appt.Id] : null;
+
+                                <tr>
+                                    <td class="ps-4 fw-bold text-dark">#@appt.Id</td>
+                                    <td>
+                                        <div class="fw-bold text-dark small">@appt.AppointmentDate.ToString("dd MMM yyyy")</div>
+                                        <div class="text-muted small"><i class="bi bi-clock me-1"></i>@appt.AppointmentTime</div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark small">
+                                            <a asp-action="PatientDetails" asp-route-id="@appt.PatientId" class="text-decoration-none text-dark">
+                                                @appt.Patient?.User?.Username
+                                            </a>
+                                        </div>
+                                        <div class="text-muted small">@appt.Patient?.Gender, @appt.Patient?.Age yrs | @(appt.Patient?.User?.PhoneNumber ?? "No Phone")</div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark small">
+                                            <a asp-action="DoctorDetails" asp-route-id="@appt.DoctorId" class="text-decoration-none text-dark">
+                                                @docName
+                                            </a>
+                                        </div>
+                                        <span class="badge bg-secondary-subtle text-secondary small">@appt.Doctor?.Specialization</span>
+                                    </td>
+                                    <td>
+                                        @if (isPaid)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success mb-1 d-inline-block">
+                                                <i class="bi bi-check-circle me-1"></i>৳@pmt?.Amount (@pmt?.PaymentMethod)
+                                            </span>
+                                            @if (!string.IsNullOrEmpty(pmt?.TransactionId))
+                                            {
+                                                <div class="small text-muted font-monospace" style="font-size: 0.72rem;">Trx: @pmt.TransactionId</div>
+                                            }
+                                        }
+                                        else if (isRefunded)
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning">
+                                                <i class="bi bi-arrow-counterclockwise me-1"></i>Refunded
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger">Unpaid</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @switch (appt.AppointmentStatus)
+                                        {
+                                            case "Completed":
+                                                <span class="badge bg-success"><i class="bi bi-check2-all me-1"></i>Completed</span>
+                                                break;
+                                            case "Confirmed":
+                                                <span class="badge bg-primary"><i class="bi bi-check-circle me-1"></i>Confirmed</span>
+                                                break;
+                                            case "Checked In":
+                                                <span class="badge bg-info text-dark"><i class="bi bi-box-arrow-in-right me-1"></i>Checked In</span>
+                                                break;
+                                            case "In Consultation":
+                                                <span class="badge bg-warning text-dark"><i class="bi bi-stethoscope me-1"></i>In Consultation</span>
+                                                break;
+                                            case "Cancelled":
+                                                <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Cancelled</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary">@appt.AppointmentStatus</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group btn-group-sm">
+                                            @if (appt.AppointmentStatus != "Cancelled" && appt.AppointmentStatus != "Completed")
+                                            {
+                                                <!-- Status Update Dropdown -->
+                                                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" title="Change Status">
+                                                    Status
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                                    <li><h6 class="dropdown-header">Update Status</h6></li>
+                                                    <li>
+                                                        <form asp-action="UpdateAppointmentStatus" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id" value="@appt.Id" />
+                                                            <input type="hidden" name="status" value="Confirmed" />
+                                                            <button type="submit" class="dropdown-item">Mark Confirmed</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form asp-action="UpdateAppointmentStatus" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id" value="@appt.Id" />
+                                                            <input type="hidden" name="status" value="Checked In" />
+                                                            <button type="submit" class="dropdown-item">Mark Checked In</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form asp-action="UpdateAppointmentStatus" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id" value="@appt.Id" />
+                                                            <input type="hidden" name="status" value="In Consultation" />
+                                                            <button type="submit" class="dropdown-item">Start Consultation</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form asp-action="UpdateAppointmentStatus" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id" value="@appt.Id" />
+                                                            <input type="hidden" name="status" value="Completed" />
+                                                            <button type="submit" class="dropdown-item text-success fw-bold">Mark Completed</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+
+                                                <!-- Reschedule Modal Trigger -->
+                                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#adminRescheduleModal-@appt.Id" title="Reschedule">
+                                                    <i class="bi bi-calendar-event"></i>
+                                                </button>
+
+                                                <!-- Cancel & Refund Trigger -->
+                                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#adminCancelModal-@appt.Id" title="Cancel Appointment">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
+                                            }
+
+                                            @if (rx != null)
+                                            {
+                                                <a asp-controller="Doctor" asp-action="PrintPrescription" asp-route-id="@rx.Id" target="_blank" class="btn btn-outline-success" title="View Prescription">
+                                                    <i class="bi bi-prescription"></i> Rx
+                                                </a>
+                                            }
+                                            <a asp-controller="Doctor" asp-action="PrintInvoice" asp-route-id="@appt.Id" target="_blank" class="btn btn-outline-info" title="View Official Invoice">
+                                                <i class="bi bi-receipt"></i> Bill
+                                            </a>
+                                        </div>
+
+                                        <!-- Reschedule Modal -->
+                                        <div class="modal fade text-start" id="adminRescheduleModal-@appt.Id" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content border-0 shadow">
+                                                    <form asp-action="RescheduleAppointment" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@appt.Id" />
+                                                        <div class="modal-header bg-primary text-white">
+                                                            <h5 class="modal-title fw-bold"><i class="bi bi-calendar-event me-2"></i>Reschedule Appointment #@appt.Id</h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body p-4">
+                                                            <p class="small text-muted mb-3">Rescheduling for <strong>@appt.Patient?.User?.Username</strong> with <strong>@docName</strong>.</p>
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-bold">New Date</label>
+                                                                <input type="date" name="newDate" class="form-control" value="@appt.AppointmentDate.ToString("yyyy-MM-dd")" required />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-bold">New Time Slot</label>
+                                                                <input type="text" name="newTime" class="form-control" value="@appt.AppointmentTime" placeholder="e.g. 10:30 AM" required />
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary fw-bold">Save New Schedule</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Cancel & Instant Refund Modal -->
+                                        <div class="modal fade text-start" id="adminCancelModal-@appt.Id" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content border-0 shadow">
+                                                    <form asp-action="CancelAppointment" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@appt.Id" />
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title fw-bold"><i class="bi bi-shield-exclamation me-2"></i>Cancel Appointment #@appt.Id</h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body p-4">
+                                                            <p class="mb-2">Are you sure you want to cancel the appointment for <strong>@appt.Patient?.User?.Username</strong> scheduled on <strong>@appt.AppointmentDate.ToString("dd MMM yyyy") at @appt.AppointmentTime</strong>?</p>
+                                                            @if (isPaid && pmt != null)
+                                                            {
+                                                                <div class="alert alert-warning py-2 small mb-3">
+                                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> <strong>Anti-Fraud &amp; Refund Protection:</strong> This patient paid <strong>৳@pmt.Amount</strong> via <strong>@pmt.PaymentMethod</strong>. Cancelling will trigger an <strong>instant 100% full refund</strong> to the patient's account and log this administrative action.
+                                                                </div>
+                                                            }
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-bold">Cancellation Reason</label>
+                                                                <input type="text" name="reason" class="form-control" placeholder="e.g. Clinic maintenance or physician emergency" required />
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Appointment</button>
+                                                            <button type="submit" class="btn btn-danger fw-bold">Confirm Cancellation &amp; Refund</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="bi bi-calendar-x fs-2 d-block mb-2 text-secondary"></i>
+                                    <span>No appointments found matching your filter criteria.</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

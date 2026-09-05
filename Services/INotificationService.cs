@@ -1,4 +1,4 @@
-﻿using DoctorAppointmentManagementSystem.Models;
+using DoctorAppointmentManagementSystem.Models;
 
 namespace DoctorAppointmentManagementSystem.Services
 {
@@ -15,5 +15,9 @@ namespace DoctorAppointmentManagementSystem.Services
         Task SendPrescriptionReadyAsync(Prescription prescription);
 
         Task SendAppointmentReminderAsync(Appointment appointment);
+
+        Task SendPaymentAndBookingNotificationAsync(Appointment appointment, Payment payment);
+
+        Task SendAppointmentRefundNotificationAsync(Appointment appointment, Payment payment, string reason);
     }
 }

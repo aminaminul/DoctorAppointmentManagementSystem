@@ -38,7 +38,6 @@ namespace DoctorAppointmentManagementSystem.Data
         public DbSet<FollowUp> FollowUps { get; set; }
         public DbSet<MedicalCertificate> MedicalCertificates { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
-        public DbSet<FamilyMember> FamilyMembers { get; set; }
         public DbSet<InsuranceInfo> InsuranceInfos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

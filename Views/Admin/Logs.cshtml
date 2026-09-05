@@ -1,0 +1,133 @@
+@model IEnumerable<DoctorAppointmentManagementSystem.Models.AdminLog>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Security & Audit Logs";
+
+    var actionTypes = ViewBag.ActionTypes as List<string> ?? new List<string>();
+    string selectedActionType = ViewBag.SelectedActionType as string ?? "";
+    string searchTerm = ViewBag.SearchTerm as string ?? "";
+}
+
+<div class="container-fluid p-0">
+    <!-- Header Banner -->
+    <div class="card text-white shadow-sm mb-4 border-0 rounded-3 bg-dark border-start border-4 border-danger">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <h3 class="fw-bold mb-1 text-white"><i class="bi bi-shield-check me-2 text-danger"></i>System Security &amp; Audit Trail</h3>
+                <p class="mb-0 text-white-50">Immutable operational log of administrative overrides, cancellations, anti-fraud 100% refunds, and account mutations.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="Logs" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-clockwise me-1"></i>Refresh Logs</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="card shadow-sm border-0 mb-4 rounded-3">
+        <div class="card-body p-3">
+            <form method="get" asp-action="Logs" class="row g-2 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted mb-1">Search Audit Descriptions / Actors</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" class="form-control" placeholder="Search keywords, doctor, patient, ID..." value="@searchTerm" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted mb-1">Action Category</label>
+                    <select name="actionType" class="form-select form-select-sm">
+                        <option value="">All Action Types</option>
+                        @foreach (var at in actionTypes)
+                        {
+                            <option value="@at" selected="@(selectedActionType == at ? "selected" : null)">@at</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-danger btn-sm flex-grow-1"><i class="bi bi-funnel me-1"></i>Filter</button>
+                    <a asp-action="Logs" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x-circle"></i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Audit Logs Table -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-dark">
+                Activity Audit Trail
+                <span class="badge bg-secondary-subtle text-dark rounded-pill ms-2">@Model.Count() Logged Events</span>
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary small">
+                        <tr>
+                            <th class="ps-4">Timestamp</th>
+                            <th>Actor / Admin</th>
+                            <th>Action Performed</th>
+                            <th>Event Description &amp; Audit Context</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            foreach (var log in Model)
+                            {
+                                string badgeColor = "bg-primary";
+                                if (log.ActionPerformed.Contains("Refund", StringComparison.OrdinalIgnoreCase) || log.ActionPerformed.Contains("Cancel", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    badgeColor = "bg-danger";
+                                }
+                                else if (log.ActionPerformed.Contains("Status", StringComparison.OrdinalIgnoreCase) || log.ActionPerformed.Contains("Reschedule", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    badgeColor = "bg-warning text-dark";
+                                }
+                                else if (log.ActionPerformed.Contains("Created", StringComparison.OrdinalIgnoreCase) || log.ActionPerformed.Contains("Approved", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    badgeColor = "bg-success";
+                                }
+
+                                <tr>
+                                    <td class="ps-4" style="white-space: nowrap;">
+                                        <div class="fw-bold text-dark small">@log.ActionDateTime.ToString("dd MMM yyyy")</div>
+                                        <div class="text-muted small">@log.ActionDateTime.ToString("hh:mm:ss tt")</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle bg-dark text-white fw-bold d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                                @(log.Admin?.Username?.Substring(0, 1).ToUpper() ?? "A")
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold text-dark small">@(log.Admin?.Username ?? "System Administrator")</div>
+                                                <div class="text-muted small" style="font-size: 0.75rem;">Admin #@log.AdminId</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge @badgeColor rounded-pill small">
+                                            @log.ActionPerformed
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="text-dark small">@log.Description</div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="bi bi-shield-x fs-2 d-block mb-2 text-secondary"></i>
+                                    <span>No audit log records found matching your query.</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

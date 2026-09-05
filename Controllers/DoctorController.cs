@@ -10,9 +10,11 @@ using DoctorAppointmentManagementSystem.Data;
 using DoctorAppointmentManagementSystem.Models;
 using DoctorAppointmentManagementSystem.ViewModels;
 using DoctorAppointmentManagementSystem.Services;
+using DoctorAppointmentManagementSystem.Filters;
 
 namespace DoctorAppointmentManagementSystem.Controllers
 {
+    [AuthorizeRole("Doctor")]
     public class DoctorController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -115,9 +117,19 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.CompletedAppointmentsList = allAppointments.Where(a => a.AppointmentStatus == "Completed").ToList();
             ViewBag.CancelledAppointmentsList = allAppointments.Where(a => a.AppointmentStatus == "Cancelled").ToList();
 
+            // Map payments by AppointmentId for live verified badges
+            var apptIds = allAppointments.Select(a => a.Id).ToList();
+            var paymentsMap = _context.Payments
+                .Where(p => apptIds.Contains(p.AppointmentId))
+                .GroupBy(p => p.AppointmentId)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(p => p.PaymentDateTime).First());
+            ViewBag.PaymentsMap = paymentsMap;
+
             // Revenue Calculations from Database Payments
             var docPayments = _context.Payments
+                .Include(p => p.Appointment).ThenInclude(a => a.Patient).ThenInclude(pt => pt.User)
                 .Where(p => p.Appointment.DoctorId == doctor.Id && (p.PaymentStatus == "Paid" || p.PaymentStatus == "Completed"))
+                .OrderByDescending(p => p.PaymentDateTime)
                 .ToList();
 
             decimal completedRevenue = docPayments.Sum(p => p.Amount);
@@ -136,6 +148,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.TodayRevenue = todayRevenue;
             ViewBag.WeeklyRevenue = weeklyRevenue;
             ViewBag.MonthlyRevenue = monthlyRevenue;
+            ViewBag.DoctorPaymentsList = docPayments;
 
             // Doctor Schedules & Vacations
             ViewBag.Schedules = _context.DoctorSchedules
@@ -230,12 +243,32 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.TotalReviewsCount = reviews.Count;
 
             // Chat Messages
-            ViewBag.ChatMessages = _context.ChatMessages
-                .Include(cm => cm.SenderUser)
-                .Include(cm => cm.ReceiverUser)
-                .Where(cm => cm.SenderUserId == userId || cm.ReceiverUserId == userId)
-                .OrderBy(cm => cm.SentAt)
-                .ToList();
+            int selectedPatientUserId = 0;
+            string patUserQuery = Request.Query["patientUserId"].ToString();
+            if (int.TryParse(patUserQuery, out int pUserId))
+            {
+                selectedPatientUserId = pUserId;
+            }
+            else if (patients.Any())
+            {
+                selectedPatientUserId = patients.First().UserId;
+            }
+
+            ViewBag.SelectedPatientUserId = selectedPatientUserId;
+            if (selectedPatientUserId > 0)
+            {
+                ViewBag.ChatMessages = _context.ChatMessages
+                    .Include(cm => cm.SenderUser)
+                    .Include(cm => cm.ReceiverUser)
+                    .Where(cm => (cm.SenderUserId == userId && cm.ReceiverUserId == selectedPatientUserId) ||
+                                (cm.SenderUserId == selectedPatientUserId && cm.ReceiverUserId == userId))
+                    .OrderBy(cm => cm.SentAt)
+                    .ToList();
+            }
+            else
+            {
+                ViewBag.ChatMessages = new List<ChatMessage>();
+            }
 
             // Queue entries if queue section
             if (ViewBag.Section == "queue")
@@ -363,21 +396,96 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         public async Task<IActionResult> Reject(int id)
         {
+            return await CancelAppointment(id, "Rejected by doctor");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelAppointment(int id, string? reason)
+        {
             var doctor = GetCurrentDoctor();
             if (doctor == null) return RedirectToAction("Login", "Account");
 
-            var appt = _context.Appointments.FirstOrDefault(a => a.Id == id && a.DoctorId == doctor.Id);
-            if (appt != null)
+            var appt = _context.Appointments
+                .Include(a => a.Patient).ThenInclude(p => p.User)
+                .Include(a => a.Doctor).ThenInclude(d => d.User)
+                .FirstOrDefault(a => a.Id == id && a.DoctorId == doctor.Id);
+
+            if (appt == null)
             {
-                appt.AppointmentStatus = "Cancelled";
-                _context.SaveChanges();
-                try { await _notificationService.SendAppointmentCancelledAsync(appt); } catch { }
-                TempData["Success"] = "Appointment cancelled.";
+                TempData["Error"] = "Appointment not found.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            // ANTI-FRAUD RULE 1: Cannot cancel completed appointments
+            if (appt.AppointmentStatus == "Completed")
+            {
+                TempData["Error"] = "Action Denied: This appointment has already been completed and finalized.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            if (appt.AppointmentStatus == "Cancelled")
+            {
+                TempData["Error"] = "Appointment is already cancelled.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            appt.AppointmentStatus = "Cancelled";
+            string cancellationReason = string.IsNullOrWhiteSpace(reason) ? "Doctor schedule conflict / cancelled by doctor" : reason;
+
+            // Free the doctor's schedule slot
+            var slot = _context.DoctorSchedules.FirstOrDefault(ds =>
+                ds.DoctorId == appt.DoctorId &&
+                ds.AvailableDate.Date == appt.AppointmentDate.Date &&
+                ds.StartTime == appt.AppointmentTime);
+            if (slot != null)
+            {
+                slot.SlotStatus = "Available";
+            }
+
+            // Cancel any active queue entry
+            var queueEntry = _context.QueueEntries.FirstOrDefault(q => q.AppointmentId == appt.Id);
+            if (queueEntry != null)
+            {
+                queueEntry.Status = "Cancelled";
+            }
+
+            // ANTI-FRAUD RULE 2: If appointment was PAID, initiate full refund and alert patient
+            var payment = _context.Payments.FirstOrDefault(p => p.AppointmentId == appt.Id);
+            if (payment != null && (payment.PaymentStatus == "Paid" || payment.PaymentStatus == "Completed"))
+            {
+                payment.PaymentStatus = "Refunded";
+
+                var invoice = _context.Invoices.FirstOrDefault(i => i.AppointmentId == appt.Id);
+                if (invoice != null)
+                {
+                    invoice.Status = "Cancelled / Refunded";
+                }
+
+                try
+                {
+                    await _notificationService.SendAppointmentRefundNotificationAsync(appt, payment, cancellationReason);
+                }
+                catch { }
+
+                var adminUser = _context.Users.FirstOrDefault(u => u.RoleId == 1);
+                _context.AdminLogs.Add(new AdminLog
+                {
+                    AdminId = adminUser?.Id ?? doctor.UserId,
+                    ActionPerformed = $"Doctor Cancelled Paid Appointment #{appt.Id}. Refund initiated for ৳{payment.Amount:N2} ({payment.PaymentMethod}). Reason: {cancellationReason}",
+                    Description = $"Patient: {appt.Patient?.User?.Username}, Doctor: {doctor.User?.Username}, TrxID: {payment.TransactionId}",
+                    ActionDateTime = DateTime.Now
+                });
+
+                TempData["Success"] = $"Appointment #{appt.Id} cancelled. Patient was notified and 100% refund of ৳{payment.Amount:N2} was initiated.";
             }
             else
             {
-                TempData["Error"] = "Appointment not found.";
+                try { await _notificationService.SendAppointmentCancelledAsync(appt); } catch { }
+                TempData["Success"] = $"Appointment #{appt.Id} cancelled successfully.";
             }
+
+            _context.SaveChanges();
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
@@ -390,54 +498,73 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .Include(a => a.Patient).ThenInclude(p => p.User)
                 .FirstOrDefault(a => a.Id == id && a.DoctorId == doctor.Id);
 
-            if (appt != null)
+            if (appt == null)
             {
-                appt.AppointmentStatus = "Completed";
+                TempData["Error"] = "Appointment not found.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
 
-                decimal docFee = doctor.ConsultationFee;
-                decimal ticketFee = 50;
-                decimal total = docFee + ticketFee;
+            if (appt.AppointmentStatus == "Completed")
+            {
+                TempData["Error"] = "Appointment is already completed.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
 
-                var existingInvoice = _context.Invoices.FirstOrDefault(i => i.AppointmentId == appt.Id);
-                if (existingInvoice == null)
+            if (appt.AppointmentStatus == "Cancelled")
+            {
+                TempData["Error"] = "Action Denied: Cannot complete a cancelled appointment.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            appt.AppointmentStatus = "Completed";
+
+            // Update queue entry
+            var queueEntry = _context.QueueEntries.FirstOrDefault(q => q.AppointmentId == appt.Id);
+            if (queueEntry != null)
+            {
+                queueEntry.Status = "Completed";
+                queueEntry.CompletionTime = DateTime.Now;
+            }
+
+            decimal docFee = doctor.ConsultationFee;
+            decimal ticketFee = 50;
+            decimal total = docFee + ticketFee;
+
+            var existingInvoice = _context.Invoices.FirstOrDefault(i => i.AppointmentId == appt.Id);
+            if (existingInvoice == null)
+            {
+                var invoice = new Invoice
                 {
-                    var invoice = new Invoice
-                    {
-                        PatientId = appt.PatientId,
-                        AppointmentId = appt.Id,
-                        TotalAmount = total,
-                        IssueDate = DateTime.Now,
-                        Status = "Paid",
-                        Particulars = $"Doctor Consultation Fee (৳{docFee}) + Hospital Ticket / Booking Fee (৳{ticketFee}) for Dr. {doctor.User?.Username ?? "Doctor"} ({doctor.Specialization})"
-                    };
-                    _context.Invoices.Add(invoice);
-                }
-                else
-                {
-                    existingInvoice.Status = "Paid";
-                }
-
-                if (appt.Patient?.UserId != null)
-                {
-                    var notification = new Notification
-                    {
-                        UserId = appt.Patient.UserId,
-                        NotificationType = "Invoice",
-                        Title = $"Consultation Invoice Ready (Appt #{appt.Id})",
-                        Message = $"Dr. {doctor.User?.Username ?? "Doctor"} has completed your appointment. Total Bill: ৳{total} (Consultation Fee: ৳{docFee}, Ticket Fee: ৳{ticketFee}). Your invoice has been updated in your dashboard.",
-                        SentDateTime = DateTime.Now,
-                        NotificationStatus = "Unread"
-                    };
-                    _context.Notifications.Add(notification);
-                }
-
-                _context.SaveChanges();
-                TempData["Success"] = "Appointment marked as Completed. Payment invoice and notification generated for patient.";
+                    PatientId = appt.PatientId,
+                    AppointmentId = appt.Id,
+                    TotalAmount = total,
+                    IssueDate = DateTime.Now,
+                    Status = "Paid",
+                    Particulars = $"Doctor Consultation Fee (৳{docFee}) + Hospital Ticket / Booking Fee (৳{ticketFee}) for Dr. {doctor.User?.Username ?? "Doctor"} ({doctor.Specialization})"
+                };
+                _context.Invoices.Add(invoice);
             }
             else
             {
-                TempData["Error"] = "Appointment not found.";
+                existingInvoice.Status = "Paid";
             }
+
+            if (appt.Patient?.UserId != null)
+            {
+                var notification = new Notification
+                {
+                    UserId = appt.Patient.UserId,
+                    NotificationType = "Invoice",
+                    Title = $"Consultation Completed (Appt #{appt.Id})",
+                    Message = $"Dr. {doctor.User?.Username ?? "Doctor"} has completed your appointment. Total Bill: ৳{total} (Consultation Fee: ৳{docFee}, Ticket Fee: ৳{ticketFee}). Your invoice has been updated in your dashboard.",
+                    SentDateTime = DateTime.Now,
+                    NotificationStatus = "Unread"
+                };
+                _context.Notifications.Add(notification);
+            }
+
+            _context.SaveChanges();
+            TempData["Success"] = "Appointment marked as Completed. Payment invoice and notification generated for patient.";
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
@@ -449,6 +576,12 @@ namespace DoctorAppointmentManagementSystem.Controllers
             var appt = _context.Appointments.FirstOrDefault(a => a.Id == id && a.DoctorId == doctor.Id);
             if (appt != null)
             {
+                if (appt.AppointmentStatus == "Completed" || appt.AppointmentStatus == "Cancelled")
+                {
+                    TempData["Error"] = "Cannot delay a completed or cancelled appointment.";
+                    return RedirectToAction("Dashboard", new { section = "appointments" });
+                }
+
                 appt.AppointmentStatus = "Delayed";
                 _context.SaveChanges();
                 try { await _notificationService.SendAppointmentDelayedAsync(appt); } catch { }
@@ -463,7 +596,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateAppointmentStatus(int id, string status)
+        public async Task<IActionResult> UpdateAppointmentStatus(int id, string status)
         {
             var doctor = GetCurrentDoctor();
             if (doctor == null) return RedirectToAction("Login", "Account");
@@ -472,53 +605,56 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 .Include(a => a.Patient).ThenInclude(p => p.User)
                 .FirstOrDefault(a => a.Id == id && a.DoctorId == doctor.Id);
 
-            if (appt != null)
+            if (appt == null)
             {
-                appt.AppointmentStatus = status;
-
-                if (status == "Completed")
-                {
-                    decimal docFee = doctor.ConsultationFee;
-                    decimal ticketFee = 50;
-                    decimal total = docFee + ticketFee;
-
-                    var existingInvoice = _context.Invoices.FirstOrDefault(i => i.AppointmentId == appt.Id);
-                    if (existingInvoice == null)
-                    {
-                        var invoice = new Invoice
-                        {
-                            PatientId = appt.PatientId,
-                            AppointmentId = appt.Id,
-                            TotalAmount = total,
-                            IssueDate = DateTime.Now,
-                            Status = "Paid",
-                            Particulars = $"Doctor Consultation Fee (৳{docFee}) + Hospital Ticket / Booking Fee (৳{ticketFee}) for Dr. {doctor.User?.Username ?? "Doctor"} ({doctor.Specialization})"
-                        };
-                        _context.Invoices.Add(invoice);
-                    }
-                    else
-                    {
-                        existingInvoice.Status = "Paid";
-                    }
-
-                    if (appt.Patient?.UserId != null)
-                    {
-                        var notification = new Notification
-                        {
-                            UserId = appt.Patient.UserId,
-                            NotificationType = "Invoice",
-                            Title = $"Consultation Invoice Ready (Appt #{appt.Id})",
-                            Message = $"Dr. {doctor.User?.Username ?? "Doctor"} has marked your appointment as Completed. Total Bill: ৳{total} (Consultation Fee: ৳{docFee}, Ticket Fee: ৳{ticketFee}). Your invoice has been updated in your dashboard.",
-                            SentDateTime = DateTime.Now,
-                            NotificationStatus = "Unread"
-                        };
-                        _context.Notifications.Add(notification);
-                    }
-                }
-
-                _context.SaveChanges();
-                TempData["Success"] = $"Appointment #{id} status updated to {status}." + (status == "Completed" ? " Invoice generated for patient." : "");
+                TempData["Error"] = "Appointment not found.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
             }
+
+            // ANTI-FRAUD RULE 1: If already Completed, cannot modify
+            if (appt.AppointmentStatus == "Completed")
+            {
+                TempData["Error"] = "Action Denied: This appointment has already been completed and finalized.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            // ANTI-FRAUD RULE 2: If already Cancelled, cannot modify
+            if (appt.AppointmentStatus == "Cancelled")
+            {
+                TempData["Error"] = "Action Denied: This appointment has already been cancelled.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            // ANTI-FRAUD RULE 3: Cannot revert to Pending
+            if (status == "Pending")
+            {
+                TempData["Error"] = "Action Denied: Cannot revert confirmed appointment to Pending.";
+                return RedirectToAction("Dashboard", new { section = "appointments" });
+            }
+
+            // ANTI-FRAUD RULE 4: If changing to Cancelled, process full refund
+            if (status == "Cancelled")
+            {
+                return await CancelAppointment(id, "Cancelled by Doctor via status control");
+            }
+
+            if (status == "Completed")
+            {
+                return Complete(id);
+            }
+
+            appt.AppointmentStatus = status;
+
+            // Update queue entry if applicable
+            var queueEntry = _context.QueueEntries.FirstOrDefault(q => q.AppointmentId == appt.Id);
+            if (queueEntry != null)
+            {
+                if (status == "Checked In") queueEntry.Status = "Waiting";
+                else if (status == "In Consultation") queueEntry.Status = "InConsultation";
+            }
+
+            _context.SaveChanges();
+            TempData["Success"] = $"Appointment #{id} status updated to {status}.";
             return RedirectToAction("Dashboard", new { section = "appointments" });
         }
 
@@ -589,7 +725,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
 
             _context.SaveChanges();
             TempData["Success"] = "Electronic Medical Record (EMR) saved successfully!";
-            return RedirectToAction("Dashboard", new { section = "emr" });
+            return RedirectToAction("Dashboard", new { section = "patients", patientId = patientId });
         }
 
         // =========================================================================
@@ -678,6 +814,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return RedirectToAction("Dashboard", new { section = "prescriptions" });
         }
 
+        [AuthorizeRole("Doctor", "Patient", "Admin")]
         public IActionResult PrintPrescription(int id)
         {
             var prescription = _context.Prescriptions
@@ -712,6 +849,27 @@ namespace DoctorAppointmentManagementSystem.Controllers
             _context.LabReports.Add(report);
             _context.SaveChanges();
             TempData["Success"] = "Laboratory test requested successfully!";
+            return RedirectToAction("Dashboard", new { section = "lab" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateLabReportResult(int reportId, string result, string? remarks)
+        {
+            var doctor = GetCurrentDoctor();
+            if (doctor == null) return RedirectToAction("Login", "Account");
+
+            var report = _context.LabReports.FirstOrDefault(lr => lr.Id == reportId);
+            if (report != null)
+            {
+                report.Result = result;
+                if (!string.IsNullOrWhiteSpace(remarks))
+                {
+                    report.Remarks = remarks;
+                }
+                _context.SaveChanges();
+                TempData["Success"] = "Laboratory test result updated successfully!";
+            }
             return RedirectToAction("Dashboard", new { section = "lab" });
         }
 
@@ -758,6 +916,23 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 TempData["Error"] = "Please select a valid document file.";
             }
 
+            return RedirectToAction("Dashboard", new { section = "documents" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteMedicalDocument(int id)
+        {
+            var doctor = GetCurrentDoctor();
+            if (doctor == null) return RedirectToAction("Login", "Account");
+
+            var doc = _context.MedicalDocuments.FirstOrDefault(d => d.Id == id && d.DoctorId == doctor.Id);
+            if (doc != null)
+            {
+                _context.MedicalDocuments.Remove(doc);
+                _context.SaveChanges();
+                TempData["Success"] = "Medical document removed successfully.";
+            }
             return RedirectToAction("Dashboard", new { section = "documents" });
         }
 
@@ -844,6 +1019,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             return View(cert);
         }
 
+        [AuthorizeRole("Doctor", "Patient", "Admin")]
         public IActionResult PrintInvoice(int id)
         {
             var invoice = _context.Invoices
@@ -885,7 +1061,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
                 _context.SaveChanges();
             }
 
-            return RedirectToAction("Dashboard", new { section = "messages" });
+            return RedirectToAction("Dashboard", new { section = "messages", patientUserId = receiverUserId });
         }
 
         // =========================================================================

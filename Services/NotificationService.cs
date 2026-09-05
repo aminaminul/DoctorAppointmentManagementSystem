@@ -1,4 +1,4 @@
-﻿using DoctorAppointmentManagementSystem.Data;
+using DoctorAppointmentManagementSystem.Data;
 using DoctorAppointmentManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -155,6 +155,81 @@ namespace DoctorAppointmentManagementSystem.Services
             await _smsService.SendSmsAsync(appt.Patient.User.PhoneNumber,
                 $"REMINDER: Tomorrow's appt with Dr. {appt.Doctor.User.Username} at " +
                 $"{appt.AppointmentTime}. Arrive 10 mins early.");
+        }
+
+        public async Task SendPaymentAndBookingNotificationAsync(Appointment appointment, Payment payment)
+        {
+            var appt = await LoadAppointmentAsync(appointment.Id);
+            if (appt == null) return;
+
+            decimal ticketFee = 50.00m;
+            decimal docFee = payment.Amount > ticketFee ? payment.Amount - ticketFee : payment.Amount;
+
+            // 1. Notification to PATIENT
+            const string patientTitle = "Payment Successful & Appointment Confirmed ✅";
+            string patientMsg = $"Your online payment of ৳{payment.Amount:N2} via {payment.PaymentMethod} (TrxID: {payment.TransactionId ?? "N/A"}) has been received. " +
+                                $"Your appointment with Dr. {appt.Doctor.User.Username} ({appt.Doctor.Specialization}) is confirmed for " +
+                                $"{appt.AppointmentDate:dd MMM yyyy} at {appt.AppointmentTime}. " +
+                                $"(Doctor Consultation Fee: ৳{docFee:N2}, Hospital Ticket Fee: ৳{ticketFee:N2}).";
+
+            await SaveInAppAsync(appt.Patient.UserId, "Payment", patientTitle, patientMsg);
+
+            await _emailService.SendEmailAsync(
+                appt.Patient.User.Email, appt.Patient.User.Username, patientTitle,
+                BuildEmailHtml(patientTitle, appt.Patient.User.Username, patientMsg, "💳", "#047857",
+                    $"<strong>Total Paid:</strong> ৳{payment.Amount:N2}<br>" +
+                    $"<strong>Payment Method:</strong> {payment.PaymentMethod}<br>" +
+                    $"<strong>Transaction ID:</strong> {payment.TransactionId ?? "N/A"}<br>" +
+                    $"<strong>Status:</strong> Confirmed & Paid"));
+
+            await _smsService.SendSmsAsync(appt.Patient.User.PhoneNumber,
+                $"PAID: ৳{payment.Amount:N2} via {payment.PaymentMethod}. Appt #{appt.Id} with Dr. {appt.Doctor.User.Username} confirmed for {appt.AppointmentDate:dd MMM} at {appt.AppointmentTime}.");
+
+            // 2. Notification to DOCTOR
+            string doctorTitle = $"New Paid Appointment Confirmed (Appt #{appt.Id}) 🔔";
+            string doctorMsg = $"Patient {appt.Patient.User.Username} has booked an appointment and paid ৳{payment.Amount:N2} via {payment.PaymentMethod} (TrxID: {payment.TransactionId ?? "N/A"}). " +
+                               $"Scheduled for {appt.AppointmentDate:dd MMM yyyy} at {appt.AppointmentTime}. Status: Confirmed.";
+
+            await SaveInAppAsync(appt.Doctor.UserId, "Booking", doctorTitle, doctorMsg);
+
+            await _emailService.SendEmailAsync(
+                appt.Doctor.User.Email, appt.Doctor.User.Username, doctorTitle,
+                BuildEmailHtml(doctorTitle, appt.Doctor.User.Username, doctorMsg, "🩺", "#1e40af",
+                    $"<strong>Patient:</strong> {appt.Patient.User.Username}<br>" +
+                    $"<strong>Date & Time:</strong> {appt.AppointmentDate:dd MMM yyyy} at {appt.AppointmentTime}<br>" +
+                    $"<strong>Payment Status:</strong> Paid (৳{payment.Amount:N2})"));
+        }
+
+        public async Task SendAppointmentRefundNotificationAsync(Appointment appointment, Payment payment, string reason)
+        {
+            var appt = await LoadAppointmentAsync(appointment.Id);
+            if (appt == null) return;
+
+            // 1. Notification to PATIENT
+            const string patientTitle = "Appointment Cancelled & Full Refund Initiated ⚠️";
+            string patientMsg = $"Your paid appointment #{appt.Id} with Dr. {appt.Doctor.User.Username} scheduled for " +
+                                $"{appt.AppointmentDate:dd MMM yyyy} at {appt.AppointmentTime} has been cancelled. " +
+                                $"Reason: {reason}. A full refund of ৳{payment.Amount:N2} has been initiated to your {payment.PaymentMethod} account (TrxID: {payment.TransactionId ?? "N/A"}).";
+
+            await SaveInAppAsync(appt.Patient.UserId, "Refund", patientTitle, patientMsg);
+
+            await _emailService.SendEmailAsync(
+                appt.Patient.User.Email, appt.Patient.User.Username, patientTitle,
+                BuildEmailHtml(patientTitle, appt.Patient.User.Username, patientMsg, "↩️", "#b91c1c",
+                    $"<strong>Refund Amount:</strong> ৳{payment.Amount:N2}<br>" +
+                    $"<strong>Refund Destination:</strong> {payment.PaymentMethod}<br>" +
+                    $"<strong>Original TrxID:</strong> {payment.TransactionId ?? "N/A"}<br>" +
+                    $"<strong>Cancellation Reason:</strong> {reason}"));
+
+            await _smsService.SendSmsAsync(appt.Patient.User.PhoneNumber,
+                $"REFUND INITIATED: ৳{payment.Amount:N2} for cancelled Appt #{appt.Id} with Dr. {appt.Doctor.User.Username}. Transferred to your {payment.PaymentMethod}.");
+
+            // 2. Notification to DOCTOR
+            string doctorTitle = $"Appointment #{appt.Id} Cancelled & Refunded";
+            string doctorMsg = $"Appointment #{appt.Id} with patient {appt.Patient.User.Username} on {appt.AppointmentDate:dd MMM yyyy} at {appt.AppointmentTime} was cancelled (Reason: {reason}). " +
+                               $"The patient's payment of ৳{payment.Amount:N2} has been marked for refund.";
+
+            await SaveInAppAsync(appt.Doctor.UserId, "Cancellation", doctorTitle, doctorMsg);
         }
 
         private async Task<Appointment?> LoadAppointmentAsync(int id)

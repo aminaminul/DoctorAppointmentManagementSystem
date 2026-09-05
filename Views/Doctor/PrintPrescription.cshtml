@@ -11,18 +11,39 @@
     <title>Prescription - #@Model.Id</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <style>
+        @@media print {
+            .d-print-none { display: none !important; }
+            body { background-color: #ffffff !important; padding: 0 !important; }
+            .prescription-card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; padding: 20px !important; }
+        }
+        body { background-color: #f1f5f9; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #1e293b; }
+        .prescription-card { max-width: 850px; margin: 25px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 35px; border: 1px solid #e2e8f0; }
+        .header-logo { width: 55px; height: 55px; background: #0d9488; color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; }
+        .seal-box { border: 2px dashed #cbd5e1; border-radius: 8px; height: 70px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.8rem; font-weight: 600; }
+    </style>
 </head>
-<body class="bg-light p-4">
-    <div class="container bg-white p-5 shadow-sm rounded-3 my-3" style="max-width: 850px;">
+<body class="p-3">
+    <div class="prescription-card position-relative">
         <!-- Header -->
         <div class="row border-bottom pb-4 mb-4 align-items-center">
-            <div class="col-8">
-                <h2 class="text-primary fw-bold mb-1"><i class="bi bi-hospital me-2"></i>Doctor Appointment Medical Center</h2>
-                <p class="text-muted mb-0 small">123 Healthcare Avenue, Medical District | Phone: +880 1700-000000</p>
+            <div class="col-8 d-flex align-items-center gap-3">
+                <div class="header-logo shadow-sm flex-shrink-0">
+                    <i class="bi bi-hospital"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">Doctor Appointment Medical Center</h3>
+                    <p class="text-muted small mb-0">Official Digital Medical Prescription &amp; Clinical Order</p>
+                    <small class="text-muted">123 Healthcare Avenue, Medical District | Phone: +880 1700-000000</small>
+                </div>
             </div>
             <div class="col-4 text-end">
-                <div class="badge bg-primary fs-6 mb-2">Prescription #@Model.Id</div>
+                <div class="badge bg-success fs-6 mb-2"><i class="bi bi-prescription2 me-1"></i> Rx #@Model.Id</div>
                 <div class="text-muted small">Date: @Model.PrescriptionDateTime.ToString("MMM dd, yyyy")</div>
+                @if (Model.AppointmentId > 0)
+                {
+                    <div class="text-muted small">Appt #@Model.AppointmentId</div>
+                }
             </div>
         </div>
 
@@ -81,28 +102,41 @@
         </div>
 
         <!-- Footer & QR Code -->
-        <div class="row pt-4 mt-4 border-top align-items-center">
-            <div class="col-md-6">
+        <div class="row pt-4 mt-4 border-top align-items-end">
+            <div class="col-4">
                 <div class="d-flex align-items-center gap-3">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=RX-@Model.Id-DOC-@Model.DoctorId-PAT-@Model.PatientId" alt="QR Code" class="img-thumbnail" />
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=85x85&data=RX-@Model.Id-DOC-@Model.DoctorId-PAT-@Model.PatientId" alt="QR Code" class="img-thumbnail rounded" style="width: 80px; height: 80px;" />
                     <div>
-                        <small class="fw-bold d-block text-dark">Digital QR Verification</small>
-                        <small class="text-muted">Scan to verify prescription authenticity.</small>
+                        <small class="fw-bold d-block text-dark">Digital Rx QR</small>
+                        <small class="text-muted" style="font-size: 0.72rem;">Scan to verify validity</small>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 text-end">
-                <div class="mt-4 pt-3 border-top d-inline-block px-4">
-                    <p class="fw-bold mb-0 text-dark">@Model.Doctor?.User?.Username</p>
-                    <small class="text-muted">Doctor's Digital Signature</small>
+            <div class="col-4 text-center">
+                <div class="seal-box">
+                    <i class="bi bi-patch-check-fill text-success me-1"></i> Hospital Digital Seal
+                </div>
+            </div>
+            <div class="col-4 text-end">
+                <div class="border-top pt-2 d-inline-block px-3">
+                    <div class="fw-bold text-dark small">@(Model.Doctor?.User?.Username != null ? "Dr. " + Model.Doctor.User.Username : "Attending Physician")</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">Doctor's Digital Signature</div>
                 </div>
             </div>
         </div>
 
+        <div class="text-center text-muted mt-4 pt-3 border-top" style="font-size: 0.78rem;">
+            This is a valid computer-generated medical prescription issued by Doctor Appointment Medical Center.
+        </div>
+
         <!-- Print Action Buttons -->
-        <div class="mt-4 pt-3 text-center d-print-none">
-            <button onclick="window.print()" class="btn btn-primary btn-lg me-2"><i class="bi bi-printer me-2"></i>Print / Save PDF</button>
-            <button onclick="window.close()" class="btn btn-outline-secondary btn-lg"><i class="bi bi-x-circle me-2"></i>Close</button>
+        <div class="mt-4 pt-3 text-center d-print-none border-top">
+            <button onclick="window.print()" class="btn btn-success px-4 py-2 me-2 rounded-pill fw-bold shadow-sm">
+                <i class="bi bi-printer me-2"></i>Print Prescription / Save PDF
+            </button>
+            <button onclick="window.close()" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
+                <i class="bi bi-x-circle me-1"></i>Close Window
+            </button>
         </div>
     </div>
 </body>

@@ -243,6 +243,10 @@
                             <strong id="docDays"></strong>
                             Available Days
                         </div>
+                        <div class="doc-stat">
+                            <strong id="docRating"></strong>
+                            Rating &amp; Reviews
+                        </div>
                     </div>
                 </div>
             </div>
@@ -354,6 +358,8 @@
                     opt.dataset.fee       = doc.fee;
                     opt.dataset.image     = doc.profileImage;
                     opt.dataset.days      = doc.availableDays;
+                    opt.dataset.rating    = doc.rating;
+                    opt.dataset.reviews   = doc.reviewsCount;
                     doctorSel.appendChild(opt);
                 });
                 doctorSel.disabled = false;
@@ -369,6 +375,10 @@
         document.getElementById('docExp').textContent  = opt.dataset.exp + ' yrs';
         document.getElementById('docFee').textContent  = '৳ ' + opt.dataset.fee;
         document.getElementById('docDays').textContent = opt.dataset.days || 'Varies';
+
+        const ratingVal = parseFloat(opt.dataset.rating || 5.0).toFixed(1);
+        const reviewsCount = opt.dataset.reviews || 0;
+        document.getElementById('docRating').innerHTML = `<span class="text-warning">★</span> ${ratingVal} (${reviewsCount})`;
 
         const avatarWrap = document.getElementById('doctorAvatarWrap');
         const imgSrc = opt.dataset.image;

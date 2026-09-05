@@ -1,0 +1,208 @@
+@model IEnumerable<DoctorAppointmentManagementSystem.Models.Payment>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Payments & Financial Ledger";
+
+    decimal totalPaid = ViewBag.TotalPaidAmount ?? 0m;
+    decimal totalRefunded = ViewBag.TotalRefundedAmount ?? 0m;
+    decimal todayPaid = ViewBag.TodayPaidAmount ?? 0m;
+    int totalCount = ViewBag.TotalTransactionsCount ?? 0;
+
+    string selectedStatus = ViewBag.SelectedStatus as string ?? "";
+    string selectedMethod = ViewBag.SelectedMethod as string ?? "";
+    string searchTerm = ViewBag.SearchTerm as string ?? "";
+}
+
+<div class="container-fluid p-0">
+    <!-- Header Banner -->
+    <div class="card text-white shadow-sm mb-4 border-0 rounded-3 bg-dark border-start border-4 border-success">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <h3 class="fw-bold mb-1 text-white"><i class="bi bi-wallet2 me-2 text-success"></i>Financial Transactions &amp; Settlements Ledger</h3>
+                <p class="mb-0 text-white-50">Complete itemized audit of all consultation fees, counter collections, mobile payments, and anti-fraud refunds.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="Payments" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</a>
+                <a asp-controller="Report" asp-action="Revenue" class="btn btn-success btn-sm fw-bold"><i class="bi bi-file-earmark-bar-graph me-1"></i>Revenue Reports</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial KPI Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-4 border-success h-100">
+                <div class="card-body p-3">
+                    <span class="text-uppercase small fw-bold text-success">Gross Paid Collections</span>
+                    <h3 class="fw-bold text-success mb-0 mt-2">৳@totalPaid.ToString("N2")</h3>
+                    <span class="text-muted small">All verified payments</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-4 border-primary h-100">
+                <div class="card-body p-3">
+                    <span class="text-uppercase small fw-bold text-primary">Today's Collections</span>
+                    <h3 class="fw-bold text-dark mb-0 mt-2">৳@todayPaid.ToString("N2")</h3>
+                    <span class="text-muted small">Recorded today</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-4 border-warning h-100">
+                <div class="card-body p-3">
+                    <span class="text-uppercase small fw-bold text-warning">Total Refunded</span>
+                    <h3 class="fw-bold text-warning mb-0 mt-2">৳@totalRefunded.ToString("N2")</h3>
+                    <span class="text-muted small">Cancellations &amp; returns</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-4 border-info h-100">
+                <div class="card-body p-3">
+                    <span class="text-uppercase small fw-bold text-info">Total Transactions</span>
+                    <h3 class="fw-bold text-dark mb-0 mt-2">@totalCount</h3>
+                    <span class="text-muted small">Historical database count</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="card shadow-sm border-0 mb-4 rounded-3">
+        <div class="card-body p-3">
+            <form method="get" asp-action="Payments" class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted mb-1">Search TrxID / Patient / Doctor</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" class="form-control" placeholder="Search transactions..." value="@searchTerm" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted mb-1">Status</label>
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">All Statuses</option>
+                        <option value="Paid" selected="@(selectedStatus == "Paid" ? "selected" : null)">Paid / Completed</option>
+                        <option value="Refunded" selected="@(selectedStatus == "Refunded" ? "selected" : null)">Refunded</option>
+                        <option value="Pending" selected="@(selectedStatus == "Pending" ? "selected" : null)">Pending</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted mb-1">Payment Method</label>
+                    <select name="method" class="form-select form-select-sm">
+                        <option value="">All Methods</option>
+                        <option value="bKash" selected="@(selectedMethod == "bKash" ? "selected" : null)">bKash</option>
+                        <option value="Nagad" selected="@(selectedMethod == "Nagad" ? "selected" : null)">Nagad</option>
+                        <option value="Rocket" selected="@(selectedMethod == "Rocket" ? "selected" : null)">Rocket</option>
+                        <option value="Cash" selected="@(selectedMethod == "Cash" ? "selected" : null)">Cash / Counter</option>
+                        <option value="Card" selected="@(selectedMethod == "Card" ? "selected" : null)">Credit/Debit Card</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-sm flex-grow-1"><i class="bi bi-funnel me-1"></i>Filter</button>
+                    <a asp-action="Payments" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x-circle"></i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payments Ledger Table -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-dark">
+                Settlement Ledger
+                <span class="badge bg-success-subtle text-success rounded-pill ms-2">@Model.Count() Records</span>
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary small">
+                        <tr>
+                            <th class="ps-4">Trx Date &amp; Time</th>
+                            <th>Appt #</th>
+                            <th>Patient Name</th>
+                            <th>Consultant Doctor</th>
+                            <th>Method</th>
+                            <th>Transaction ID</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Invoice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            foreach (var p in Model)
+                            {
+                                var docName = p.Appointment?.Doctor?.User?.Username ?? "Doctor";
+                                if (!docName.StartsWith("Dr.", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    docName = "Dr. " + docName;
+                                }
+
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark small">@p.PaymentDateTime.ToString("dd MMM yyyy")</div>
+                                        <div class="text-muted small">@p.PaymentDateTime.ToString("hh:mm tt")</div>
+                                    </td>
+                                    <td class="fw-bold text-dark small">#@p.AppointmentId</td>
+                                    <td>
+                                        <div class="fw-semibold text-dark small">
+                                            @p.Appointment?.Patient?.User?.Username
+                                        </div>
+                                        <div class="text-muted small">@(p.Appointment?.Patient?.User?.PhoneNumber ?? "N/A")</div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-dark small">@docName</div>
+                                        <span class="badge bg-secondary-subtle text-secondary small">@p.Appointment?.Doctor?.Specialization</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            @p.PaymentMethod
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-monospace small text-primary fw-semibold">
+                                            @(string.IsNullOrEmpty(p.TransactionId) ? "CASH-COUNTER" : p.TransactionId)
+                                        </span>
+                                    </td>
+                                    <td class="fw-bold text-dark">৳@p.Amount.ToString("N2")</td>
+                                    <td>
+                                        @if (p.PaymentStatus == "Paid" || p.PaymentStatus == "Completed")
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success"><i class="bi bi-check-circle me-1"></i>Paid</span>
+                                        }
+                                        else if (p.PaymentStatus == "Refunded")
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning"><i class="bi bi-arrow-counterclockwise me-1"></i>Refunded</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary border">@p.PaymentStatus</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a asp-controller="Doctor" asp-action="PrintInvoice" asp-route-id="@p.AppointmentId" target="_blank" class="btn btn-outline-info btn-sm" title="View Official Invoice">
+                                            <i class="bi bi-receipt me-1"></i>Bill
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-5 text-muted">
+                                    <i class="bi bi-wallet2 fs-2 d-block mb-2 text-secondary"></i>
+                                    <span>No payment records found matching the filter criteria.</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

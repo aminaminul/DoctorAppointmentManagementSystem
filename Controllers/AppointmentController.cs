@@ -49,7 +49,9 @@ namespace DoctorAppointmentManagementSystem.Controllers
                     specialization = d.Specialization,
                     experience   = d.Experience,
                     fee          = d.ConsultationFee,
-                    availableDays = d.AvailableDays ?? ""
+                    availableDays = d.AvailableDays ?? "",
+                    rating       = _context.Feedbacks.Where(f => f.DoctorId == d.Id && f.Status == "Active").Select(f => (double?)f.Rating).Average() ?? 5.0,
+                    reviewsCount = _context.Feedbacks.Count(f => f.DoctorId == d.Id && f.Status == "Active")
                 })
                 .ToList();
 
@@ -157,6 +159,14 @@ namespace DoctorAppointmentManagementSystem.Controllers
             ViewBag.Specialization = doctor.Specialization;
             ViewBag.Fee          = doctor.ConsultationFee;
             ViewBag.Experience   = doctor.Experience;
+
+            var avgRating = _context.Feedbacks
+                .Where(f => f.DoctorId == doctorId && f.Status == "Active")
+                .Select(f => (double?)f.Rating)
+                .Average() ?? 5.0;
+            var reviewsCount = _context.Feedbacks.Count(f => f.DoctorId == doctorId && f.Status == "Active");
+            ViewBag.DoctorAvgRating = avgRating;
+            ViewBag.DoctorReviewsCount = reviewsCount;
 
             return View();
         }
@@ -329,7 +339,7 @@ namespace DoctorAppointmentManagementSystem.Controllers
             }
             _context.SaveChanges();
 
-            try { await _notificationService.SendAppointmentConfirmationAsync(appointment); }
+            try { await _notificationService.SendPaymentAndBookingNotificationAsync(appointment, payment); }
             catch { }
 
             TempData["BookingSuccess"]      = "true";

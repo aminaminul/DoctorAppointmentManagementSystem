@@ -59,6 +59,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link @(activeAction("Admin", "Appointments") ? "active-item" : "")" asp-controller="Admin" asp-action="Appointments">
+                    <i class="bi bi-calendar-check me-2"></i> Appointments
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link @(activeAction("Admin", "Doctors") ? "active-item" : "")" asp-controller="Admin" asp-action="Doctors">
                     <i class="bi bi-person-badge me-2"></i> Doctors
                 </a>
@@ -69,10 +74,21 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link @(active("Pharmacy") ? "active-item" : "")" asp-controller="Pharmacy" asp-action="Index">
-                    <i class="bi bi-capsule me-2"></i> Pharmacy
+                <a class="nav-link @(activeAction("Admin", "Payments") ? "active-item" : "")" asp-controller="Admin" asp-action="Payments">
+                    <i class="bi bi-wallet2 me-2"></i> Payments &amp; Ledger
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link @(activeAction("Admin", "Invoices") ? "active-item" : "")" asp-controller="Admin" asp-action="Invoices">
+                    <i class="bi bi-receipt me-2"></i> Invoices
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(activeAction("Admin", "Queue") ? "active-item" : "")" asp-controller="Admin" asp-action="Queue">
+                    <i class="bi bi-people-fill me-2"></i> Live Queue
+                </a>
+            </li>
+            <li class="sidebar-section-header mt-2">Clinical &amp; Operations</li>
             <li class="nav-item">
                 <a class="nav-link @(activeAction("Laboratory", "Tests") ? "active-item" : "")" asp-controller="Laboratory" asp-action="Tests">
                     <i class="bi bi-droplet me-2"></i> Lab Tests
@@ -84,6 +100,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link @(active("Pharmacy") ? "active-item" : "")" asp-controller="Pharmacy" asp-action="Index">
+                    <i class="bi bi-capsule me-2"></i> Pharmacy
+                </a>
+            </li>
+            <li class="sidebar-section-header mt-2">Support &amp; Audit</li>
+            <li class="nav-item">
                 <a class="nav-link @(activeAction("Admin", "LeaveRequests") ? "active-item" : "")" asp-controller="Admin" asp-action="LeaveRequests">
                     <i class="bi bi-calendar-minus me-2"></i> Leave Requests
                 </a>
@@ -94,13 +116,18 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link @(activeAction("Admin", "Invoices") ? "active-item" : "")" asp-controller="Admin" asp-action="Invoices">
-                    <i class="bi bi-receipt me-2"></i> Invoices
+                <a class="nav-link @(activeAction("Admin", "Logs") ? "active-item" : "")" asp-controller="Admin" asp-action="Logs">
+                    <i class="bi bi-shield-check me-2"></i> Audit Logs
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link @(active("Report") ? "active-item" : "")" asp-controller="Report" asp-action="Revenue">
                     <i class="bi bi-bar-chart me-2"></i> Reports
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(activeAction("Admin", "EditPrivacy") ? "active-item" : "")" asp-controller="Admin" asp-action="EditPrivacy">
+                    <i class="bi bi-shield-lock me-2"></i> Privacy Policy
                 </a>
             </li>
         }
@@ -214,11 +241,6 @@
             <li class="nav-item">
                 <a class="nav-link @(currentSection == "payments" ? "active-item" : "")" asp-controller="Patient" asp-action="Dashboard" asp-route-section="payments">
                     <i class="bi bi-wallet2 me-2"></i> Online Payments
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link @(currentSection == "family" ? "active-item" : "")" asp-controller="Patient" asp-action="Dashboard" asp-route-section="family">
-                    <i class="bi bi-people me-2"></i> Family Members
                 </a>
             </li>
             <li class="nav-item">

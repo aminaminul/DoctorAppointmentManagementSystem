@@ -1,61 +1,180 @@
-﻿@* Razor View: Admin/Patients *@
-<!-- HTML View: Admin/Patients -->
 @model IEnumerable<DoctorAppointmentManagementSystem.Models.Patient>
-
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Patient Management";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Patient Management</h2>
-    <a asp-action="AddPatient" class="btn btn-primary">Add Patient</a>
+<div class="container-fluid p-0">
+    <!-- Header Banner -->
+    <div class="card text-white shadow-sm mb-4 border-0 rounded-3 bg-dark border-start border-4 border-primary">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <h3 class="fw-bold mb-1 text-white"><i class="bi bi-people me-2 text-primary"></i>Patient Directory &amp; Records Management</h3>
+                <p class="mb-0 text-white-50">Oversee registered patient profiles, medical registration status, and appointment histories.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="AddPatient" class="btn btn-primary btn-sm fw-bold px-3">
+                    <i class="bi bi-person-plus-fill me-1"></i>Add New Patient
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Patients Table Card -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-dark">
+                Registered Patients
+                <span class="badge bg-primary-subtle text-primary rounded-pill ms-2">@Model.Count() Total</span>
+            </h5>
+            <div class="w-25">
+                <input type="text" id="patientSearchInput" class="form-control form-control-sm" placeholder="Search patient name, phone..." onkeyup="filterPatientsTable()" />
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="patientsTable">
+                    <thead class="table-light text-secondary small">
+                        <tr>
+                            <th class="ps-4">Patient</th>
+                            <th>Age / Gender</th>
+                            <th>Blood Group</th>
+                            <th>Contact Phone</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle bg-secondary text-white fw-bold d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; min-width: 40px; font-size: 1rem;">
+                                                @(item.User?.Username?.Substring(0, 1).ToUpper() ?? "P")
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark small">
+                                                    <a asp-action="PatientDetails" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.User?.Username</a>
+                                                </div>
+                                                <div class="text-muted small">@item.User?.Email</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-dark small fw-semibold">@item.Age Years</div>
+                                        <span class="badge bg-light text-dark border">@item.Gender</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-danger-subtle text-danger border border-danger">
+                                            @(string.IsNullOrEmpty(item.BloodGroup) ? "Unknown" : item.BloodGroup)
+                                        </span>
+                                    </td>
+                                    <td class="small text-dark font-monospace">
+                                        @(item.User?.PhoneNumber ?? "Not provided")
+                                    </td>
+                                    <td>
+                                        <form asp-action="TogglePatientStatus" asp-route-id="@item.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm p-0 border-0" title="Click to toggle status">
+                                                @if (item.ActiveStatus)
+                                                {
+                                                    <span class="badge bg-success-subtle text-success border border-success px-2 py-1"><i class="bi bi-check-circle me-1"></i>Active</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger px-2 py-1"><i class="bi bi-pause-circle me-1"></i>Inactive</span>
+                                                }
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="PatientDetails" asp-route-id="@item.Id" class="btn btn-outline-info" title="View Patient Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="EditPatient" asp-route-id="@item.Id" class="btn btn-outline-warning" title="Edit Patient">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePatientModal-@item.Id" title="Delete / Deactivate">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Delete Confirmation Modal -->
+                                        <div class="modal fade text-start" id="deletePatientModal-@item.Id" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content border-0 shadow">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Patient Confirmation</h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body p-4">
+                                                        <p class="mb-2">Are you sure you want to remove patient <strong>@item.User?.Username</strong> from the system?</p>
+                                                        <div class="alert alert-info py-2 small mb-0">
+                                                            <i class="bi bi-info-circle me-1"></i> <strong>Medical History Protection:</strong> If this patient has historical appointments or clinical billing records, they will be <strong>safely deactivated</strong> instead of deleted to protect patient healthcare records.
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <a asp-action="DeletePatient" asp-route-id="@item.Id" class="btn btn-danger fw-bold">Proceed</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-people fs-2 d-block mb-2 text-secondary"></i>
+                                    <span>No patients registered in system yet.</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-<!-- Data Table Block -->
-        <table class="table table-striped table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Age</th>
-            <th>Gender</th>
-            <th>Blood Group</th>
-            <th>Phone</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.User?.Username</td>
-                <td>@item.User?.Email</td>
-                <td>@item.Age</td>
-                <td>@item.Gender</td>
-                <td>@(string.IsNullOrEmpty(item.BloodGroup) ? "N/A" : item.BloodGroup)</td>
-                <td>@(item.User?.PhoneNumber ?? "N/A")</td>
-                <td>
-                    @if (item.ActiveStatus)
-                    {
-                        <span class="badge bg-success">Active</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger">Inactive</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="PatientDetails" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Details</a>
-                    <a asp-action="EditPatient" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="DeletePatient" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete patient @item.User?.Username?')" >Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@section Scripts {
+    <script>
+        function filterPatientsTable() {
+            var input = document.getElementById("patientSearchInput");
+            var filter = input.value.toLowerCase();
+            var table = document.getElementById("patientsTable");
+            var tr = table.getElementsByTagName("tr");
 
+            for (var i = 1; i < tr.length; i++) {
+                var text = tr[i].textContent || tr[i].innerText;
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+}

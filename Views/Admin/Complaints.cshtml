@@ -1,58 +1,121 @@
-﻿@* Razor View: Admin/Complaints *@
-<!-- HTML View: Admin/Complaints -->
 @model IEnumerable<DoctorAppointmentManagementSystem.Models.Complaint>
-
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Complaints Management";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Complaints Management</h2>
+<div class="container-fluid p-0">
+    <!-- Header Banner -->
+    <div class="card text-white shadow-sm mb-4 border-0 rounded-3 bg-dark border-start border-4 border-warning">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <h3 class="fw-bold mb-1 text-white"><i class="bi bi-chat-left-text me-2 text-warning"></i>User Grievances &amp; Complaints</h3>
+                <p class="mb-0 text-white-50">Review patient and doctor feedback, resolve reported disputes, and maintain service quality.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-action="Complaints" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</a>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Complaints Table Card -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-dark">
+                Complaints Registry
+                <span class="badge bg-warning-subtle text-dark rounded-pill ms-2">@Model.Count() Total</span>
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary small">
+                        <tr>
+                            <th class="ps-4">Date Filed</th>
+                            <th>User / Submitter</th>
+                            <th>Subject</th>
+                            <th>Grievance Details</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4" style="white-space: nowrap;">
+                                        <div class="fw-bold text-dark small">@item.DateSubmitted.ToString("dd MMM yyyy")</div>
+                                        <div class="text-muted small">@item.DateSubmitted.ToString("hh:mm tt")</div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark small">@item.User?.Username</div>
+                                        <div class="text-muted small">@item.User?.Email</div>
+                                    </td>
+                                    <td class="fw-semibold text-dark small">
+                                        @item.Subject
+                                    </td>
+                                    <td>
+                                        <div class="text-dark small" style="max-width: 450px;">
+                                            @item.Description
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.Status == "Resolved")
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success"><i class="bi bi-check-circle me-1"></i>Resolved</span>
+                                        }
+                                        else if (item.Status == "In Progress")
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning">In Progress</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger">Open</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group btn-group-sm">
+                                            @if (item.Status != "Resolved")
+                                            {
+                                                <form asp-action="UpdateComplaintStatus" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <input type="hidden" name="status" value="Resolved" />
+                                                    <button type="submit" class="btn btn-outline-success" title="Mark Resolved">
+                                                        <i class="bi bi-check2-circle me-1"></i>Resolve
+                                                    </button>
+                                                </form>
+                                            }
+                                            <a asp-action="DeleteComplaint" asp-route-id="@item.Id" class="btn btn-outline-danger ms-1" onclick="return confirm('Delete complaint #@item.Id?')" title="Delete Complaint">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-chat-heart fs-2 d-block mb-2 text-secondary"></i>
+                                    <span>No complaints currently filed. Great job!</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-<!-- Data Table Block -->
-        <table class="table table-striped table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Date</th>
-            <th>User</th>
-            <th>Subject</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.DateSubmitted.ToShortDateString()</td>
-                <td>@item.User?.Username</td>
-                <td>@item.Subject</td>
-                <td>@item.Description</td>
-                <td>
-                    <span class="badge @(item.Status == "Resolved" ? "bg-success" : (item.Status == "Open" ? "bg-danger" : "bg-warning text-dark"))">
-                        @item.Status
-                    </span>
-                </td>
-                <td>
-                    @if (item.Status != "Resolved")
-                    {
-<!-- Form Block -->
-        <form asp-action="UpdateComplaintStatus" method="post" class="d-inline">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <input type="hidden" name="status" value="Resolved" />
-                            <button type="submit" class="btn btn-sm btn-success">Mark Resolved</button>
-                        </form>
-                    }
-                    <a asp-action="DeleteComplaint" asp-route-id="@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Delete complaint?')">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-

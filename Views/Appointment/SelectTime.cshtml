@@ -194,6 +194,9 @@
                     <span class="badge-info">@ViewBag.Specialization</span>
                     <span class="badge-info">@ViewBag.Experience yrs exp.</span>
                     <span class="badge-info">৳ @ViewBag.Fee fee</span>
+                    <span class="badge-info" style="background: rgba(245, 158, 11, 0.15); color: #d97706; font-weight: 700;">
+                        <i class="bi bi-star-fill text-warning me-1"></i>@(ViewBag.DoctorAvgRating != null ? ((double)ViewBag.DoctorAvgRating).ToString("0.0") : "5.0") (@(ViewBag.DoctorReviewsCount ?? 0) reviews)
+                    </span>
                     <span class="badge-date"><i class="bi bi-calendar3 me-1"></i>@ViewBag.DateDisplay</span>
                 </div>
             </div>

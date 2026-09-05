@@ -1,103 +1,188 @@
-@* Razor View: Admin/DoctorDetails *@
-<!-- HTML View: Admin/DoctorDetails -->
 @model DoctorAppointmentManagementSystem.Models.Doctor
-
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Doctor Details";
-}
 
-@{
     var doctorName = Model.User?.Username ?? "Doctor";
     if (!doctorName.StartsWith("Dr.", StringComparison.OrdinalIgnoreCase))
     {
         doctorName = "Dr. " + doctorName;
     }
+
+    var appointments = ViewBag.Appointments as List<DoctorAppointmentManagementSystem.Models.Appointment> ?? new List<DoctorAppointmentManagementSystem.Models.Appointment>();
+    var schedules = ViewBag.Schedules as List<DoctorAppointmentManagementSystem.Models.DoctorSchedule> ?? new List<DoctorAppointmentManagementSystem.Models.DoctorSchedule>();
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Doctor Details - @doctorName</h2>
-    <a asp-action="Doctors" class="btn btn-secondary">Back to List</a>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Account & Professional Profile</h5>
+<div class="container-fluid p-0">
+    <!-- Header Banner -->
+    <div class="card text-white shadow-sm mb-4 border-0 rounded-3 bg-dark border-start border-4 border-primary">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center border border-3 border-secondary" style="width: 60px; height: 60px; min-width: 60px; font-size: 1.5rem;">
+                    @(Model.User?.Username?.Substring(0, 1).ToUpper() ?? "D")
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-1 text-white">@doctorName</h3>
+                    <p class="mb-0 text-white-50"><span class="badge bg-primary me-2">@Model.Specialization</span> Experience: @Model.Experience Years | Consultation Fee: ৳@Model.ConsultationFee</p>
+                </div>
             </div>
-            <div class="card-body">
-<!-- Data Table Block -->
-        <table class="table table-hover">
-                    <tr>
-                        <th style="width: 40%">Username / Name</th>
-                        <td>@doctorName</td>
-                    </tr>
-                    <tr>
-                        <th>Email Address</th>
-                        <td>@Model.User?.Email</td>
-                    </tr>
-                    <tr>
-                        <th>Phone Number</th>
-                        <td>@(Model.User?.PhoneNumber ?? "N/A")</td>
-                    </tr>
-                    <tr>
-                        <th>Specialization</th>
-                        <td>@Model.Specialization</td>
-                    </tr>
-                    <tr>
-                        <th>Qualification</th>
-                        <td>@(string.IsNullOrEmpty(Model.Qualification) ? "N/A" : Model.Qualification)</td>
-                    </tr>
-                    <tr>
-                        <th>Experience (Years)</th>
-                        <td>@Model.Experience Years</td>
-                    </tr>
-                    <tr>
-                        <th>Consultation Fee</th>
-                        <td>৳@Model.ConsultationFee</td>
-                    </tr>
-                    <tr>
-                        <th>Status</th>
-                        <td>
-                            @if (Model.ActiveStatus)
-                            {
-                                <span class="badge bg-success">Active</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Inactive</span>
-                            }
-                        </td>
-                    </tr>
-                </table>
+            <div class="d-flex gap-2">
+                <a asp-action="EditDoctor" asp-route-id="@Model.Id" class="btn btn-warning btn-sm"><i class="bi bi-pencil me-1"></i>Edit Profile</a>
+                <a asp-action="Doctors" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left me-1"></i>Back to Doctors</a>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Chamber & Availability Info</h5>
+    <div class="row g-4 mb-4">
+        <!-- Account & Credentials Details -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-white border-0 py-3 px-4">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Credentials &amp; Practice Information</h5>
+                </div>
+                <div class="card-body p-4 pt-0">
+                    <table class="table table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <th class="text-muted fw-normal" style="width: 40%">Full Name</th>
+                                <td class="fw-bold text-dark">@doctorName</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Email Address</th>
+                                <td>@Model.User?.Email</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Phone Number</th>
+                                <td>@(Model.User?.PhoneNumber ?? "Not specified")</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Department</th>
+                                <td><span class="badge bg-primary-subtle text-primary">@Model.Specialization</span></td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Qualification</th>
+                                <td class="fw-semibold text-dark">@(string.IsNullOrEmpty(Model.Qualification) ? "MBBS" : Model.Qualification)</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Experience</th>
+                                <td>@Model.Experience Years</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Consultation Fee</th>
+                                <td class="fw-bold text-success">৳@Model.ConsultationFee</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Account Status</th>
+                                <td>
+                                    @if (Model.ActiveStatus)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success"><i class="bi bi-check-circle me-1"></i>Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger"><i class="bi bi-pause-circle me-1"></i>Inactive</span>
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="card-body">
-<!-- Data Table Block -->
-        <table class="table table-hover">
-                    <tr>
-                        <th style="width: 40%">Available Days</th>
-                        <td>@(Model.AvailableDays ?? "N/A")</td>
-                    </tr>
-                    <tr>
-                        <th>Available Time</th>
-                        <td>@(Model.Availability ?? "N/A")</td>
-                    </tr>
+        </div>
+
+        <!-- Chamber & Schedule Details -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-white border-0 py-3 px-4">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history me-2 text-primary"></i>Chamber Schedule Parameters</h5>
+                </div>
+                <div class="card-body p-4 pt-0">
+                    <table class="table table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <th class="text-muted fw-normal" style="width: 40%">Available Days</th>
+                                <td class="fw-semibold text-dark">@(Model.AvailableDays ?? "Mon-Fri")</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Chamber Hours</th>
+                                <td class="fw-semibold text-dark">@(Model.Availability ?? "N/A")</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Configured Chamber Slots</th>
+                                <td><span class="badge bg-info-subtle text-info">@schedules.Count slots in DB</span></td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted fw-normal">Lifetime Consultations</th>
+                                <td><span class="badge bg-success-subtle text-success">@appointments.Count appointments logged</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="mt-4 p-3 bg-light rounded-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold text-dark small">Live Chamber Queue</div>
+                                <div class="text-muted small">View today's patient queue for this doctor</div>
+                            </div>
+                            <a asp-action="Queue" asp-route-doctorId="@Model.Id" class="btn btn-primary btn-sm fw-bold">
+                                <i class="bi bi-people-fill me-1"></i>Open Queue
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Appointments Tab / Card -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-calendar-check me-2 text-primary"></i>Recent Consultations by @doctorName</h5>
+            <a asp-action="Appointments" asp-route-doctorId="@Model.Id" class="btn btn-outline-primary btn-sm">View All</a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary small">
+                        <tr>
+                            <th class="ps-4">Appt #</th>
+                            <th>Date &amp; Time</th>
+                            <th>Patient Name</th>
+                            <th>Visit Reason</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (appointments.Any())
+                        {
+                            foreach (var a in appointments)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold">#@a.Id</td>
+                                    <td>@a.AppointmentDate.ToString("dd MMM yyyy") at @a.AppointmentTime</td>
+                                    <td>
+                                        <a asp-action="PatientDetails" asp-route-id="@a.PatientId" class="text-decoration-none fw-semibold text-dark">
+                                            @a.Patient?.User?.Username
+                                        </a>
+                                    </td>
+                                    <td class="text-muted small">@(a.ReasonForVisit ?? "General Consultation")</td>
+                                    <td>
+                                        <span class="badge @(a.AppointmentStatus == "Completed" ? "bg-success" : (a.AppointmentStatus == "Cancelled" ? "bg-danger" : "bg-primary"))">
+                                            @a.AppointmentStatus
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted small">No recent appointment history for this physician.</td>
+                            </tr>
+                        }
+                    </tbody>
                 </table>
             </div>
         </div>
-
-        <div class="d-flex gap-2 justify-content-end">
-            <a asp-action="EditDoctor" asp-route-id="@Model.Id" class="btn btn-warning">Edit Profile</a>
-            <a asp-action="DeleteDoctor" asp-route-id="@Model.Id" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete @Model.User?.Username?')" >Delete Profile</a>
-        </div>
     </div>
 </div>
-
